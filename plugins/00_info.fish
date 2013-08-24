@@ -4,4 +4,4 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
-set -x -g FISHAMNIUM_VERSION "1.0.0"
+set -x -g FISHAMNIUM_VERSION "1.0.1"

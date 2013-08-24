@@ -10,3 +10,5 @@ function rvm_current
   and set -l rv
   and rvm-prompt i v g;
 end
+
+rvm reload > /dev/null ^ /dev/null

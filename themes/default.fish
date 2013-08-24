@@ -68,7 +68,7 @@ function fish_prompt -d "Write out the prompt"
 
   # RVM
   set -l current_rvm (rvm_current)
-  test -n $current_rvm; and printf ' %s%s' $red $current_rvm
+  [ "$current_rvm" != "" ]; and printf ' %s%s' $red $current_rvm
 
   # Shell symbol and end
   printf '%s] %s> %s' $yellow $symbol (set_color normal)
