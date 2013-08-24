@@ -72,7 +72,7 @@ namespace :site do
     system("git branch -D gh-pages")
     system("git fetch")
 		system("git checkout gh-pages")
-		system("curl -s -o installer https://raw.github.com/ShogunPanda/fishamnium/master/installer && git commit -qam \"Updated site installer.\" && git push -q")
+		system("curl -s -o installer https://raw.github.com/ShogunPanda/fishamnium/master/installer; and git commit -qam \"Updated site installer.\"; and push -q")
 		system("git checkout master")
 		system("git branch -D gh-pages")
 	end

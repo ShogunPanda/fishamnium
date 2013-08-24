@@ -4,6 +4,20 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
+function __truncated_cwd
+  set -l rv (pwd |sed -e "s#$HOME#~#")
+  set -l old_rv ""
+  set len 50
+
+  while [ (echo -e $rv | wc -m)  -gt $len ];
+    set old_rv $rv
+    set rv (echo $rv | sed -E "s#^((\.\.\./)?[^/]*/)#.../#")
+    [ "$rv" = "$old_rv" ]; and break;
+  end;
+
+  echo $rv
+end
+
 function fish_prompt -d "Write out the prompt"
   # Terminal codes
   set -l white (set_color -o white)
@@ -36,7 +50,7 @@ function fish_prompt -d "Write out the prompt"
 	printf '%s[%s%s%s]%s' $yellow $white (date "+%Y-%m-%d %H:%M") $yellow
 
   # Current directory
-  printf ' %s%s' $dir (pwd |sed -e "s#$HOME#~#")
+  printf ' %s%s' $dir (__truncated_cwd)
 
   # GIT
   if is_git_repository
