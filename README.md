@@ -39,6 +39,6 @@ Licensed under the MIT license, which can be found at http://www.opensource.org/
 
 ### External scripts included
 
-* `plugins/21_rvm.fish` was extract from [lunks/fishnuggets](https://www.github.com/zmalltalker/fish-nuggets).
-* `plugins/71_fishmarks.fish` was extract from [techwizrd/fishmarks](https://www.github.com/zmalltalker/fish-nuggets).
+* `plugins/21_rvm.fish` was extract from [lunks/fishnuggets](https://www.github.com/zmalltalker/lunks-nuggets).
+* `plugins/71_fishmarks.fish` was extract from [techwizrd/fishmarks](https://www.github.com/zmalltalker/techwizrd/fishmarks).
 * `completions/31_git.fish` was extract from [zmalltalker/fish-nuggets](https://www.github.com/zmalltalker/fish-nuggets).

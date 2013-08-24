@@ -8,7 +8,7 @@
 complete -c git -n "__fish_git_using_command pull" -f -a "(__fish_git_heads) (__fish_git_remotes)"
 complete -c git -n "__fish_git_using_command push" -f -a "(__fish_git_heads) (__fish_git_remotes)"
 for i in gl gp glp glr;
-  complete -c $i -n "__fish_git_using_command push" -f -a "(__fish_git_heads) (__fish_git_remotes)";
+  complete -c $i -f -a "(__fish_git_heads) (__fish_git_remotes)";
 end;
 
 # Checkout
