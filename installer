@@ -14,5 +14,5 @@ if [ $required_fish_version -gt $current_fish_version ];
   exit 1
 end
 
-[ "$FISHAMNIUM_OPERATION" != "uninstall" ]; and set $FISHAMNIUM_OPERATION "install"
+[ "$FISHAMNIUM_OPERATION" != "uninstall" ]; and set FISHAMNIUM_OPERATION "install"
 git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"; and cd "$destdir"; and sudo rake $FISHAMNIUM_OPERATION\[true\]; and rm -rf "$destdir";
