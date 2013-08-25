@@ -21,8 +21,8 @@ desc "Installs the environment."
 task :install do
 	files = FileList["loader.fish", "completions", "plugins", "themes"]
   FileUtils.mkdir_p(root)
-	FileUtils.cp_r(files, root, :verbose => !quiet)
-	FileUtils.chmod_R(0755, root, :verbose => !quiet)
+	FileUtils.cp_r(files, root, verbose: !quiet)
+  FileUtils.chmod_R(0755, root, verbose: false) # Never show this due to https://bugs.ruby-lang.org/issues/8547
 
 	puts <<-EOMESSAGE
 -------
@@ -38,7 +38,7 @@ end
 
 desc "Uninstalls the environment."
 task :uninstall do
-	FileUtils.rm_r(root, :verbose => !quiet)
+	FileUtils.rm_r(root, verbose: !quiet)
 	puts <<-EOMESSAGE
 -------
 fishamnium has been uninstalled. Disabling it is left to you.
@@ -80,4 +80,4 @@ namespace :site do
 	end
 end
 
-task :default => ["install"]
+task default: ["install"]
