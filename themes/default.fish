@@ -11,7 +11,7 @@ function __truncated_cwd
 
   while [ (echo -e $rv | wc -m)  -gt $len ];
     set old_rv $rv
-    set rv (echo $rv | sed -E "s#^((\.\.\./)?[^/]*/)#.../#")
+    set rv (echo $rv | sed -E "s#^((…)?[^/]*/)#…/#")
     [ "$rv" = "$old_rv" ]; and break;
   end;
 

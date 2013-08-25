@@ -27,7 +27,7 @@ task :install do
 	puts <<-EOMESSAGE
 -------
 fishamnium has been installed. Enabling it is left to you.
-To enable, add the following line to #{home}/.config/config.fish:
+To enable, add the following line to #{home}/.config/fish/config.fish:
 
 . #{root}/loader.fish
 
@@ -42,7 +42,7 @@ task :uninstall do
 	puts <<-EOMESSAGE
 -------
 fishamnium has been uninstalled. Disabling it is left to you.
-To disable, remove the following line from #{home}/.config/config.fish:
+To disable, remove the following line from #{home}/.config/fish/config.fish:
 
 . #{root}/loader.fish
 
