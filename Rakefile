@@ -70,12 +70,13 @@ end
 namespace :site do
 	desc "Updates site installer."
 	task :update_installer do
-    system("git branch -D gh-pages")
-    system("git fetch")
-		system("git checkout gh-pages")
-		system("curl -s -o installer https://raw.github.com/ShogunPanda/fishamnium/master/installer; and git commit -qam \"Updated site installer.\"; and push -q")
-		system("git checkout master")
-		system("git branch -D gh-pages")
+    commands = [
+      "git branch -D gh-pages", "git fetch", "git checkout gh-pages",
+      "curl -s -o installer https://raw.github.com/ShogunPanda/fishamnium/master/installer", "git commit -qam \"Updated site installer.\"", "git push -q",
+      "git checkout master", "git branch -D gh-pages"
+    ]
+
+    abort if !commands.all? {|command| system(command) }
 	end
 end
 
