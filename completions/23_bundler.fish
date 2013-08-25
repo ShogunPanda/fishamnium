@@ -5,14 +5,15 @@
 #
 
 function __bundle_wants_command
-  [ (commandline -opc) = "bundle" ]; and return 0;
+  set -l cmd (commandline -opc)
+  [ "$cmd" = "bundle" ]; and return 0;
   return 1;
 end
 
 function __bundle_wants_gem
-  set cmd (commandline -opc)
+  set -l cmd (commandline -opc)
 
-  if test -f Gemfile;
+  if test -f Gemfile
     if contains show $cmd; return 0; end;
     if contains update $cmd; return 0; end;
   end;
@@ -41,6 +42,7 @@ complete -c bundle -n "__bundle_wants_command" -f -a show --description "Shows a
 complete -c bundle -n "__bundle_wants_command" -f -a update --description "Update the current environment"
 complete -c bundle -n "__bundle_wants_command" -f -a version --description "Prints version information"
 complete -c bundle -n "__bundle_wants_command" -f -a viz --description "Generates a visual dependency graph"
+
 complete -c bundle -n "__bundle_wants_gem" -f -a "(__bundle_gems)"
 
 complete -c bu -f -a "(__bundle_gems)"

@@ -5,19 +5,20 @@
 #
 
 function __rails_wants_command
-  [ (commandline -opc) = "rails" ]; and return 0;
+  set -l cmd (commandline -opc)
+  [ "$cmd" = "rails" ]; and return 0;
   return 1;
 end
 
 function __is_rails_console
-  set cmd (commandline -opc)
+  set -l cmd (commandline -opc)
   contains c $cmd; and return 0;
   contains console $cmd; and return 0;
   return 1;
 end
 
 function __is_rails_server
-  set cmd (commandline -opc)
+  set -l cmd (commandline -opc)
   contains s $cmd; and return 0;
   contains server $cmd; and return 0;
   return 1;
