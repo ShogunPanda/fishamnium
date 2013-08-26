@@ -4,5 +4,7 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
-bind \eB backward-word
-bind \eF forward-word
+function fish_user_key_bindings
+  bind \eB backward-word
+  bind \eF forward-word
+end
