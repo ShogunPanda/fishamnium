@@ -12,19 +12,19 @@ root = "#{home}/.fishamnium"
 contents_directory = File.dirname(__FILE__)
 quiet = (ENV["FISHAMNIUM_QUIET"] =~ /^(1|on|true|yes|t|y)$/i)
 external_scripts = {
-	"plugins.rvm" => ["plugins/21_rvm", "https://raw.github.com/lunks/fish-nuggets/master/functions/rvm.fish"],
-	"plugins.fishmarks" => ["plugins/71_fishmarks", "https://raw.github.com/techwizrd/fishmarks/master/marks.fish"],
-	"completions.git" => ["completions/31_git", "https://raw.github.com/zmalltalker/fish-nuggets/master/completions/git.fish"]
+  "plugins.rvm" => ["plugins/21_rvm", "https://raw.github.com/lunks/fish-nuggets/master/functions/rvm.fish"],
+  "plugins.fishmarks" => ["plugins/71_fishmarks", "https://raw.github.com/techwizrd/fishmarks/master/marks.fish"],
+  "completions.git" => ["completions/31_git", "https://raw.github.com/zmalltalker/fish-nuggets/master/completions/git.fish"]
 }
 
 desc "Installs the environment."
 task :install do
-	files = FileList["loader.fish", "completions", "plugins", "themes"]
+  files = FileList["loader.fish", "completions", "plugins", "themes"]
   FileUtils.mkdir_p(root)
-	FileUtils.cp_r(files, root, verbose: !quiet)
+  FileUtils.cp_r(files, root, verbose: !quiet)
   FileUtils.chmod_R(0755, root, verbose: false) # Never show this due to https://bugs.ruby-lang.org/issues/8547
 
-	puts <<-EOMESSAGE
+  puts <<-EOMESSAGE
 -------
 fishamnium has been installed. Enabling it is left to you.
 To enable, add the following line to #{home}/.config/fish/config.fish:
@@ -38,8 +38,8 @@ end
 
 desc "Uninstalls the environment."
 task :uninstall do
-	FileUtils.rm_r(root, verbose: !quiet)
-	puts <<-EOMESSAGE
+  FileUtils.rm_r(root, verbose: !quiet)
+  puts <<-EOMESSAGE
 -------
 fishamnium has been uninstalled. Disabling it is left to you.
 To disable, remove the following line from #{home}/.config/fish/config.fish:
@@ -51,20 +51,20 @@ Hope you liked it. Farewell! ;)"
 end
 
 namespace :external do
-	desc "Updates an external script."
-	task :update, :name do |_, args|
-		script_arg = args[:name].to_s
+  desc "Updates an external script."
+  task :update, :name do |_, args|
+    script_arg = args[:name].to_s
 
-		raise RuntimeError.new("You have to specify the name of script to update. Valid scripts are: #{external_scripts.keys.join(", ")}.") if script_arg.strip.length == 0
-		raise RuntimeError.new("External script #{script_arg} is not valid. Valid scripts are: #{external_scripts.keys.join(", ")}.") if !external_scripts[script_arg]
-		final_script = external_scripts[script_arg]	
+    raise RuntimeError.new("You have to specify the name of script to update. Valid scripts are: #{external_scripts.keys.join(", ")}.") if script_arg.strip.length == 0
+    raise RuntimeError.new("External script #{script_arg} is not valid. Valid scripts are: #{external_scripts.keys.join(", ")}.") if !external_scripts[script_arg]
+    final_script = external_scripts[script_arg] 
 
-		open(contents_directory + "/#{final_script[0]}.fish", "w", 0755) do |destination|
-			open(final_script[1]) do |source|
-				destination.write(source.read)
-			end
-		end
-	end
+    open(contents_directory + "/#{final_script[0]}.fish", "w", 0755) do |destination|
+      open(final_script[1]) do |source|
+        destination.write(source.read)
+      end
+    end
+  end
 end
 
 task default: ["install"]
