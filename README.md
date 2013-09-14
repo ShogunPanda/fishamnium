@@ -48,3 +48,7 @@ Licensed under the MIT license, which can be found at http://www.opensource.org/
 * `plugins/21_rvm.fish` was extracted from [lunks/fishnuggets](https://www.github.com/zmalltalker/lunks-nuggets).
 * `plugins/71_fishmarks.fish` was extracted from [techwizrd/fishmarks](https://www.github.com/zmalltalker/techwizrd/fishmarks).
 * `completions/31_git.fish` was extracted from [zmalltalker/fish-nuggets](https://www.github.com/zmalltalker/fish-nuggets).
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/ShogunPanda/fishamnium/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
