@@ -6,6 +6,8 @@ http://sw.cow.tc/fishamnium
 
 https://github.com/ShogunPanda/fishamnium
 
+[![Bitdeli Trend](https://d2weczhvl823v0.cloudfront.net/ShogunPanda/fishamnium/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 ## Install
 
 Just type the following inside a fish shell and you're done!
