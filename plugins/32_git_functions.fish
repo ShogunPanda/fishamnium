@@ -51,8 +51,16 @@ function gfbn --description "Prints the GIT full branch name"
   git fbn
 end
 
+function gfbnc --description "Copies the GIT full branch name into the clipboard"
+  git fbn | tr -d "\n" | pbcopy
+end
+
 function gbn --description "Prints the GIT branch name"
   git bn
+end
+
+function gbnc --description "Copies the GIT branch name into the clipboard"
+  git bn | tr -d "\n" | pbcopy
 end
 
 function gt --description "Prints the GIT task number"

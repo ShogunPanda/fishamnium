@@ -67,17 +67,4 @@ namespace :external do
 	end
 end
 
-namespace :site do
-	desc "Updates site installer."
-	task :update_installer do
-    commands = [
-      "git branch -D gh-pages", "git fetch", "git checkout gh-pages",
-      "curl -s -o installer https://raw.github.com/ShogunPanda/fishamnium/master/installer", "git commit -qam \"Updated site installer.\"", "git push -q",
-      "git checkout master", "git branch -D gh-pages"
-    ]
-
-    abort if !commands.all? {|command| system(command) }
-	end
-end
-
 task default: ["install"]

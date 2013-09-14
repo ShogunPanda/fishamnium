@@ -1,3 +1,11 @@
+### 2013-09-13 - 1.0.8
+
+* Removed unused Rake tasks.
+
+### 2013-09-13 - 1.0.7
+
+* Added "gfbnc" and "gbnc".
+
 ### 2013-08-26 - 1.0.6
 
 * Fixed GIT autocompletion.
