@@ -1,3 +1,7 @@
+### 2013-09-15 - 1.0.10
+
+* Unix compatibility.
+
 ### 2013-09-14 - 1.0.9
 
 * Fixed Rakefile indentation.
