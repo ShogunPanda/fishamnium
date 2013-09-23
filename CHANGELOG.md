@@ -1,3 +1,7 @@
+### 2013-09-12 - 1.0.11
+
+* Fixed installer.
+
 ### 2013-09-15 - 1.0.10
 
 * Unix compatibility.
