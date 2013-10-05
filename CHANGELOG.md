@@ -1,3 +1,7 @@
+### 2013-09-12 - 1.0.12
+
+* Update RVM settings.
+
 ### 2013-09-12 - 1.0.11
 
 * Fixed installer.

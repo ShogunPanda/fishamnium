@@ -33,3 +33,5 @@ function __handle_rvmrc_stuff --on-variable PWD
     set -e cwd
   end
 end
+
+set -x -g rvmsudo_secure_path 1
