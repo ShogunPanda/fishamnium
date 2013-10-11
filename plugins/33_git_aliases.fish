@@ -38,6 +38,7 @@ alias grup='git remote update'
 alias grbi='git rebase -i'
 alias grbc='git rebase --continue'
 alias grba='git rebase --abort'
+alias grbs='git rebase --skip'
 
 # Cherry pick
 alias gcp='git cherry-pick'

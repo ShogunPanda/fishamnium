@@ -16,7 +16,8 @@ complete -c gco -f -a '(__fish_git_branches)' --description 'Branch'
 complete -c gco -f -a '(__fish_git_tags)' --description 'Tag'
 
 # Branch
-complete -c gbd -f -a '(__fish_git_tags)'
+complete -c gbd -f -a '(__fish_git_branches)' --description 'Branch'
+complete -c gbd -f -a '(__fish_git_tags)' --description 'Tag'
 
 # Remote
 for i in gr grv grmv grrm grset grup;

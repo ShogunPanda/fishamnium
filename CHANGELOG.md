@@ -1,3 +1,7 @@
+### 2013-10-11 - 1.0.13
+
+* Added GIT autocompletions.
+
 ### 2013-09-12 - 1.0.12
 
 * Update RVM settings.
