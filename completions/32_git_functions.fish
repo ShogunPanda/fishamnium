@@ -12,12 +12,16 @@ for i in gl gp glp glr;
 end;
 
 # Checkout
-complete -c gco -f -a '(__fish_git_branches)' --description 'Branch'
-complete -c gco -f -a '(__fish_git_tags)' --description 'Tag'
+for i in gco gcb;
+  complete -c $1 -f -a '(__fish_git_branches)' --description 'Branch'
+  complete -c $1 -f -a '(__fish_git_tags)' --description 'Tag'
+end
 
-# Branch
-complete -c gbd -f -a '(__fish_git_branches)' --description 'Branch'
-complete -c gbd -f -a '(__fish_git_tags)' --description 'Tag'
+# Branch related
+for i in gb gbd gbm gm gmt gmf;
+  complete -c $1 -f -a '(__fish_git_branches)' --description 'Branch'
+  complete -c $1 -f -a '(__fish_git_tags)' --description 'Tag'
+end
 
 # Remote
 for i in gr grv grmv grrm grset grup;

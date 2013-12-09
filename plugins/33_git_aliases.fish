@@ -25,6 +25,7 @@ alias gca='git commit -a -m'
 alias gco='git checkout'
 alias gcd='git checkout development'
 alias gcm='git checkout master'
+alias gcb='git checkout -b'
 
 # Remote
 alias gr='git remote'
@@ -61,6 +62,7 @@ alias ga='git add'
 alias gaa='git add -A'
 alias gm='git merge'
 alias gmt='git mergetool --no-prompt'
+alias gmf='git merge --no-ff'
 
 # Resetting
 alias grh='git reset HEAD'
