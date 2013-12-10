@@ -60,7 +60,7 @@ alias glp="git_log_prettify"
 # Add and merge
 alias ga='git add'
 alias gaa='git add -A'
-alias gm='git merge'
+alias gme='git merge'
 alias gmt='git mergetool --no-prompt'
 alias gmf='git merge --no-ff'
 

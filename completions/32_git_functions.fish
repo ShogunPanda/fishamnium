@@ -18,7 +18,7 @@ for i in gco gcb;
 end
 
 # Branch related
-for i in gb gbd gbm gm gmt gmf;
+for i in gb gbd gbm gme gmt gmf;
   complete -c $1 -f -a '(__fish_git_branches)' --description 'Branch'
   complete -c $1 -f -a '(__fish_git_tags)' --description 'Tag'
 end
