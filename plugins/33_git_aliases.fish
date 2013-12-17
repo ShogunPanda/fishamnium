@@ -48,6 +48,7 @@ alias gcp='git cherry-pick'
 alias gb='git branch'
 alias gba='git branch -a'
 alias gbd='git branch -D'
+alias gbm='git branch -m'
 alias gsh='git_sha'
 
 # Config
