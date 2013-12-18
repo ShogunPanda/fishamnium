@@ -13,19 +13,19 @@ end;
 
 # Checkout
 for i in gco gcb;
-  complete -c $1 -f -a '(__fish_git_branches)' --description 'Branch'
-  complete -c $1 -f -a '(__fish_git_tags)' --description 'Tag'
+  complete -c $i -f -a '(__fish_git_branches)' --description 'Branch'
+  complete -c $i -f -a '(__fish_git_tags)' --description 'Tag'
 end
 
 # Branch related
 for i in gb gbd gbm gme gmt gmf;
-  complete -c $1 -f -a '(__fish_git_branches)' --description 'Branch'
-  complete -c $1 -f -a '(__fish_git_tags)' --description 'Tag'
+  complete -c $i -f -a '(__fish_git_branches)' --description 'Branch'
+  complete -c $i -f -a '(__fish_git_tags)' --description 'Tag'
 end
 
 # Remote
 for i in gr grv grmv grrm grset grup;
-  complete -c $1 -f -a '(__fish_git_remotes)'
+  complete -c $i -f -a '(__fish_git_remotes)'
 end
 
 # Rebase
