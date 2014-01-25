@@ -56,7 +56,7 @@ alias gcl='git config --list'
 
 # Log
 alias glo='git log --oneline'
-alias glog='git --oneline --graph'
+alias glog='git log --oneline --graph'
 alias glp='git_log_prettify'
 
 # Add and merge

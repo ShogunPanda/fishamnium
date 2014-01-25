@@ -1,3 +1,7 @@
+### 2014-01-25 - 1.3.1
+
+* Bugfix.
+
 ### 2014-01-25 - 1.3.0
 
 * Added new aliases for git.
