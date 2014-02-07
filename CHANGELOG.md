@@ -1,3 +1,7 @@
+### 2014-02-07 - 1.4.0
+
+* Added fishamnium_reload.
+
 ### 2014-01-25 - 1.3.1
 
 * Bugfix.

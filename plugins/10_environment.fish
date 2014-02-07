@@ -6,3 +6,8 @@
 
 set -x -g EDITOR "nano"
 set -x -g fish_greeting
+
+function fishamnium_reload
+  echo "Reloading Fishamnium ..."
+  . ~/.fishamnium/loader.fish  
+end
