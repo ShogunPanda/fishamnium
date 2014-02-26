@@ -1,3 +1,11 @@
+### 2014-02-26 - 1.4.2
+
+* Updated keybindings.
+
+### 2014-02-07 - 1.4.1
+
+* Include the current directory bin in the path.
+
 ### 2014-02-07 - 1.4.0
 
 * Added fishamnium_reload.

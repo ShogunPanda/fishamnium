@@ -4,6 +4,9 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
+# Set the bin in the current directory
+set -x -g PATH ./bin $PATH
+
 for root in /usr/local /opt /var
 	if test -d $root
     for dir in $root/bin $root/sbin
