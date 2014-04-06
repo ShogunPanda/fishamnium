@@ -1,4 +1,8 @@
-### 2014-02-26 - 1.4.3
+### 2014-04-06 - 1.4.4
+
+* Update to SublimeText 3.
+
+### 2014-04-06 - 1.4.3
 
 * Update to SublimeText 3.
 
