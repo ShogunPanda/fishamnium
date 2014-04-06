@@ -1,3 +1,7 @@
+### 2014-02-26 - 1.4.3
+
+* Update to SublimeText 3.
+
 ### 2014-02-26 - 1.4.2
 
 * Updated keybindings.
