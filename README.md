@@ -7,7 +7,6 @@ http://sw.cow.tc/fishamnium
 https://github.com/ShogunPanda/fishamnium
 
 [![Bitdeli Trend](https://d2weczhvl823v0.cloudfront.net/ShogunPanda/fishamnium/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-<iframe src="http://ghbtns.com/github-btn.html?user=ShogunPanda&repo=fishamnium&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="135" height="20"></iframe>
 
 ## Install
 
