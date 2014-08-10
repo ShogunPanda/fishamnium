@@ -1,3 +1,8 @@
+### 2014-04-06 - 1.5.1
+
+* Renamed g_clean to g_reset.
+* Added g_cleanup.
+
 ### 2014-04-06 - 1.5.0
 
 * Add Git workflow.

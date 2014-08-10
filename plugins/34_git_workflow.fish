@@ -61,7 +61,7 @@ function g_finish --description "Merges a branch back to its remote branch."
   g_refresh $base $origin; and git checkout $base; and git merge --no-ff $current; and git push $origin $base;
 end  
 
-function g_clean --description "Cleans up a local branch."
+function g_reset --description "Cleans up a local branch."
   git reset --hard; and git clean -f;
 end
 
@@ -73,4 +73,9 @@ function g_delete --description "Deletes a branch locally and remotely."
   for branch in $branches
     git branch -D $branch; and git push $origin :$branch
   end
+end
+
+function g_cleanup --description "Removes all merged branch."
+  set -l branches (git branch --merged | grep -v '^*' | sed 's#  ##' | grep -v -E '^(development|master)$')
+  git branch -D $branches
 end
