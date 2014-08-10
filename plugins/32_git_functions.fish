@@ -34,7 +34,7 @@ function git_log_prettify --description "Show a pretty GIT log."
 end
 
 function git_branch
-  set branch (git bn ^ /dev/null)
+  set branch (gbn ^ /dev/null)
   test -n $branch; and echo $branch
 end
 
@@ -48,25 +48,25 @@ function git_push_and_pull
 end
 
 function gfbn --description "Prints the GIT full branch name"
-  git fbn
+  git symbolic-ref HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
 end
 
 function gfbnc --description "Copies the GIT full branch name into the clipboard"
-  git fbn | tr -d "\n" | pbcopy
+  gfbn | tr -d "\n" | pbcopy
 end
 
 function gbn --description "Prints the GIT branch name"
-  git bn
+  gfbn | sed \"s#refs/heads/##\""
 end
 
 function gbnc --description "Copies the GIT branch name into the clipboard"
-  git bn | tr -d "\n" | pbcopy
+  gbn | tr -d "\n" | pbcopy
 end
 
 function gt --description "Prints the GIT task number"
-  git task
+  git branch-name | sed -E \"s/(.+)-([0-9]+)$/\\\\2/g\";
 end
 
 function gtc --description "Copies the GIT task number into the clipboard"
-  git task | tr -d "\n" | pbcopy
+  gt | tr -d "\n" | pbcopy
 end

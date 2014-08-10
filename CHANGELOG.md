@@ -1,3 +1,7 @@
+### 2014-08-10 - 1.5.3
+
+* Do not rely on external aliases.
+
 ### 2014-08-10 - 1.5.2
 
 * Bugfix on g_cleanup.
