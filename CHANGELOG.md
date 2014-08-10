@@ -1,3 +1,7 @@
+### 2014-04-06 - 1.5.0
+
+* Add Git workflow.
+
 ### 2014-04-06 - 1.4.4
 
 * Update to SublimeText 3.
