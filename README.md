@@ -12,7 +12,7 @@ https://github.com/ShogunPanda/fishamnium
 
 Just type the following inside a fish shell and you're done!
 
-`curl -sL http://sw.cow.tc/fishamnium/installer | fish`
+`curl -sL http://sw.cowtech.it/fishamnium/installer | fish`
 
 ### Install Git aliases
 
@@ -24,7 +24,7 @@ Just type the following inside a fish shell and you're done!
 
 `
 set -x FISHAMNIUM_OPERATION uninstall
-curl -sL http://sw.cow.tc/fishamnium/installer | fish
+curl -sL http://sw.cowtech.it/fishamnium/installer | fish
 set -e FISHAMNIUM_OPERATION
 `
 
