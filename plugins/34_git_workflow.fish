@@ -77,5 +77,5 @@ end
 
 function g_cleanup --description "Removes all merged branch."
   set -l branches (git branch --merged | grep -v '^*' | sed 's#  ##' | grep -v -E '^(development|master)$')
-  git branch -D $branches
+  test -n "$branches"; and git branch -D $branches
 end
