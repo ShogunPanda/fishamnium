@@ -4,14 +4,6 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
-function fishamnium_install_git_aliases
-  if which rvm-prompt > /dev/null;
-    git config --global alias.fbn '! git symbolic-ref HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null'
-    git config --global alias.bn '! git fbn | sed "s#refs/heads/##"'
-    git config --global alias.task '! git bn | sed -E "s/(.+)-([0-9]+)$/\2/g"'
-  end
-end
-
 function is_git_repository --description "Check if the current directory is inside a GIT repository."
   git rev-parse --is-inside-work-tree > /dev/null ^ /dev/null
 end
@@ -48,7 +40,7 @@ function git_push_and_pull
 end
 
 function gfbn --description "Prints the GIT full branch name"
-  git symbolic-ref HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
+  git symbolic-ref HEAD ^ /dev/null; or git rev-parse --short HEAD ^ /dev/null
 end
 
 function gfbnc --description "Copies the GIT full branch name into the clipboard"
@@ -64,7 +56,7 @@ function gbnc --description "Copies the GIT branch name into the clipboard"
 end
 
 function gt --description "Prints the GIT task number"
-  git branch-name | sed -E \"s/(.+)-([0-9]+)$/\\\\2/g\";
+  git branch-name | sed -E \"s/(.+)-([0-9]+)\$/\\\\2/g\";
 end
 
 function gtc --description "Copies the GIT task number into the clipboard"
