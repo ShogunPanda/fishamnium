@@ -1,3 +1,7 @@
+### 2014-08-11 - 1.5.5
+
+* Bugfix.
+
 ### 2014-08-10 - 1.5.3
 
 * Do not rely on external aliases.
