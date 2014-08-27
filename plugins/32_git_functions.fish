@@ -56,7 +56,7 @@ function gbnc --description "Copies the GIT branch name into the clipboard"
 end
 
 function gt --description "Prints the GIT task number"
-  git branch-name | sed -E "s/(.+)-([0-9]+)\$/\\\\2/g";
+  git branch-name | sed -E "s/(.+)-([0-9]+)\$/\2/g";
 end
 
 function gtc --description "Copies the GIT task number into the clipboard"
