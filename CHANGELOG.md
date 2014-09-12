@@ -1,3 +1,7 @@
+### 2014-09-12 - 1.5.9
+
+* Added missing statement.
+
 ### 2014-09-12 - 1.5.8
 
 * Fixed RVM debug handling.

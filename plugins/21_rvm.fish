@@ -7,6 +7,8 @@ function rvm --description='Ruby enVironment Manager'
   and eval (grep '^rvm\|^[^=]*PATH\|^GEM_HOME' $env_file | grep -v '_clr=' | grep -v 'rvm_debug=' | sed '/^[^=]*PATH/s/:/" "/g; s/^/set -xg /; s/=/ "/; s/$/" ;/; s/(//; s/)//')
   # clean up
   rm -f $env_file
+
+  set -xg rvmsudo_secure_path 1
 end
 
 function __handle_rvmrc_stuff --on-variable PWD
