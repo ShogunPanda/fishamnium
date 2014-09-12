@@ -5,7 +5,7 @@
 #
 
 # Set defaults
-set -x -g FISHAMNIUM_VERSION "1.5.6"
+set -x -g FISHAMNIUM_VERSION "1.5.7"
 [ (count $FISHAMNIUM_PLUGINS) -eq 0 ]; and set -x FISHAMNIUM_PLUGINS (/bin/ls ~/.fishamnium/plugins/*.fish | xargs -n1 basename);
 [ (count $FISHAMNIUM_COMPLETIONS) -eq 0 ]; and set -x FISHAMNIUM_COMPLETIONS (/bin/ls ~/.fishamnium/completions/*.fish | xargs -n1 basename);
 test -n $FISHAMNIUM_THEME; and set -x FISHAMNIUM_THEME default;
