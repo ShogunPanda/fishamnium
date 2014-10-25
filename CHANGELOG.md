@@ -1,3 +1,7 @@
+### 2014-10-25 - 1.6.0
+
+* Added compatibility functions.
+
 ### 2014-09-12 - 1.5.9
 
 * Added missing statement.
