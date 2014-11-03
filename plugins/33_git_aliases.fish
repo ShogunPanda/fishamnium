@@ -20,6 +20,9 @@ alias glr='git pull --rebase'
 # Committing
 alias gc='git commit -m'
 alias gca='git commit -a -m'
+alias gct='git_commit_with_task'
+alias gcat='git_commit_with_task -a'
+
 
 # Checkout
 alias gco='git checkout'
@@ -73,3 +76,12 @@ alias gclean='git reset --hard; and git clean -dfx'
 
 # Finding
 alias gf='git ls-files | grep'
+
+# Custom functions
+alias gfbn='git_full_branch_name'
+alias gfbnc='git_full_branch_name_copy'
+alias gbn='git_branch_name'
+alias gbnc='git_branch_name_copy'
+alias gt='git_task'
+alias gtc='git_task_copy'
+

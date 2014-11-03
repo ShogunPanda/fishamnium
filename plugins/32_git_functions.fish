@@ -39,26 +39,41 @@ function git_push_and_pull
   git pull $argv; and git push $argv
 end
 
-function gfbn --description "Prints the GIT full branch name"
+function git_full_branch_name --description "Prints the GIT full branch name"
   git symbolic-ref HEAD ^ /dev/null; or git rev-parse --short HEAD ^ /dev/null
 end
 
-function gfbnc --description "Copies the GIT full branch name into the clipboard"
-  gfbn | tr -d "\n" | pbcopy
+function git_full_branch_name_copy --description "Copies the GIT full branch name into the clipboard"
+  git_full_branch_name | tr -d "\n" | pbcopy
 end
 
-function gbn --description "Prints the GIT branch name"
-  gfbn | sed -E "s#refs/heads/##"
+function git_branch_name --description "Prints the GIT branch name"
+  git_full_branch_name | sed -E "s#refs/heads/##"
 end
 
-function gbnc --description "Copies the GIT branch name into the clipboard"
-  gbn | tr -d "\n" | pbcopy
+function git_branch_name_copy --description "Copies the GIT branch name into the clipboard"
+  git_branch_name | tr -d "\n" | pbcopy
 end
 
-function gt --description "Prints the GIT task number"
-  git branch-name | sed -E "s/(.+)-([0-9]+)\$/\2/g";
+function git_task --description "Prints the GIT task number"
+  git_branch_name | sed -E "s/(.+)-([0-9]+)\$/\2/g";
 end
 
-function gtc --description "Copies the GIT task number into the clipboard"
-  gt | tr -d "\n" | pbcopy
+function git_task_copy --description "Copies the GIT task number into the clipboard"
+  git_task | tr -d "\n" | pbcopy
+end
+
+function git_commit_with_task --description "Commits a message appending the task number"
+  set -l task (git_task)
+
+  if [ (count $argv) -eq 1 ]
+    set message $argv[1]
+    set args ""
+  else
+    set message $argv[-1]
+    set args $argv[1..-2]
+  end
+
+
+  git commit $args -m "$message [#$task]"
 end
