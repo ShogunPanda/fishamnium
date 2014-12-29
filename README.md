@@ -29,7 +29,7 @@ set -e FISHAMNIUM_OPERATION
 `
 
 ## Contributing to fishamnium
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
@@ -46,5 +46,6 @@ Licensed under the MIT license, which can be found at http://www.opensource.org/
 ### External scripts included
 
 * `plugins/21_rvm.fish` was extracted from [lunks/fishnuggets](https://www.github.com/zmalltalker/lunks-nuggets).
+* `plugins/41_nvm.fish` was extracted from [Alex7Kom/nvm-fish](https://www.github.com/Alex7Kom/nvm-fish).
 * `plugins/71_fishmarks.fish` was extracted from [techwizrd/fishmarks](https://www.github.com/zmalltalker/techwizrd/fishmarks).
 * `completions/31_git.fish` was extracted from [zmalltalker/fish-nuggets](https://www.github.com/zmalltalker/fish-nuggets).

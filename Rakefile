@@ -12,8 +12,9 @@ root = "#{home}/.fishamnium"
 contents_directory = File.dirname(__FILE__)
 quiet = (ENV["FISHAMNIUM_QUIET"] =~ /^(1|on|true|yes|t|y)$/i)
 external_scripts = {
-  "plugins.rvm" => ["plugins/21_rvm", "https://raw.github.com/lunks/fish-nuggets/master/functions/rvm.fish"],
-  "plugins.fishmarks" => ["plugins/71_fishmarks", "https://raw.github.com/techwizrd/fishmarks/master/marks.fish"],
+  "plugins.rvm" => ["plugins/21_rvm", "https://raw.githubusercontent.com/lunks/fish-nuggets/master/functions/rvm.fish"],
+  "plugins.nvm" => ["plugins/41_nvm", "https://raw.githubusercontent.com/Alex7Kom/nvm-fish/master/nvm.fish"],
+  "plugins.fishmarks" => ["plugins/71_fishmarks", "https://raw.githubusercontent.com/techwizrd/fishmarks/master/marks.fish"],
   "completions.git" => ["completions/31_git", "https://raw.github.com/zmalltalker/fish-nuggets/master/completions/git.fish"]
 }
 
@@ -57,7 +58,7 @@ namespace :external do
 
     raise RuntimeError.new("You have to specify the name of script to update. Valid scripts are: #{external_scripts.keys.join(", ")}.") if script_arg.strip.length == 0
     raise RuntimeError.new("External script #{script_arg} is not valid. Valid scripts are: #{external_scripts.keys.join(", ")}.") if !external_scripts[script_arg]
-    final_script = external_scripts[script_arg] 
+    final_script = external_scripts[script_arg]
 
     open(contents_directory + "/#{final_script[0]}.fish", "w", 0755) do |destination|
       open(final_script[1]) do |source|

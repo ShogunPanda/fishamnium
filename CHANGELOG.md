@@ -1,7 +1,12 @@
+### 2014-11-11 - 1.9.0
+
+* Added support for NVM.
+* Added `clcd` command.
+
 ### 2014-11-11 - 1.8.0
 
 * Added support for NPM local bins.
-* 
+
 ### 2014-10-25 - 1.7.0
 
 * Added `git_full_branch_name`, `git_full_branch_name_copy`, `git_branch_name`, `git_branch_name_copy`, `git_task`, `git_task_copy`, `git_commit_with_task`, `gct`, `gcat` functions.
