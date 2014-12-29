@@ -59,7 +59,7 @@ function g_finish --description "Merges a branch back to its remote branch."
   set -l origin (g_default_remote $origin)
 
   g_refresh $base $origin; and git checkout $base; and git merge --no-ff $current; and git push $origin $base;
-end  
+end
 
 function g_reset --description "Cleans up a local branch."
   git reset --hard; and git clean -f;

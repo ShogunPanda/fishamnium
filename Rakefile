@@ -18,6 +18,33 @@ external_scripts = {
   "completions.git" => ["completions/31_git", "https://raw.github.com/zmalltalker/fish-nuggets/master/completions/git.fish"]
 }
 
+desc "Releases a new version."
+task :release, :version do |_, args|
+  version = args[:version].to_s
+  raise RuntimeError.new("You have to specify the name of script to update. Valid scripts are: #{external_scripts.keys.join(", ")}.") if version.length == 0
+
+  system("git commit -a -m 'Version #{version}.'")
+  system("git tag v-#{version}")
+  system("git push github")
+  system("git push github --tags")
+end
+
+
+namespace :external do
+  desc "Updates an external script."
+  task :update, :name do |_, args|
+    script_arg = args[:name].to_s
+
+    raise RuntimeError.new("External script #{script_arg} is not valid. Valid scripts are: #{external_scripts.keys.join(", ")}.") if !external_scripts[script_arg]
+    final_script = external_scripts[script_arg]
+
+    open(contents_directory + "/#{final_script[0]}.fish", "w", 0755) do |destination|
+      open(final_script[1]) do |source|
+        destination.write(source.read)
+      end
+    end
+  end
+end
 desc "Installs the environment."
 task :install do
   files = FileList["loader.fish", "completions", "plugins", "themes"]
