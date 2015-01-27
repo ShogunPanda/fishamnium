@@ -29,7 +29,7 @@ function g_start --description "Starts a new branch off a remote existing branch
   set -l base (g_default_branch $base)
   set -l origin (g_default_remote $origin)
 
-  git fetch;
+  git fetch
   git checkout $base; and git pull $origin $base; and git checkout -b $new
 end
 
@@ -48,8 +48,8 @@ function g_refresh --description "Rebases the current working tree on top of an 
   set -l base (g_default_branch $base)
   set -l origin (g_default_remote $origin)
 
-  git fetch;
-  git checkout $base; and git pull $origin $base; and git checkout $current; and git rebase $base;
+  git fetch
+  git checkout $base; and git pull $origin $base; and git checkout $current; and git rebase $base
 end
 
 function g_finish --description "Merges a branch back to its remote branch."
@@ -58,11 +58,16 @@ function g_finish --description "Merges a branch back to its remote branch."
   set -l base (g_default_branch $base)
   set -l origin (g_default_remote $origin)
 
-  g_refresh $base $origin; and git checkout $base; and git merge --no-ff $current; and git push $origin $base;
+  g_refresh $base $origin; and git checkout $base; and git merge --no-ff $current; and git push $origin $base
+end
+
+function g_full_finish --description "Merges a branch back to its remote branch and then deletes the branch."
+  set -l current (gbn)
+  g_finish $argv; and gbd $current
 end
 
 function g_reset --description "Cleans up a local branch."
-  git reset --hard; and git clean -f;
+  git reset --hard; and git clean -f
 end
 
 function g_delete --description "Deletes a branch locally and remotely."

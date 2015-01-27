@@ -6,22 +6,22 @@
 
 function __rails_wants_command
   set -l cmd (commandline -opc)
-  [ "$cmd" = "rails" ]; and return 0;
-  return 1;
+  [ "$cmd" = "rails" ]; and return 0
+  return 1
 end
 
 function __is_rails_console
   set -l cmd (commandline -opc)
-  contains c $cmd; and return 0;
-  contains console $cmd; and return 0;
-  return 1;
+  contains c $cmd; and return 0
+  contains console $cmd; and return 0
+  return 1
 end
 
 function __is_rails_server
   set -l cmd (commandline -opc)
-  contains s $cmd; and return 0;
-  contains server $cmd; and return 0;
-  return 1;
+  contains s $cmd; and return 0
+  contains server $cmd; and return 0
+  return 1
 end
 
 function __rails_environments

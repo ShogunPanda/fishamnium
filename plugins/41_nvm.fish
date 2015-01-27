@@ -223,7 +223,7 @@ function nvm
     set -l ALIAS
 
     set -l cur 1
-    
+
     switch $argv[$cur]
         case 'help'
             echo
@@ -295,7 +295,7 @@ function nvm
 
             set provided_version $argv[$cur]
             if test -z "$provided_version"
-                if test $version_not_provided -ne 1 
+                if test $version_not_provided -ne 1
                     nvm_rc_version
                 end
                 set provided_version "$NVM_RC_VERSION"
@@ -364,7 +364,7 @@ function nvm
                 set make gmake
                 set MAKE_CXX "CXX=c++"
             end
-            
+
             set -l tmpdir $NVM_DIR/src
             set -l tmptarball $tmpdir/node-$VERSION.tar.gz
 
@@ -374,7 +374,7 @@ function nvm
             else if test -z (curl -Is "$NVM_NODEJS_ORG_MIRROR/node-$VERSION.tar.gz" | grep '404 Not Found')
                 set tarball $NVM_NODEJS_ORG_MIRROR/node-$VERSION.tar.gz
             end
-            
+
             test -n "$tarball" ; and \
             mkdir -p "$tmpdir" ; and \
             curl -L --progress-bar $tarball -o "$tmptarball"; and \

@@ -5,6 +5,6 @@
 #
 
 function clcd --description "Move to the home directory and clears the screen"
-  clear;
+  clear
   cd
 end

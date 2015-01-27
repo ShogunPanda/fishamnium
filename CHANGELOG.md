@@ -1,3 +1,7 @@
+### 2015-01-27 - 1.11.0
+
+* Added `g_full_finish`.
+
 ### 2015-01-27 - 1.10.0
 
 * Added `g_hotfix_start`, `g_hotfix_start`, `g_hotfix_refresh`, `g_hotfix_finish` and `g_import`.

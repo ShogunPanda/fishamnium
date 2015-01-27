@@ -5,10 +5,10 @@
 #
 
 function rvm_current
-  which rvm-prompt > /dev/null;
-  and test -n (rvm-prompt i);
+  which rvm-prompt > /dev/null
+  and test -n (rvm-prompt i)
   and set -l rv
-  and rvm-prompt i v g;
+  and rvm-prompt i v g
 end
 
 rvm reload > /dev/null ^ /dev/null
