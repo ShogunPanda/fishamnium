@@ -1,4 +1,13 @@
-### 2014-11-11 - 1.9.0
+### 2015-01-27 - 1.10.0
+
+* Added `g_hotfix_start`, `g_hotfix_start`, `g_hotfix_refresh`, `g_hotfix_finish` and `g_import`.
+* Fixed bin path.
+
+### 2014-12-28 - 1.9.1
+
+* Maintenance version. Added `release` task.
+
+### 2014-12-28 - 1.9.0
 
 * Added support for NVM.
 * Added `clcd` command.

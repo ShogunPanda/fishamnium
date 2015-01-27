@@ -21,14 +21,14 @@ external_scripts = {
 desc "Releases a new version."
 task :release, :version do |_, args|
   version = args[:version].to_s
-  raise RuntimeError.new("You have to specify the name of script to update. Valid scripts are: #{external_scripts.keys.join(", ")}.") if version.length == 0
+  raise RuntimeError.new("You have to specify the version of the release.") if version.length == 0
 
+  system("git tag -d v-#{version}")
   system("git commit -a -m 'Version #{version}.'")
   system("git tag v-#{version}")
-  system("git push github")
-  system("git push github --tags")
+  system("git push -f github")
+  system("git push -f github --tags")
 end
-
 
 namespace :external do
   desc "Updates an external script."

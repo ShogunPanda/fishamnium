@@ -79,3 +79,27 @@ function g_cleanup --description "Removes all merged branch."
   set -l branches (git branch --merged | grep -v '^*' | sed 's#  ##' | grep -v -E '^(development|master)$')
   test -n "$branches"; and git branch -D $branches
 end
+
+function g_hotfix_start --description "Starts an hotfix."
+  echo $argv | read -l name
+  test -z "$name"; and set -l name "branch"
+
+  g_start "hotfix-$name" master
+end
+
+function g_hotfix_refresh --description "Rebases the current hotfix branch on top of master."
+  g_refresh master
+end
+
+function g_hotfix_finish --description "Merges the current hotfix branch to master."
+  g_finish master
+end
+
+function g_import --description "Imports latest changes from a branch on top of an existing remote branch (default development)."
+  echo $argv | read -l temporary destination base
+  set -l destination (g_default_branch $destination)
+  test -z "$base"; and set -l base "master"
+  test -z "$temporary"; and set -l temporary "import-$base"
+
+  gbd $temporary; and g_start $temporary $base; and g_refresh $destination; and g_finish $destination; and gbd $temporary
+end
