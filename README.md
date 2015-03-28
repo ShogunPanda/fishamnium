@@ -10,7 +10,9 @@ https://github.com/ShogunPanda/fishamnium
 
 ## Install
 
-Just type the following inside a fish shell and you're done!
+1. Install nvm following this [instructions](https://github.com/creationix/nvm#installation).
+
+2. Type the following inside a fish shell and you're done!
 
 `curl -sL http://sw.cowtech.it/fishamnium/installer | fish`
 
@@ -46,6 +48,6 @@ Licensed under the MIT license, which can be found at http://www.opensource.org/
 ### External scripts included
 
 * `plugins/21_rvm.fish` was extracted from [lunks/fishnuggets](https://www.github.com/zmalltalker/lunks-nuggets).
-* `plugins/41_nvm.fish` was extracted from [Alex7Kom/nvm-fish](https://www.github.com/Alex7Kom/nvm-fish).
+* `plugins/41_nvm.fish` was extracted from [passcod/nvm-fish-wrapper](https://www.github.com/passcod/nvm-fish-wrapper).
 * `plugins/71_fishmarks.fish` was extracted from [techwizrd/fishmarks](https://www.github.com/zmalltalker/techwizrd/fishmarks).
 * `completions/31_git.fish` was extracted from [zmalltalker/fish-nuggets](https://www.github.com/zmalltalker/fish-nuggets).

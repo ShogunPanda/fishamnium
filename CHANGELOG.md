@@ -1,3 +1,11 @@
+### 2015-01-27 - 1.20.0
+
+* Switched to nvm-fish-wrapper.
+
+### 2015-01-27 - 1.11.1
+
+* Fixed bug in `g_import`.
+
 ### 2015-01-27 - 1.11.0
 
 * Added `g_full_finish`.

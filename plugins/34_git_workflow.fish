@@ -106,5 +106,6 @@ function g_import --description "Imports latest changes from a branch on top of 
   test -z "$base"; and set -l base "master"
   test -z "$temporary"; and set -l temporary "import-$base"
 
-  gbd $temporary; and g_start $temporary $base; and g_refresh $destination; and g_finish $destination; and gbd $temporary
+  gbd $temporary
+  g_start $temporary $base; and g_refresh $destination; and g_finish $destination; and gbd $temporary
 end
