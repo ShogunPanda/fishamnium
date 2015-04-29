@@ -24,6 +24,7 @@ task :release, :version do |_, args|
   raise RuntimeError.new("You have to specify the version of the release.") if version.length == 0
 
   system("git tag -d v-#{version}")
+  system("git add -A")
   system("git commit -a -m 'Version #{version}.'")
   system("git tag v-#{version}")
   system("git push -f github")
