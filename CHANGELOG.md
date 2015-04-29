@@ -1,3 +1,7 @@
+### 2015-04-25 - 1.21.0
+
+* Add Docker Machine support.
+
 ### 2015-01-27 - 1.20.0
 
 * Switched to nvm-fish-wrapper.
