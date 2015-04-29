@@ -1,3 +1,7 @@
+### 2015-04-29 - 1.22.0
+
+* Add docker_setup.
+
 ### 2015-04-25 - 1.21.0
 
 * Add Docker Machine support.
