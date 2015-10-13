@@ -1,3 +1,9 @@
+### 2015-10-13 - 1.23.0
+
+* Added help to all git workflow commands.
+* Renamed `g_release` to `g_release_tag`.
+* Added `g_hotfix_full_finish`, `g_release_start`, `g_release_refresh`, `g_release_finish`, `g_release_full_finish`, `g_import_release`, `g_import_production`.
+
 ### 2015-04-29 - 1.22.0
 
 * Add docker_setup.

@@ -4,8 +4,18 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
+function __g_default_base_help
+  set -l name (test (count $argv) -gt 0; and echo $argv[1]; or echo "BASE");
+  echo "Default $name is the value of \$GIT_DEFAULT_BRANCH variable or \"development\"."
+end
+
+function __g_default_origin_help
+  set -l name (test (count $argv) -gt 0; and echo $argv[1]; or echo "ORIGIN");
+  echo "Default $name is the value of \$GIT_DEFAULT_REMOTE variable or \"origin\"."
+end
+
 function g_default_branch --description "Fallbacks a remote to development."
-  if test -n "$argv[1]"
+  if test (count $argv) -gt 0
     echo $argv[1]
   else if test -n "$GIT_DEFAULT_BRANCH"
     echo $GIT_DEFAULT_BRANCH
@@ -15,7 +25,7 @@ function g_default_branch --description "Fallbacks a remote to development."
 end
 
 function g_default_remote --description "Fallbacks a remote to origin."
-  if test -n "$argv[1]"
+  if test (count $argv) -gt 0
     echo $argv[1]
   else if test -n "$GIT_DEFAULT_REMOTE"
     echo $GIT_DEFAULT_REMOTE
@@ -25,6 +35,13 @@ function g_default_remote --description "Fallbacks a remote to origin."
 end
 
 function g_start --description "Starts a new branch off a remote existing branch (default development)."
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_start NAME [BASE] [ORIGIN]"
+    __g_default_base_help
+    __g_default_origin_help
+    return
+  end
+
   echo $argv | read -l new base origin
   set -l base (g_default_branch $base)
   set -l origin (g_default_remote $origin)
@@ -33,16 +50,14 @@ function g_start --description "Starts a new branch off a remote existing branch
   git checkout $base; and git pull $origin $base; and git checkout -b $new
 end
 
-function g_release --description "Tags a release."
-  echo $argv | read -l new base origin
-  set -l new "release-$new"
-  set -l base (g_default_branch $base)
-  set -l origin (g_default_remote $origin)
-
-  g_start $new $base $origin; and git push -f $origin $new
-end
-
 function g_refresh --description "Rebases the current working tree on top of an existing remote branch (default development)."
+  if test "$argv[1]" = "-h"
+    echo "Usage: g_release [BASE] [ORIGIN]"
+    __g_default_base_help
+    __g_default_origin_help
+    return 1
+  end
+
   echo $argv | read -l base origin
   set -l current (gbn)
   set -l base (g_default_branch $base)
@@ -53,6 +68,13 @@ function g_refresh --description "Rebases the current working tree on top of an 
 end
 
 function g_finish --description "Merges a branch back to its remote branch."
+  if test "$argv[1]" = "-h"
+    echo "Usage: g_finish [BASE] [ORIGIN]"
+    __g_default_base_help
+    __g_default_origin_help
+    return 1
+  end
+
   echo $argv | read -l base origin
   set -l current (gbn)
   set -l base (g_default_branch $base)
@@ -62,6 +84,13 @@ function g_finish --description "Merges a branch back to its remote branch."
 end
 
 function g_full_finish --description "Merges a branch back to its remote branch and then deletes the branch."
+  if test "$argv[1]" = "-h"
+    echo "Usage: g_full_finish [BASE] [ORIGIN]"
+    __g_default_base_help
+    __g_default_origin_help
+    return 1
+  end
+
   set -l current (gbn)
   g_finish $argv; and gbd $current
 end
@@ -71,6 +100,13 @@ function g_reset --description "Cleans up a local branch."
 end
 
 function g_delete --description "Deletes a branch locally and remotely."
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_delete BRANCH... [ORIGIN]"
+    __g_default_origin_help
+    echo "When more than branch is given, ORIGIN is mandatory."
+    return 1
+  end
+
   test (count $argv) -gt 1; and set -l branches $argv[1..-2]; or set -l branches $argv[1]
   test (count $argv) -gt 1; and set -l origin $argv[-1]; or set -l origin ""
   set -l origin (g_default_remote $origin)
@@ -85,27 +121,156 @@ function g_cleanup --description "Removes all merged branch."
   test -n "$branches"; and git branch -D $branches
 end
 
-function g_hotfix_start --description "Starts an hotfix."
-  echo $argv | read -l name
-  test -z "$name"; and set -l name "branch"
+function g_release_tag --description "Tags a release."
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_release_tag VERSION [BASE] [ORIGIN]"
+    __g_default_base_help
+    __g_default_origin_help
+    echo "The final branch will be release-VERSION."
+    return 1
+  end
 
-  g_start "hotfix-$name" master
+  echo $argv | read -l release base origin
+  set -l release "release-$release"
+  set -l base (g_default_branch $base)
+  set -l origin (g_default_remote $origin)
+
+  g_start $release $base $origin; and git push -f $origin $release
+end
+
+function g_release_start --description "Starts a fix on a release"
+  set -l want_helps (test (count $argv) -gt 0; and test "$argv[1]" = "-h")
+
+  if begin test $want_helps; or test (count $argv) -lt 2; end
+    echo "Usage: g_release_start VERSION BRANCH [ORIGIN]"
+    __g_default_origin_help
+    echo "The final release branch will be release-VERSION."
+    return 1
+  end
+
+  g_start $new "release-$release" $origin
+end
+
+function g_release_refresh --description "Rebases the current fix branch on top of the release."
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_release_refresh VERSION [ORIGIN]"
+    __g_default_origin_help
+    echo "The final release branch will be release-VERSION."
+    return 1
+  end
+
+  echo $argv | read -l release origin
+  g_refresh "release-$release" $origin
+end
+
+function g_release_finish --description "Merges the current fix branch to the release."
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_release_finish VERSION [ORIGIN]"
+    __g_default_origin_help
+    echo "The final release branch will be release-VERSION."
+    return 1
+  end
+
+  echo $argv | read -l release origin
+  g_finish "release-$release" $origin
+end
+
+function g_release_full_finish --description "Merges the current fix branch to the release and then deletes the branch."
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_release_full_finish VERSION [ORIGIN]"
+    __g_default_origin_help
+    echo "The final release branch will be release-VERSION."
+    return 1
+  end
+
+  echo $argv | read -l release origin
+  g_full_finish "release-$release" $origin
+end
+
+function g_hotfix_start --description "Starts an hotfix."
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_hotfix_start BASE [ORIGIN]"
+    __g_default_origin_help
+    echo "The final hotfix branch will be hotfix-BASE."
+    return 1
+  end
+
+  echo $argv | read -l name origin
+  g_start "hotfix-$name" master $origin
 end
 
 function g_hotfix_refresh --description "Rebases the current hotfix branch on top of master."
+  if test "$argv[1]" = "-h"
+    echo "Usage: g_hotfix_refresh [ORIGIN]"
+    __g_default_origin_help
+    return 1
+  end
+
   g_refresh master
 end
 
 function g_hotfix_finish --description "Merges the current hotfix branch to master."
-  g_finish master
+  if test "$argv[1]" = "-h"
+    echo "Usage: g_hotfix_finish [ORIGIN]"
+    __g_default_origin_help
+    return 1
+  end
+
+  echo $argv | read -l origin
+  g_finish master $origin
+end
+
+function g_hotfix_full_finish --description "Merges the current hotfix branch to master and then deletes the branch."
+  if test "$argv[1]" = "-h"
+    echo "Usage: g_hotfix_full_finish [ORIGIN]"
+    __g_default_origin_help
+    return 1
+  end
+
+  echo $argv | read -l origin
+  g_full_finish master $origin
 end
 
 function g_import --description "Imports latest changes from a branch on top of an existing remote branch (default development)."
-  echo $argv | read -l temporary destination base
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_import TEMPORARY [DESTINATION] [BASE] [ORIGIN]"
+    echo "Default TEMPORARY is \"import-BASE\"."
+    __g_default_base_help "DESTINATION"
+    echo "Default BASE is \"master\"."
+    __g_default_origin_help
+    return 1
+  end
+
+  echo $argv | read -l temporary destination base origin
   set -l destination (g_default_branch $destination)
   test -z "$base"; and set -l base "master"
   test -z "$temporary"; and set -l temporary "import-$base"
 
   gbd $temporary
-  g_start $temporary $base; and g_refresh $destination; and g_finish $destination; and gbd $temporary
+  g_start $temporary $base $origin; and g_refresh $destination $origin; and g_finish $destination $origin; and gbd $temporary
+end
+
+function g_import_release --description "Imports a release into production."
+  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_import_release RELEASE [ORIGIN]"
+    echo "The final release branch will be release-VERSION."
+    __g_default_origin_help
+    return 1
+  end
+
+  echo $argv | read -l release origin
+  g_import "import-release-$release" master "release-$release" $origin
+end
+
+function g_import_production --description "Imports production into development."
+  if test "$argv[1]" = "-h";
+    echo "Usage: g_import_production [DESTINATION] [ORIGIN]"
+    __g_default_base_help "DESTINATION"
+    __g_default_origin_help
+    return 1
+  end
+
+  echo $argv | read -l destination origin
+  set -l destination (g_default_branch $argv[1])
+  echo g_import "import-production" $destination master $origin
 end
