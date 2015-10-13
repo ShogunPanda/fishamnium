@@ -148,7 +148,7 @@ function g_release_start --description "Starts a fix on a release"
     return 1
   end
 
-  echo $argv | read -l release base origin
+  echo $argv | read -l release new origin
   g_start $new "release-$release" $origin
 end
 
