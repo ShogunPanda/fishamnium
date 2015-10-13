@@ -1,3 +1,7 @@
+### 2015-10-13 - 1.23.1
+
+* Minor fixes.
+
 ### 2015-10-13 - 1.23.0
 
 * Added help to all git workflow commands.

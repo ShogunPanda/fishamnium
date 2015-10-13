@@ -148,6 +148,7 @@ function g_release_start --description "Starts a fix on a release"
     return 1
   end
 
+  echo $argv | read -l release base origin
   g_start $new "release-$release" $origin
 end
 
@@ -206,7 +207,8 @@ function g_hotfix_refresh --description "Rebases the current hotfix branch on to
     return 1
   end
 
-  g_refresh master
+  echo $argv | read -l origin
+  g_refresh master $origin
 end
 
 function g_hotfix_finish --description "Merges the current hotfix branch to master."
