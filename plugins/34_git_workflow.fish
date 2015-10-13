@@ -15,7 +15,7 @@ function __g_default_origin_help
 end
 
 function g_default_branch --description "Fallbacks a remote to development."
-  if test (count $argv) -gt 0
+  if test -n "$argv[1]"
     echo $argv[1]
   else if test -n "$GIT_DEFAULT_BRANCH"
     echo $GIT_DEFAULT_BRANCH
@@ -25,7 +25,7 @@ function g_default_branch --description "Fallbacks a remote to development."
 end
 
 function g_default_remote --description "Fallbacks a remote to origin."
-  if test (count $argv) -gt 0
+  if test -n "$argv[1]"
     echo $argv[1]
   else if test -n "$GIT_DEFAULT_REMOTE"
     echo $GIT_DEFAULT_REMOTE
