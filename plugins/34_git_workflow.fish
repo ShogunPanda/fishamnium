@@ -273,6 +273,6 @@ function g_import_production --description "Imports production into development.
   end
 
   echo $argv | read -l destination origin
-  set -l destination (g_default_branch $argv[1])
-  echo g_import "import-production" $destination master $origin
+  set -l destination (g_default_branch $destination)
+  g_import "import-production" $destination master $origin
 end
