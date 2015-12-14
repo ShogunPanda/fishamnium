@@ -266,13 +266,15 @@ end
 
 function g_import_production --description "Imports production into development."
   if test "$argv[1]" = "-h";
-    echo "Usage: g_import_production [DESTINATION] [ORIGIN]"
+    echo "Usage: g_import_production [NAME] [DESTINATION] [ORIGIN]"
+    echo "The default name is import-production."
     __g_default_base_help "DESTINATION"
     __g_default_origin_help
     return 1
   end
 
-  echo $argv | read -l destination origin
+  echo $argv | read -l name destination origin
+  test -z "$name"; and set -l name "import-production"
   set -l destination (g_default_branch $destination)
-  g_import "import-production" $destination master $origin
+  g_import $name $destination master $origin
 end
