@@ -1,3 +1,7 @@
+### 2016-01-21 - 1.23.6
+
+* Docker Machine (0.5.5+) now supports fish.
+
 ### 2015-12-14 - 1.23.5
 
 * Minor fixes.

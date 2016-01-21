@@ -14,7 +14,7 @@ function docker_setup --description "Setup Docker Machine environment"
   echo $argv | read -l name
   test -z "$name"; and set -l name "main"
 
-  which docker-machine > /dev/null; and eval (docker-machine env $name | sed -E "s#set -x#set -x -g#");
+  which docker-machine > /dev/null; and eval (docker-machine env $name);
   set -x -g DOCKER_IP (echo $DOCKER_HOST | sed -E "s#.+/(.+):.+#\1#")
 end
 
