@@ -47,7 +47,7 @@ function fish_prompt -d "Write out the prompt"
   end
 
   # Date
-	printf '%s[%s%s%s]%s' $yellow $white (date "+%Y-%m-%d %H:%M") $yellow
+	printf '%s[%s%s%s]%s' $yellow $white (date "+%Y-%m-%d %H:%M:%S") $yellow
 
   # Current directory
   printf ' %s%s' $dir (__truncated_cwd)

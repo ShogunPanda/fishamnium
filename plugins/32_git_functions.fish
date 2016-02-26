@@ -5,7 +5,7 @@
 #
 
 function is_git_repository --description "Check if the current directory is inside a GIT repository."
-  git rev-parse --is-inside-work-tree > /dev/null ^ /dev/null
+  test -d .git; and git rev-parse --is-inside-work-tree > /dev/null ^ /dev/null
 end
 
 function git_current_branch --description "Show the current branch of a GIT repository."

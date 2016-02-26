@@ -1,3 +1,8 @@
+### 2016-01-21 - 1.23.7
+
+* Added seconds to the shell prompt.
+* Speed up checking whether within GIT repo.
+
 ### 2016-01-21 - 1.23.6
 
 * Docker Machine (0.5.5+) now supports fish.
