@@ -19,9 +19,12 @@ external_scripts = {
 }
 
 desc "Releases a new version."
-task :release, :version do |_, args|
+task :release, :version, :changelog do |_, args|
   version = args[:version].to_s
+  changelog = args[:changelog].to_s
   raise RuntimeError.new("You have to specify the version of the release.") if version.length == 0
+
+  File.write("CHANGELOG.md", "### #{Time.now.strftime("%F")} - #{version}\n\n* #{changelog}\n\n" + File.read("CHANGELOG.md")) if changelog.length > 0
 
   system("git tag -d v-#{version}")
   system("git add -A")
