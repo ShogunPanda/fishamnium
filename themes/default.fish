@@ -68,8 +68,10 @@ function fish_prompt -d "Write out the prompt"
   printf '\n%s[%s%s@%s' $yellow $user_color $user (hostname -s)
 
   # RVM
-  set -l current_rvm (rvm_current)
-  [ "$current_rvm" != "" ]; and printf ' %s%s' $red $current_rvm
+  if contains "22_rvm_prompt.fish" $FISHAMNIUM_LOADED_PLUGINS
+    set -l current_rvm (rvm_current)
+    [ "$current_rvm" != "" ]; and printf ' %s%s' $red $current_rvm
+  end
 
   # Shell symbol and end
   printf '%s] %s> %s' $yellow $symbol (set_color normal)
