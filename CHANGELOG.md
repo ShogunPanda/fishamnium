@@ -1,3 +1,7 @@
+### 2016-02-27 - 1.23.12
+
+* Bugfix.
+
 ### 2016-02-27 - 1.23.11
 
 * Enable RVM and NVM only if it makes sense.

@@ -5,7 +5,7 @@
 #
 
 # Set defaults
-set -x -g FISHAMNIUM_VERSION "1.23.11"
+set -x -g FISHAMNIUM_VERSION "1.23.12"
 [ (count $FISHAMNIUM_PLUGINS) -eq 0 ]; and set -x FISHAMNIUM_PLUGINS (/bin/ls ~/.fishamnium/plugins/*.fish | xargs -n1 basename)
 [ (count $FISHAMNIUM_COMPLETIONS) -eq 0 ]; and set -x FISHAMNIUM_COMPLETIONS (/bin/ls ~/.fishamnium/completions/*.fish | xargs -n1 basename)
 test -n $FISHAMNIUM_THEME; and set -x FISHAMNIUM_THEME default
@@ -13,6 +13,7 @@ test -n $FISHAMNIUM_THEME; and set -x FISHAMNIUM_THEME default
 # Remove RVM and NVM if not available
 test -f ~/.nvm/nvm.sh; and chmod u+x ~/.fishamnium/plugins/41_nvm.fish; or chmod u-x ~/.fishamnium/plugins/41_nvm.fish
 test -f ~/.rvm/scripts/rvm; and chmod u+x ~/.fishamnium/plugins/21_rvm.fish; or chmod u-x ~/.fishamnium/plugins/21_rvm.fish
+test -f ~/.rvm/scripts/rvm; and chmod u+x ~/.fishamnium/plugins/22_rvm_prompt.fish; or chmod u-x ~/.fishamnium/plugins/22_rvm_prompt.fish
 
 # Load plugins files
 for i in $FISHAMNIUM_PLUGINS
