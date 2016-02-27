@@ -1,3 +1,7 @@
+### 2016-02-27 - 1.23.11
+
+* Enable RVM and NVM only if it makes sense.
+
 ### 2016-02-27 - 1.23.10
 
 * Bugfix for RVM under Alpine.
