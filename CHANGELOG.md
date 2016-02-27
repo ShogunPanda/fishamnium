@@ -1,3 +1,7 @@
+### 2016-02-27 - 1.23.10
+
+* Bugfix for RVM under Alpine.
+
 ### 2016-02-27 - 1.23.9
 
 * Bugfix.
