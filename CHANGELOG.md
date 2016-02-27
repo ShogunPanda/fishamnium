@@ -1,4 +1,8 @@
-### 2016-01-21 - 1.23.7
+### 2016-02-27 - 1.23.8
+
+* Change installer not to require Ruby and rake.
+
+### 2016-02-26 - 1.23.7
 
 * Added seconds to the shell prompt.
 * Speed up checking whether within GIT repo.

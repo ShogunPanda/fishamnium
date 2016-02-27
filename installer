@@ -8,6 +8,7 @@ set required_fish_version 2
 set current_fish_version (fish --version ^| cut -d ' ' -f 3 | cut -d . -f 1)
 set command $1
 set destdir /tmp/fishamnium-(date +%Y%m%d%H%M%S)
+set rootdir ~/.fishamnium
 
 if [ $required_fish_version -gt $current_fish_version ];
   echo "fishamnium requires at least Fish $required_fish_version.0 (you have $current_fish_version). You can obtain the latest version at http://fishshell.com/"
@@ -15,4 +16,9 @@ if [ $required_fish_version -gt $current_fish_version ];
 end
 
 [ "$FISHAMNIUM_OPERATION" != "uninstall" ]; and set FISHAMNIUM_OPERATION "install"
-git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"; and cd "$destdir"; and rake $FISHAMNIUM_OPERATION\[true\]; and /bin/rm -rf "$destdir";
+git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
+and cd "$destdir"
+and mkdir -p $rootdir
+and cp -a loader.fish completions plugins themes $rootdir
+and chmod -R 755 $rootdir
+and /bin/rm -rf "$destdir"
