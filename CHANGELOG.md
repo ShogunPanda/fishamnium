@@ -1,3 +1,7 @@
+### 2016-02-27 - 1.23.9
+
+* Bugfix.
+
 ### 2016-02-27 - 1.23.8
 
 * Change installer not to require Ruby and rake.
