@@ -1,3 +1,7 @@
+### 2016-02-29 - 1.23.15
+
+* Do not assume a default name for docker machine.
+
 ### 2016-02-27 - 1.23.14
 
 * Bugfix.
