@@ -1,3 +1,7 @@
+### 2016-03-03 - 1.23.16
+
+* Bugfix on RVM
+
 ### 2016-02-29 - 1.23.15
 
 * Do not assume a default name for docker machine.

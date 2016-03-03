@@ -100,3 +100,5 @@ function nvm
   command rm -r $tmpdir
   return $s
 end
+
+nvm use default > /dev/null ^ /dev/null

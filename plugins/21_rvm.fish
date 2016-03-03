@@ -37,3 +37,5 @@ function __handle_rvmrc_stuff --on-variable PWD
     set -e cwd
   end
 end
+
+rvm use default > /dev/null ^ /dev/null
