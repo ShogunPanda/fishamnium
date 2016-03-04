@@ -19,4 +19,4 @@ function docker_setup --description "Setup Docker Machine environment"
   set -x -g DOCKER_IP (echo $DOCKER_HOST | sed -E "s#.+/(.+):.+#\1#")
 end
 
-docker_setup
+docker_setup > /dev/null ^ /dev/null

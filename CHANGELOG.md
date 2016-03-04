@@ -1,3 +1,7 @@
+### 2016-03-04 - 1.24.0
+
+* Improve Git task detection.
+
 ### 2016-03-03 - 1.23.16
 
 * Bugfix on RVM

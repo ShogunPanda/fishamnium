@@ -56,7 +56,7 @@ function git_branch_name_copy --description "Copies the GIT branch name into the
 end
 
 function git_task --description "Prints the GIT task number"
-  git_branch_name | sed -E "s/(.+)-([0-9]+)\$/\2/g"
+  git_branch_name | sed -E "s/(.+)--(.+)\$/\2/g"
 end
 
 function git_task_copy --description "Copies the GIT task number into the clipboard"
