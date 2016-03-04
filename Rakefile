@@ -25,6 +25,7 @@ task :release, :version, :changelog do |_, args|
   raise RuntimeError.new("You have to specify the version of the release.") if version.length == 0
 
   File.write("CHANGELOG.md", "### #{Time.now.strftime("%F")} - #{version}\n\n* #{changelog}\n\n" + File.read("CHANGELOG.md")) if changelog.length > 0
+  File.write("loader.fish", File.read("loader.fish").gsub(/set -x -g FISHAMNIUM_VERSION.+/, "set -x -g FISHAMNIUM_VERSION \"#{version}\""))
 
   system("git tag -d v-#{version}")
   system("git add -A")
