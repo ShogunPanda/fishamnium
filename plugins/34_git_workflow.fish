@@ -188,64 +188,19 @@ function g_release_full_finish --description "Merges the current fix branch to t
   g_full_finish "release-$release" $origin
 end
 
-function g_hotfix_start --description "Starts an hotfix."
-  if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
-    echo "Usage: g_hotfix_start BASE [ORIGIN]"
-    __g_default_origin_help
-    echo "The final hotfix branch will be hotfix-BASE."
-    return 1
-  end
-
-  echo $argv | read -l name origin
-  g_start "hotfix-$name" master $origin
-end
-
-function g_hotfix_refresh --description "Rebases the current hotfix branch on top of master."
-  if test "$argv[1]" = "-h"
-    echo "Usage: g_hotfix_refresh [ORIGIN]"
-    __g_default_origin_help
-    return 1
-  end
-
-  echo $argv | read -l origin
-  g_refresh master $origin
-end
-
-function g_hotfix_finish --description "Merges the current hotfix branch to master."
-  if test "$argv[1]" = "-h"
-    echo "Usage: g_hotfix_finish [ORIGIN]"
-    __g_default_origin_help
-    return 1
-  end
-
-  echo $argv | read -l origin
-  g_finish master $origin
-end
-
-function g_hotfix_full_finish --description "Merges the current hotfix branch to master and then deletes the branch."
-  if test "$argv[1]" = "-h"
-    echo "Usage: g_hotfix_full_finish [ORIGIN]"
-    __g_default_origin_help
-    return 1
-  end
-
-  echo $argv | read -l origin
-  g_full_finish master $origin
-end
-
 function g_import --description "Imports latest changes from a branch on top of an existing remote branch (default development)."
   if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
     echo "Usage: g_import TEMPORARY [DESTINATION] [BASE] [ORIGIN]"
     echo "Default TEMPORARY is \"import-BASE\"."
     __g_default_base_help "DESTINATION"
-    echo "Default BASE is \"master\"."
+    echo "Default BASE is \"development\"."
     __g_default_origin_help
     return 1
   end
 
   echo $argv | read -l temporary destination base origin
   set -l destination (g_default_branch $destination)
-  test -z "$base"; and set -l base "master"
+  test -z "$base"; and set -l base "development"
   test -z "$temporary"; and set -l temporary "import-$base"
 
   gbd $temporary
@@ -254,27 +209,14 @@ end
 
 function g_import_release --description "Imports a release into production."
   if begin test (count $argv) -eq 0; or test "$argv[1]" = "-h"; end
-    echo "Usage: g_import_release RELEASE [ORIGIN]"
+    echo "Usage: g_import_release RELEASE [DESTINATION] [ORIGIN]"
     echo "The final release branch will be release-VERSION."
+    echo "Default DESTINATIOn is \"development\"."
     __g_default_origin_help
     return 1
   end
 
-  echo $argv | read -l release origin
-  g_import "import-release-$release" master "release-$release" $origin
-end
-
-function g_import_production --description "Imports production into development."
-  if test "$argv[1]" = "-h";
-    echo "Usage: g_import_production [NAME] [DESTINATION] [ORIGIN]"
-    echo "The default name is import-production."
-    __g_default_base_help "DESTINATION"
-    __g_default_origin_help
-    return 1
-  end
-
-  echo $argv | read -l name destination origin
-  test -z "$name"; and set -l name "import-production"
-  set -l destination (g_default_branch $destination)
-  g_import $name $destination master $origin
+  echo $argv | read -l release destination origin
+  test -z "$destination"; and set -l base "development"
+  g_import "import-release-$release" $destination "release-$release" $origin
 end

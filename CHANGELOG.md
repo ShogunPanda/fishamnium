@@ -1,3 +1,7 @@
+### 2016-06-14 - 1.25.0
+
+* Improve Git workflow.
+
 ### 2016-03-04 - 1.24.0
 
 * Improve Git task detection.
