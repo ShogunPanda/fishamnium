@@ -1,3 +1,7 @@
+### 2016-06-30 - 1.26.0
+
+* Added git_fast_commit.
+
 ### 2016-06-14 - 1.25.0
 
 * Improve Git workflow.

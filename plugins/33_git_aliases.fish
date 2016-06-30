@@ -86,4 +86,4 @@ alias gbn='git_branch_name'
 alias gbnc='git_branch_name_copy'
 alias gt='git_task'
 alias gtc='git_task_copy'
-
+alias gfc='git_fast_commit'

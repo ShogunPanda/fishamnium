@@ -95,6 +95,19 @@ function g_full_finish --description "Merges a branch back to its remote branch 
   g_finish $argv; and gbd $current
 end
 
+function g_fast_commit --description "Creates a local branch, commit changes and then merges it back to the base branch."
+  if begin test (count $argv) -lt 2; or test "$argv[1]" = "-h"; end
+    echo "Usage: g_fast_commit [BRANCH] [MESSAGE] [BASE]"
+    __g_default_base_help
+    return 1
+  end
+
+  echo $argv | read -l branch message base
+  set -l base (g_default_branch $base)
+
+  g_start $branch $base; and gca $message; and g_full_finish $base;
+end
+
 function g_reset --description "Cleans up a local branch."
   git reset --hard; and git clean -f
 end
