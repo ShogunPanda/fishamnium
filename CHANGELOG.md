@@ -1,3 +1,7 @@
+### 2016-06-30 - 1.27.0
+
+* Removed docker-machine.
+
 ### 2016-06-30 - 1.26.0
 
 * Added git_fast_commit.
