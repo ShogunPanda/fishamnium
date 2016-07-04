@@ -1,0 +1,379 @@
+#!/usr/bin/env node
+
+const childProcess = require("child_process");
+const fs = require("fs");
+
+const FIRST_ARGUMENT = 3;
+const defaultBranch = process.env.GIT_DEFAULT_BRANCH || "development";
+const defaultRemote = process.env.GIT_DEFAULT_REMOTE || "origin";
+const baseHelp = '  Default $BASE is the value of GIT_DEFAULT_BRANCH environment variable or "development".';
+const remoteHelp = '  Default $REMOTE is the value of GIT_DEFAULT_REMOTE environment variable or "origin".';
+let mainCommand = null;
+
+const success = function(message, code = 0){
+  if(typeof message === "string")
+    console.log(message.trim());
+
+  return process.exit(code); // eslint-disable-line no-process-exit
+};
+
+const fail = function(message = null, code = 1){
+  if(message instanceof Error)
+    console.error(message);
+  else if(typeof message === "string")
+    console.error(`ERROR: ${message.trim()}`);
+
+  return process.exit(code); // eslint-disable-line no-process-exit
+};
+
+const isEmptyArgument = function(arg){
+  return typeof arg !== "string" || arg.trim().length === 0;
+};
+
+const showHelpOnly = function(args, firstArgumentRequired = false){
+  return (firstArgumentRequired && args.length === 0) || (args.length && args[0].match(/^(-h|-u|--help|--usage|-\?)$/)); // eslint-disable-line no-extra-parens
+};
+
+const showHelp = function(...args){
+  const message = `Usage: fishamnium_git ${mainCommand} ${args.join("\n")}`;
+  const requested = !isEmptyArgument(process.argv[FIRST_ARGUMENT]) && process.argv[FIRST_ARGUMENT].match(/^(-h|-u|--help|--usage|-\?)$/);
+
+  console[requested ? "log" : "error"](message);
+  process.exit(requested ? 0 : 1); // eslint-disable-line no-process-exit
+};
+
+const prepareHelp = function(mandatory, optional, additionalHelp){
+  let message = [];
+
+  // Add arguments
+  for(const arg of mandatory)
+    message.push(`$${arg.toUpperCase()}`);
+  for(const arg of optional)
+    message.push(`[$${arg.toUpperCase()}]`);
+
+  message = [message.join(" ")];
+
+  // Add messages
+  if(optional.includes("base"))
+    message.push(baseHelp);
+  if(optional.includes("remote"))
+    message.push(remoteHelp);
+
+  return message.concat(additionalHelp);
+};
+
+const parseArguments = function(args, mandatory, optional, additionalHelp = []){
+  if(showHelpOnly(args, mandatory.length))
+    return showHelp(...prepareHelp(mandatory, optional, additionalHelp));
+
+  // First parse mandatory arguments
+  const values = [];
+
+  for(const arg of mandatory){
+    const value = args.shift();
+
+    if(isEmptyArgument(value))
+      return fail(`Please provide the $${arg.toUpperCase()} argument. Re-run with "-h" as the only argument for more information.`);
+
+    values.push(value);
+  }
+
+  // Parse optional arguments and apply default base and remote
+  for(const arg of optional){
+    let value = args.shift();
+
+    if(isEmptyArgument(value)){
+      if(arg === "base")
+        value = defaultBranch;
+
+      if(arg === "remote")
+        value = defaultRemote;
+    }
+
+    values.push(value);
+  }
+
+  return values;
+};
+
+const runAsPromise = function(toCall, ...args){
+  return new Promise((resolve, reject) => {
+    args.push((error, ...other) => {
+      if(error)
+        return reject(error);
+
+      return resolve(...other);
+    });
+
+    toCall.apply(this, args);
+  });
+};
+
+const exec = function(command, skipDryRun = false){
+  if(!skipDryRun && process.env.DRY_RUN){
+    console.log(command);
+    return Promise.resolve();
+  }
+
+  return runAsPromise(childProcess.exec, command);
+};
+
+const isRepository = function(){
+  return runAsPromise(fs.readdir, process.cwd())
+    .then(files => { // eslint-disable-line arrow-body-style
+      return files.includes(".git") ? Promise.resolve() : Promise.reject();
+    })
+    .then(() => exec("git rev-parse --is-inside-work-tree", true)).then(() => Promise.resolve());
+};
+
+const remotes = function(){
+  return exec("git remote -v", true).then(output => {
+    const all = {};
+
+    // Format output
+    for(const line of output.trim().split("\n")){
+      const [name, url, type] = line.split(/\s+/).map(e => e.trim());
+
+      if(!all[name])
+        all[name] = {};
+
+      all[name][type.replace(/[()]/g, "")] = url;
+    }
+
+    // Simplify output
+    for(const name of Object.keys(all)){
+      if(all[name].fetch === all[name].push)
+        all[name] = all[name].fetch;
+    }
+
+    return JSON.stringify(all, null, 2);
+  });
+};
+
+const fullBranchName = function(){
+  return exec("git symbolic-ref HEAD", true)
+    .catch(() => exec("git rev-parse --short HEAD", true));
+};
+
+const branchName = function(name){
+  return name.replace(/^refs\/heads\//, "").trim();
+};
+
+const sha = function(short = false){
+  return exec(`git rev-parse ${short ? "--short" : ""} HEAD`, true);
+};
+
+const parseTask = function(name){
+  return name.match(/^refs\/heads\/.+-{1,2}(([a-z0-9]+-)?\d+)/) ? RegExp.$1.trim() : "";
+};
+
+const commitWithTask = function(message, task, args){
+  // Get the message from args if missing
+  if(!message)
+    message = args.shift();
+
+  // Validation
+  if(isEmptyArgument(message))
+    return Promise.reject("Please provide a commit message.");
+
+  // Append the task if present
+  if(task.length)
+    message += ` [#${task}]`;
+
+  // Execute
+  return exec(`git commit ${args.join(" ")} -m "${message}"`);
+};
+
+const cleanup = function(){
+  // Get branches
+  return exec("git branch --merged", true).then(output => {
+    // Filter out current, master and default branch
+    const branches = output.trim().split("\n")
+      .map(l => l.trim()).filter(l => !l.startsWith("* "))
+      .map(b => b.replace(/^\s+/, ""))
+      .filter(l => !["master", defaultBranch].includes(l));
+
+    // Delete branches
+    return branches.length ? exec(`git branch -D ${branches.join(" ")}`) : true;
+  });
+};
+
+const workflowDebugStep = function(step){
+  if(process.env.DRY_RUN)
+    console.log(`--- WORKFLOW STEP: ${step} ---`);
+
+  return Promise.resolve();
+};
+
+const workflowStart = function(args){
+  const [name, base, remote] = parseArguments(args, ["name"], ["base", "remote"]);
+
+  return workflowDebugStep("START")
+    .then(() => exec("git fetch"))
+    .then(() => exec(`git checkout ${base}`))
+    .then(() => exec(`git pull ${remote} ${base}`))
+    .then(() => exec(`git checkout -b ${name}`));
+};
+
+const workflowRefresh = function(current, args){
+  const [base, remote] = parseArguments(args, [], ["base", "remote"]);
+
+  return workflowDebugStep("REFRESH")
+    .then(() => exec("git fetch"))
+    .then(() => exec(`git checkout ${base}`))
+    .then(() => exec(`git pull ${remote} ${base}`))
+    .then(() => exec(`git checkout -b ${current}`))
+    .then(() => exec(`git rebase ${base}`));
+};
+
+const workflowFinish = function(current, args, deleteAfter = false){
+  const [base, remote] = parseArguments(args, [], ["base", "remote"]);
+
+  let chain = workflowRefresh(current, args)
+    .then(() => workflowDebugStep("FINISH"))
+    .then(() => exec(`git checkout ${base}`))
+    .then(() => exec(`git merge --no-ff ${current}`)) // TODO@PI: Can you skip the command input here?
+    .then(() => exec(`git push ${remote} ${base}`));
+
+  if(deleteAfter)
+    chain = chain.then(() => workflowDebugStep("FULL FINISH")).then(() => exec(`git branch -D ${current}`));
+
+  return chain;
+};
+
+const workflowFastCommit = function(args){
+  const [message, name, base, remote] = parseArguments(args, ["message", "name"], ["base", "remote"]);
+
+  return workflowStart([name, base, remote])
+    .then(() => workflowDebugStep("COMMIT WITH TASK"))
+    .then(() => commitWithTask(message, parseTask(name), ["-a"]))
+    .then(() => workflowFinish(name, args, true));
+};
+
+const workflowDelete = function(args){
+  if(showHelpOnly(args, true)){
+    return showHelp(
+      "$BRANCH [$BRANCH...] [$REMOTE]", baseHelp, remoteHelp, "  When more than a branch is given, the last argument is considered to always be $REMOTE."
+    );
+  }
+
+  // Default case: single branch
+  let branches = [args[0]], remote = defaultRemote;
+
+  // More than a argument specified
+  if(args.length > 1){
+    remote = args.pop();
+    branches = args;
+  }
+
+  let chain = workflowDebugStep("DELETE");
+
+  for(const branch of branches)
+    chain = chain.then(() => exec(`git branch -D ${branch}`));
+
+  for(const branch of branches)
+    chain = chain.then(() => exec(`git push ${remote} :${branch}`));
+
+  return chain;
+};
+
+const workflowRelease = function(current, args){
+  const [version, base, remote] = parseArguments(args, ["version"], ["base", "remote"]);
+  const release = `release-${version}`;
+
+  return workflowStart([release, base, remote])
+    .then(() => workflowDebugStep("RELEASE"))
+    .then(() => exec(`git push -f ${remote} ${release}`))
+    .then(() => exec(`git checkout ${current}`))
+    .then(() => exec(`git branch -D ${release}`));
+};
+
+const workflowImport = function(args){
+  let [source, base, remote, temporary] = parseArguments(args, ["source"], ["base", "remote", "temporary"]);
+
+  if(isEmptyArgument(temporary))
+    temporary = `import-${source}`;
+
+  return workflowDelete([temporary, remote])
+    .then(() => workflowStart([temporary, source, remote]))
+    .then(() => workflowFinish(temporary, [base, remote], true));
+};
+
+const workflowStartFromRelease = function(args){
+  const [name, version, remote] = parseArguments(args, ["name", "version"], ["remote"]);
+  return workflowStart([name, `release-${version}`, remote]);
+};
+
+const workflowRefreshFromRelease = function(current, args){
+  const [version, remote] = parseArguments(args, ["version"], ["remote"]);
+  return workflowRefresh(current, [`release-${version}`, remote]);
+};
+
+const workflowFinishToRelease = function(current, args, deleteAfter = false){
+  const [version, remote] = parseArguments(args, ["version"], ["remote"]);
+  return workflowFinish(current, [`release-${version}`, remote], deleteAfter);
+};
+
+const workflowImportRelease = function(args){
+  const [version, base, remote, temporary] = parseArguments(args, ["version"], ["base", "remote", "temporary"]);
+  return workflowImport([`release-${version}`, base, remote, temporary]);
+};
+
+// Main
+Promise.resolve().then(() => {
+  const args = process.argv.slice(FIRST_ARGUMENT);
+  mainCommand = process.argv[2];
+
+  switch(mainCommand){
+    // Base
+    case "is_repository":
+      return isRepository();
+    case "remotes":
+      return isRepository().then(remotes);
+    case "full_branch_name":
+      return isRepository().then(fullBranchName);
+    case "branch_name":
+      return isRepository().then(fullBranchName).then(branchName);
+    case "full_sha":
+      return isRepository().then(sha.bind(this, false));
+    case "sha":
+      return isRepository().then(sha.bind(this, true));
+    case "task":
+      return isRepository().then(fullBranchName).then(parseTask);
+    case "commit_with_task":
+      return isRepository().then(fullBranchName).then(parseTask).then(task => commitWithTask(null, task, args));
+    case "reset":
+      return isRepository().then(() => exec("git reset --hard")).then(() => exec("git clean -f"));
+    case "cleanup":
+      return isRepository().then(cleanup);
+    // Workflow
+    case "start":
+      return isRepository().then(() => workflowStart(args));
+    case "refresh":
+      return isRepository().then(fullBranchName).then(branchName).then(current => workflowRefresh(current, args));
+    case "finish":
+      return isRepository().then(fullBranchName).then(branchName).then(current => workflowFinish(current, args));
+    case "full_finish":
+      return isRepository().then(fullBranchName).then(branchName).then(current => workflowFinish(current, args, true));
+    case "fast_commit":
+      return isRepository().then(() => workflowFastCommit(args));
+    case "delete":
+      return isRepository().then(() => workflowDelete(args));
+    case "release":
+      return isRepository().then(fullBranchName).then(branchName).then(current => workflowRelease(current, args));
+    case "import":
+      return isRepository().then(() => workflowImport(args));
+    case "start_from_release":
+      return isRepository().then(() => workflowStartFromRelease(args));
+    case "refresh_from_release":
+      return isRepository().then(fullBranchName).then(branchName).then(current => workflowRefreshFromRelease(current, args));
+    case "finish_to_release":
+      return isRepository().then(fullBranchName).then(branchName).then(current => workflowFinishToRelease(current, args));
+    case "full_finish_to_release":
+      return isRepository().then(fullBranchName).then(branchName).then(current => workflowFinishToRelease(current, args, true));
+    case "import_release":
+      return isRepository().then(() => workflowImportRelease(args));
+    default:
+      return Promise.reject("Command not supported.");
+  }
+}).then(success).catch(fail);

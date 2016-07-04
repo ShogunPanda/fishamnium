@@ -6,19 +6,17 @@ http://sw.cowtech.it/fishamnium
 
 https://github.com/ShogunPanda/fishamnium
 
-[![Bitdeli Trend](https://d2weczhvl823v0.cloudfront.net/ShogunPanda/fishamnium/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+## Prerequisites
+
+To use git and bookmarks functions you need to have [Node.js 6+](https://nodejs.org) installed.
+
+We suggest to install it using NVM, by following this [instructions](https://github.com/creationix/nvm#installation).
 
 ## Install
 
-1. Install nvm following this [instructions](https://github.com/creationix/nvm#installation).
-
-2. Type the following inside a fish shell and you're done!
+Type the following inside a fish shell and you're done!
 
 `curl -sL http://sw.cowtech.it/fishamnium/installer | fish`
-
-### Install Git aliases
-
-`fishamnium_install_git_aliases`
 
 ## Uninstall
 
@@ -49,5 +47,4 @@ Licensed under the MIT license, which can be found at http://www.opensource.org/
 
 * `plugins/21_rvm.fish` was extracted from [lunks/fishnuggets](https://www.github.com/zmalltalker/lunks-nuggets).
 * `plugins/41_nvm.fish` was extracted from [passcod/nvm-fish-wrapper](https://www.github.com/passcod/nvm-fish-wrapper).
-* `plugins/71_fishmarks.fish` was extracted from [techwizrd/fishmarks](https://www.github.com/zmalltalker/techwizrd/fishmarks).
 * `completions/31_git.fish` was extracted from [lunks/fish-nuggets](https://www.github.com/lunks/fish-nuggets).

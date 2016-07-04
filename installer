@@ -19,6 +19,6 @@ end
 echo "Running: git clone https://github.com/ShogunPanda/fishamnium -q -- \"$destdir\""; and git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
 and echo "Running: cd \"$destdir\""; and cd "$destdir"
 and echo "Running: mkdir -p \"$rootdir\""; and mkdir -p "$rootdir"
-and echo "Running: /bin/cp -a -f loader.fish completions plugins themes \"$rootdir\""; and /bin/cp -a -f loader.fish completions plugins themes "$rootdir"
+and echo "Running: /bin/cp -a -f loader.fish completions helpers plugins themes \"$rootdir\""; and /bin/cp -a -f loader.fish completions helpers plugins themes "$rootdir"
 and echo "Running: chmod -R 755 \"$rootdir\""; and chmod -R 755 "$rootdir"
 and echo "Running: /bin/rm -rf \"$destdir\""; and /bin/rm -rf "$destdir"

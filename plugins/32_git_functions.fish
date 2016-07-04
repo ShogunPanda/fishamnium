@@ -5,75 +5,105 @@
 #
 
 function is_git_repository --description "Check if the current directory is inside a GIT repository."
-  test -d .git; and git rev-parse --is-inside-work-tree > /dev/null ^ /dev/null
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git is_repository
 end
 
-function git_current_branch --description "Show the current branch of a GIT repository."
-  if is_git_repository
-    set ref (git symbolic-ref HEAD ^ /dev/null; or git rev-parse --short HEAD ^ /dev/null)
-    echo $ref | sed -E "s#refs/heads/##g"
-  end
+function git_branch --description "Show the current branch of a GIT repository."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git branch_name
 end
 
-function git_current_repository --description "Show the current local and remote repository of a GIT repository."
-  if is_git_repository
-    echo (git remote -v | cut -d':' -f 2)
-  end
+function git_remotes --description "Show all the remotes of a GIT repository."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git remotes
 end
 
 function git_log_prettify --description "Show a pretty GIT log."
   git log --pretty $argv
 end
 
-function git_branch
-  set branch (gbn ^ /dev/null)
-  test -n $branch; and echo $branch
-end
-
 function git_sha
-  set sha (git rev-parse --short HEAD ^ /dev/null)
-  test -n $sha; and echo $sha
-end
-
-function git_push_and_pull
-  git pull $argv; and git push $argv
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git sha
 end
 
 function git_full_branch_name --description "Prints the GIT full branch name"
-  git symbolic-ref HEAD ^ /dev/null; or git rev-parse --short HEAD ^ /dev/null
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git full_branch_name
 end
 
 function git_full_branch_name_copy --description "Copies the GIT full branch name into the clipboard"
-  git_full_branch_name | tr -d "\n" | pbcopy
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git full_branch_name | pbcopy
 end
 
-function git_branch_name --description "Prints the GIT branch name"
-  git_full_branch_name | sed -E "s#refs/heads/##"
-end
-
-function git_branch_name_copy --description "Copies the GIT branch name into the clipboard"
-  git_branch_name | tr -d "\n" | pbcopy
+function git_branch_copy --description "Copies the GIT branch name into the clipboard"
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git branch_name | pbcopy
 end
 
 function git_task --description "Prints the GIT task number"
-  git_branch_name | sed -E "s/(.+)--(.+)\$/\2/g"
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git task
 end
 
 function git_task_copy --description "Copies the GIT task number into the clipboard"
-  git_task | tr -d "\n" | pbcopy
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git task | pbcopy
 end
 
 function git_commit_with_task --description "Commits a message appending the task number"
-  set -l task (git_task)
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git commit_with_task $argv
+end
 
-  if [ (count $argv) -eq 1 ]
-    set message $argv[1]
-    set args ""
-  else
-    set message $argv[-1]
-    set args $argv[1..-2]
-  end
+function g_start --description "Starts a new branch off a remote existing branch (default development)."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git start $argv
+end
 
+function g_refresh --description "Rebases the current working tree on top of an existing remote branch (default development)."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git refresh $argv
+end
 
-  git commit $args -m "$message [#$task]"
+function g_finish --description "Merges a branch back to its remote branch."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git finish $argv
+end
+
+function g_full_finish --description "Merges a branch back to its remote branch and then deletes the branch."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git full_finish $argv
+end
+
+function g_fast_commit --description "Creates a local branch, commit changes and then merges it back to the base branch."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git fast_commit $argv
+end
+
+function g_reset --description "Cleans up a local branch."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git reset $argv
+end
+
+function g_delete --description "Deletes a branch locally and remotely."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git delete $argv
+end
+
+function g_cleanup --description "Removes all merged branch."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git cleanup $argv
+end
+
+function g_release --description "Tags a release."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git release $argv
+end
+
+function g_start_from_release --description "Starts a fix on a release"
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git start_from_release $argv
+end
+
+function g_refresh_from_release --description "Rebases the current fix branch on top of the release."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git refresh_from_release $argv
+end
+
+function g_finish_to_release --description "Merges the current fix branch to the release."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git finish_to_release $argv
+end
+
+function g_full_finish_to_release --description "Merges the current fix branch to the release and then deletes the branch."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git full_finish_to_release $argv
+end
+
+function g_import --description "Imports latest changes from a branch on top of an existing remote branch (default development)."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git import $argv
+end
+
+function g_import_release --description "Imports a release."
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_git import_release $argv
 end

@@ -1,0 +1,114 @@
+#!/usr/bin/env node
+
+const os = require("os");
+const path = require("path");
+const fs = require("fs");
+
+const bookmarks = new Map();
+const FIRST_ARGUMENT = 2;
+const SUCCESS_DELAY = 100;
+
+const success = function(message, code = 0){
+  if(message)
+    console.log(message.trim());
+
+  setTimeout(process.exit.bind(null, code), SUCCESS_DELAY); // eslint-disable-line no-process-exit
+};
+
+const fail = function(message = null, code = 1){
+  if(message instanceof Error)
+    console.error(message);
+  else if(typeof message === "string")
+    console.error(`ERROR: ${message.trim()}`);
+
+  return process.exit(code); // eslint-disable-line no-process-exit
+};
+
+const loadBookmarks = function(){
+  const temp = require(path.resolve(os.homedir(), ".fishamnium_bookmarks.json")); // eslint-disable-line global-require
+
+  for(const name of Object.keys(temp).sort((a, b) => a.localeCompare(b)))
+    bookmarks.set(name, temp[name]);
+
+  return Promise.resolve();
+};
+
+const saveBookmarks = function(){
+  return new Promise((resolve, reject) => {
+    const temp = {};
+
+    for(const name of Array.from(bookmarks.keys()).sort((a, b) => a.localeCompare(b)))
+      temp[name] = bookmarks.get(name);
+
+    fs.writeFile(path.resolve(os.homedir(), ".fishamnium_bookmarks.json"), JSON.stringify(temp, null, 2), error => { // eslint-disable-line arrow-body-style
+      return error ? reject(error) : resolve();
+    });
+  });
+};
+
+const list = function(modifier){
+  if(modifier === "--names-only")
+    return Array.from(bookmarks.keys()).join("\n");
+
+  const maxLength = Math.max(...Array.from(bookmarks.keys()).map(l => l.length)) + 1;
+  const output = [];
+
+  for(let [name, destination] of bookmarks.entries()){
+    while(name.length < maxLength)
+      name += " ";
+
+    output.push(`\u001b[32m${name}\u001b[39m\u2192 \u001b[1m${destination.replace("$HOME", "\u001b[33m$HOME\u001b[39m")}\u001b[22m`);
+  }
+
+  return output.join("\n");
+};
+
+const requireName = function(name){
+  if(typeof name !== "string" || name.trim().length === 0)
+    return Promise.reject("Please provide a bookmark name.");
+
+  return Promise.resolve();
+};
+
+const show = function(name){
+  if(!bookmarks.has(name))
+    return fail(`The bookmark ${name} does not exists.`);
+
+  return bookmarks.get(name).replace(/~|\$HOME/, os.homedir());
+};
+
+const save = function(name){
+  if(bookmarks.has(name))
+    return fail(`The bookmark ${name} already exists.`);
+
+  bookmarks.set(name, process.cwd());
+  return saveBookmarks();
+};
+
+const remove = function(name){
+  if(!bookmarks.has(name))
+    return fail(`The bookmark ${name} does not exists.`);
+
+  bookmarks.delete(name);
+  return saveBookmarks();
+};
+
+// Main
+loadBookmarks().then(() => {
+  const operation = process.argv[FIRST_ARGUMENT];
+  const name = process.argv[FIRST_ARGUMENT + 1];
+
+  if(["g", "get", "show", "load", "read"].includes(operation))
+    return requireName(name).then(() => show(name));
+
+  if(["s", "set", "save", "write"].includes(operation))
+    return requireName(name).then(() => save(name));
+
+  if(["d", "delete", "erase", "remove"].includes(operation))
+    return requireName(name).then(() => remove(name));
+
+  if(["l", "list"].includes(operation))
+    return list(name);
+
+  return fail(`Usage: ${path.basename(process.argv[FIRST_ARGUMENT - 1])} s|d|l|get|set|delete|list|load|save|erase|read|write|remove $NAME`);
+}).then(success).catch(fail);

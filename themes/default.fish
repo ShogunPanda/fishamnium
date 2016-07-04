@@ -54,7 +54,7 @@ function fish_prompt -d "Write out the prompt"
 
   # GIT
   if is_git_repository
-    printf ' %s(%s %s%s%s)' $branch (git_current_branch) $commit (git_sha) $branch
+    printf ' %s(%s %s%s%s)' $branch (git_branch) $commit (git_sha) $branch
     set -l git_dirty (git status -s)
 
     if [ "$git_dirty" != "" ]

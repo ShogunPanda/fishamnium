@@ -4,10 +4,9 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
-for root in /usr/local /opt /var
-  for dir in $root/bin $root/sbin
-		set -x -g PATH $dir $PATH
-	end
+function __fish_bookmarks
+  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_bookmarks list --names-only
 end
 
-set -x -g PATH $PATH ~/.fishamnium/helpers
+complete -c g -f -a '(__fish_bookmarks)'
+complete -c d -f -a '(__fish_bookmarks)'

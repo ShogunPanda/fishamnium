@@ -1,3 +1,8 @@
+### 2016-07-02 - 2.0.0
+
+* Moved all GIT related tasks to a Node.js helper, fishamnium_git.
+* Rewritten bookmarks functionality in a Node.js helper, fishamnium_bookmarks.
+
 ### 2016-06-30 - 1.27.1
 
 * Minor fix.

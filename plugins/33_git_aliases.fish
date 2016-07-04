@@ -14,7 +14,6 @@ alias gd='git diff'
 # Pull and push
 alias gl='git pull'
 alias gp='git push'
-alias glp='git_push_and_pull'
 alias glr='git pull --rebase'
 
 # Committing
@@ -22,7 +21,6 @@ alias gc='git commit -m'
 alias gca='git commit -a -m'
 alias gct='git_commit_with_task'
 alias gcat='git_commit_with_task -a'
-
 
 # Checkout
 alias gco='git checkout'
