@@ -109,13 +109,23 @@ const runAsPromise = function(toCall, ...args){
   });
 };
 
-const exec = function(command, skipDryRun = false){
-  if(!skipDryRun && process.env.DRY_RUN){
-    console.log(command);
-    return Promise.resolve();
+const exec = function(command, force = false){
+  if(!force){
+    if(process.env.DRY_RUN || process.env.DEBUG)
+      console.log(`--- EXECUTING: ${command} ---`);
+
+    if(process.env.DRY_RUN)
+      return Promise.resolve();
   }
 
-  return runAsPromise(childProcess.exec, command);
+  return runAsPromise(childProcess.exec, command).then(output => {
+    output = output.trim();
+
+    if(!force && !process.env.QUIET && output.length)
+      console.log(output);
+
+    return output;
+  });
 };
 
 const isRepository = function(){
@@ -199,7 +209,7 @@ const cleanup = function(){
 };
 
 const workflowDebugStep = function(step){
-  if(process.env.DRY_RUN)
+  if(process.env.DRY_RUN || process.env.DEBUG)
     console.log(`--- WORKFLOW STEP: ${step} ---`);
 
   return Promise.resolve();
@@ -222,7 +232,7 @@ const workflowRefresh = function(current, args){
     .then(() => exec("git fetch"))
     .then(() => exec(`git checkout ${base}`))
     .then(() => exec(`git pull ${remote} ${base}`))
-    .then(() => exec(`git checkout -b ${current}`))
+    .then(() => exec(`git checkout ${current}`))
     .then(() => exec(`git rebase ${base}`));
 };
 
@@ -242,7 +252,7 @@ const workflowFinish = function(current, args, deleteAfter = false){
 };
 
 const workflowFastCommit = function(args){
-  const [message, name, base, remote] = parseArguments(args, ["message", "name"], ["base", "remote"]);
+  const [name, message, base, remote] = parseArguments(args, ["name", "message"], ["base", "remote"]);
 
   return workflowStart([name, base, remote])
     .then(() => workflowDebugStep("COMMIT WITH TASK"))

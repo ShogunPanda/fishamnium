@@ -1,3 +1,7 @@
+### 2016-07-05 - 2.0.1
+
+* Bugfix
+
 ### 2016-07-02 - 2.0.0
 
 * Moved all GIT related tasks to a Node.js helper, fishamnium_git.
