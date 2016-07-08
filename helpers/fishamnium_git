@@ -111,7 +111,7 @@ const runAsPromise = function(toCall, ...args){
 
 const exec = function(command, force = false){
   if(!force && (process.env.DRY_RUN || process.env.DEBUG))
-    console.log(`--- EXECUTING: ${command} ---`);
+    console.log(`\u001b[30m--- EXECUTING: \u001b[90m${command}\u001b[39m ---\u001b[39m`);
 
   if(process.env.DRY_RUN)
     return Promise.resolve();
@@ -123,8 +123,8 @@ const exec = function(command, force = false){
     [command, ...args] = command.split(" ");
     const cp = childProcess.spawn(command, args);
 
-    cp.stdout.on("data", data => console.log(data.toString()));
-    cp.stderr.on("data", data => console.log(data.toString()));
+    cp.stdout.on("data", data => process.stdout.write(data.toString()));
+    cp.stderr.on("data", data => process.stdout.write(data.toString()));
 
     cp.on("close", code => { // eslint-disable-line arrow-body-style
       return code === 0 ? resolve() : reject();
@@ -218,7 +218,7 @@ const cleanup = function(){
 
 const workflowDebugStep = function(step){
   if(process.env.DRY_RUN || process.env.DEBUG)
-    console.log(`--- WORKFLOW STEP: ${step} ---`);
+    console.log(`\u001b[30m--- WORKFLOW STEP: ${step} ---\u001b[39m`);
 
   return Promise.resolve();
 };
@@ -250,7 +250,7 @@ const workflowFinish = function(current, args, deleteAfter = false){
   let chain = workflowRefresh(current, args)
     .then(() => workflowDebugStep("FINISH"))
     .then(() => exec(`git checkout ${base}`))
-    .then(() => exec(`git merge --no-ff ${current}`)) // TODO@PI: Can you skip the command input here?
+    .then(() => exec(`git merge --no-ff ${current}`))
     .then(() => exec(`git push ${remote} ${base}`));
 
   if(deleteAfter)
@@ -286,11 +286,17 @@ const workflowDelete = function(args){
 
   let chain = workflowDebugStep("DELETE");
 
-  for(const branch of branches)
-    chain = chain.then(() => exec(`git branch -D ${branch}`));
+  for(const branch of branches){
+    chain = chain.then(() => { // eslint-disable-line arrow-body-style
+      return exec(`git branch -D ${branch}`).then(() => true).catch(() => true);
+    });
+  }
 
-  for(const branch of branches)
-    chain = chain.then(() => exec(`git push ${remote} :${branch}`));
+  for(const branch of branches){
+    chain = chain.then(() => { // eslint-disable-line arrow-body-style
+      return exec(`git push ${remote} :${branch}`).then(() => true).catch(() => true);
+    });
+  }
 
   return chain;
 };
@@ -338,7 +344,7 @@ const workflowImportRelease = function(args){
 };
 
 // Main
-Promise.resolve().then(() => {
+Promise.resolve().then(() => { // eslint-disable-line complexity
   const args = process.argv.slice(FIRST_ARGUMENT);
   mainCommand = process.argv[2];
 
@@ -349,16 +355,21 @@ Promise.resolve().then(() => {
     case "remotes":
       return isRepository().then(remotes);
     case "full_branch_name":
+    case "fbn":
       return isRepository().then(fullBranchName);
     case "branch_name":
+    case "bn":
       return isRepository().then(fullBranchName).then(branchName);
     case "full_sha":
       return isRepository().then(sha.bind(this, false));
     case "sha":
       return isRepository().then(sha.bind(this, true));
     case "task":
+    case "t":
       return isRepository().then(fullBranchName).then(parseTask);
     case "commit_with_task":
+    case "ct":
+    case "cat":
       return isRepository().then(fullBranchName).then(parseTask).then(task => commitWithTask(null, task, args));
     case "reset":
       return isRepository().then(() => exec("git reset --hard")).then(() => exec("git clean -f"));
@@ -366,30 +377,43 @@ Promise.resolve().then(() => {
       return isRepository().then(cleanup);
     // Workflow
     case "start":
+    case "s":
       return isRepository().then(() => workflowStart(args));
     case "refresh":
+    case "r":
       return isRepository().then(fullBranchName).then(branchName).then(current => workflowRefresh(current, args));
     case "finish":
+    case "f":
       return isRepository().then(fullBranchName).then(branchName).then(current => workflowFinish(current, args));
     case "full_finish":
+    case "ff":
       return isRepository().then(fullBranchName).then(branchName).then(current => workflowFinish(current, args, true));
     case "fast_commit":
+    case "fc":
       return isRepository().then(() => workflowFastCommit(args));
     case "delete":
+    case "d":
       return isRepository().then(() => workflowDelete(args));
     case "release":
+    case "rt":
       return isRepository().then(fullBranchName).then(branchName).then(current => workflowRelease(current, args));
     case "import":
+    case "i":
       return isRepository().then(() => workflowImport(args));
     case "start_from_release":
+    case "rs":
       return isRepository().then(() => workflowStartFromRelease(args));
     case "refresh_from_release":
+    case "rr":
       return isRepository().then(fullBranchName).then(branchName).then(current => workflowRefreshFromRelease(current, args));
     case "finish_to_release":
+    case "rf":
       return isRepository().then(fullBranchName).then(branchName).then(current => workflowFinishToRelease(current, args));
     case "full_finish_to_release":
+    case "rff":
       return isRepository().then(fullBranchName).then(branchName).then(current => workflowFinishToRelease(current, args, true));
     case "import_release":
+    case "ri":
       return isRepository().then(() => workflowImportRelease(args));
     default:
       return Promise.reject("Command not supported.");

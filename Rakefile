@@ -56,6 +56,8 @@ task :install do
   FileUtils.mkdir_p(root)
   FileUtils.cp_r(files, root, verbose: !quiet)
   FileUtils.chmod_R(0755, root, verbose: false) # Never show this due to https://bugs.ruby-lang.org/issues/8547
+  FileUtils.ln_sf("#{root}/helpers/fishamnium_git", "#{root}/helpers/g", verbose: !quiet)
+  FileUtils.ln_sf("#{root}/helpers/fishamnium_bookmarks", "#{root}/helpers/d", verbose: !quiet)
 
   puts <<-EOMESSAGE
 -------

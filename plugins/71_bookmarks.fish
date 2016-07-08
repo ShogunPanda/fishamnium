@@ -10,15 +10,15 @@ function l --description "Show all bookmarks."
   eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_bookmarks list $argv
 end
 
-function g --description "Change current directory to a saved bookmark."
+function d_g --description "Change current directory to a saved bookmark."
   set -l OUTPUT (eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_bookmarks get $argv)
   [ $status = 0 ]; and cd "$OUTPUT"
 end
 
-function s --description "Saves the current directory as new bookmark."
+function d_s --description "Saves the current directory as new bookmark."
   eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_bookmarks save $argv
 end
 
-function d --description "Deletes an existing bookmark."
+function d_d --description "Deletes an existing bookmark."
   eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/fishamnium_bookmarks delete $argv
 end

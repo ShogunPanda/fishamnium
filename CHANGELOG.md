@@ -1,3 +1,7 @@
+### 2016-07-08 - 2.1.0
+
+* Moved all GIT aliases to g
+
 ### 2016-07-06 - 2.0.2
 
 * Bugfix for execution.
