@@ -1,3 +1,7 @@
+### 2016-07-08 - 2.1.1
+
+* Moved all bookmarks aliases to d
+
 ### 2016-07-08 - 2.1.0
 
 * Moved all GIT aliases to g
