@@ -140,7 +140,6 @@ const exec = function(command, force = false){
       return accu;
     }, []);
 
-    console.log(args);
     const cp = childProcess.spawn(command, args);
 
     cp.stdout.on("data", data => process.stdout.write(data.toString()));
