@@ -111,7 +111,7 @@ const runAsPromise = function(toCall, ...args){
 
 const exec = function(command, force = false){
   if(!force && (process.env.DRY_RUN || process.env.DEBUG))
-    console.log(`\u001b[30m--- EXECUTING: \u001b[90m${command}\u001b[39m ---\u001b[39m`);
+    console.log(`\u001b[30m--- EXECUTING: \u001b[90m${command}\u001b[39m \u001b[30m---\u001b[39m`);
 
   if(process.env.DRY_RUN)
     return Promise.resolve();
@@ -121,6 +121,26 @@ const exec = function(command, force = false){
   return new Promise((resolve, reject) => {
     let args = null;
     [command, ...args] = command.split(" ");
+
+    // Parse arguments so that " and ' are treated properly
+    let separator = null;
+    args = args.reduce((accu, arg) => {
+      if(separator){ // We're waiting for a closure
+        accu[accu.length - 1] += ` ${arg.replace(separator, "")}`;
+
+        if(arg.includes(separator))
+          separator = null;
+      }else{
+        if(arg.match(/(['"])/))
+          separator = RegExp.$1;
+
+        accu.push(arg.replace(separator, ""));
+      }
+
+      return accu;
+    }, []);
+
+    console.log(args);
     const cp = childProcess.spawn(command, args);
 
     cp.stdout.on("data", data => process.stdout.write(data.toString()));

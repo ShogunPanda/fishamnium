@@ -1,3 +1,7 @@
+### 2016-07-11 - 2.1.2
+
+* Minor execution bug.
+
 ### 2016-07-08 - 2.1.1
 
 * Moved all bookmarks aliases to d
