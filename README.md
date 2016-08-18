@@ -2,9 +2,7 @@
 
 Some useful shell extension for fish shell.
 
-http://sw.cowtech.it/fishamnium
-
-https://github.com/ShogunPanda/fishamnium
+https://sw.cowtech.it/fishamnium
 
 ## Prerequisites
 
