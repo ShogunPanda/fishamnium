@@ -68,9 +68,19 @@ function fish_prompt -d "Write out the prompt"
   printf '\n%s[%s%s@%s' $yellow $user_color $user (hostname -s)
 
   # RVM
-  if contains "22_rvm_prompt.fish" $FISHAMNIUM_LOADED_PLUGINS
-    set -l current_rvm (rvm_current)
-    [ "$current_rvm" != "" ]; and printf ' %s%s' $red $current_rvm
+  if [ "$FISHAMNIUM_THEME_SHOW_RVM" != "" ]
+    if contains "22_rvm_prompt.fish" $FISHAMNIUM_LOADED_PLUGINS
+      set -l current_rvm (which ruby | sed -E -e "s#.+rubies/(.+)/bin/ruby#\1#" -e "s#^ruby-##")
+      [ "$current_rvm" != "" ]; and printf ' %srvm:%s' $red $current_rvm
+    end
+  end
+
+  # NVM
+  if [ "$FISHAMNIUM_THEME_SHOW_NVM" != "" ]
+    if contains "41_nvm.fish" $FISHAMNIUM_LOADED_PLUGINS
+      set -l current_nvm (which node | sed -E -e "s#.+versions/node/(.+)/bin/node#\1#" -e "s#^v##")
+      [ "$current_nvm" != "" ]; and printf ' %snvm:%s' $red $current_nvm
+    end
   end
 
   # Shell symbol and end

@@ -6,7 +6,7 @@
 
 for root in /usr/local /opt /var
   for dir in $root/bin $root/sbin
-		set -x -g PATH $dir $PATH
+    test -d $dir; and set -x -g PATH $dir $PATH
 	end
 end
 

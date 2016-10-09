@@ -11,6 +11,7 @@ home = ENV["HOME"]
 root = "#{home}/.fishamnium"
 contents_directory = File.dirname(__FILE__)
 quiet = (ENV["FISHAMNIUM_QUIET"] =~ /^(1|on|true|yes|t|y)$/i)
+helpers = ["fishamnium_bookmarks", "fishamnium_git"]
 external_scripts = {
   "plugins.rvm" => ["plugins/21_rvm", "https://raw.githubusercontent.com/lunks/fish-nuggets/master/functions/rvm.fish"],
   "plugins.nvm" => ["plugins/41_nvm", "https://raw.githubusercontent.com/passcod/nvm-fish-wrapper/master/nvm.fish"],
@@ -34,6 +35,17 @@ task :release, :version, :changelog do |_, args|
   system("git push -f github --tags")
 end
 
+namespace :build do
+  desc "Build helpers."
+  task :helpers do |_, args|
+
+    Dir.chdir("helpers-sources")
+    system("swift build -c release")
+    FileUtils.mv(helpers.map { |h| ".build/release/#{h}" }, "../helpers/", verbose: !quiet)
+    FileUtils.rm_rf(".build")
+  end
+end
+
 namespace :external do
   desc "Updates an external script."
   task :update, :name do |_, args|
@@ -49,6 +61,7 @@ namespace :external do
     end
   end
 end
+
 desc "Installs the environment."
 task :install do
   files = FileList["loader.fish", "completions", "plugins", "helpers", "themes"]

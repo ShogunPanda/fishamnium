@@ -5,8 +5,8 @@
 #
 
 function __fish_bookmarks
-  eval $FISHAMNIUM_NODE ~/.fishamnium/helpers/d list --names-only
+  eval ~/.fishamnium/helpers/fishamnium_bookmarks list --names-only
 end
 
-complete -c d_g -f -a '(__fish_bookmarks)'
-complete -c d_d -f -a '(__fish_bookmarks)'
+complete -c c -f -a '(__fish_bookmarks)'
+complete -c d -f -a '(__fish_bookmarks)'

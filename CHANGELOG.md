@@ -1,4 +1,11 @@
-### 2016-07-11 - 2.1.2
+### 2016-10-09 - 3.0.0
+
+* Rewritten helpers in Swift.
+* Introduced a `rake build:helpers` to build helpers locally (Swift 3 and Swift Package Manager needed).
+* Introduced `FISHAMNIUM_THEME_SHOW_RVM` and `FISHAMNIUM_THEME_SHOW_NVM` to show RVM and NVM in the default prompt. Otherwise they are hidden by default now.
+* Move bookmarks back to `l`, `s`, `d` commands. Renamed d_g to `m`.
+
+### 2016-07-11 - 2.1.3
 
 * Removed debug line.
 
