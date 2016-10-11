@@ -1,3 +1,7 @@
+### 2016-10-11 - 3.0.1
+
+* Minor helper fixes.
+
 ### 2016-10-09 - 3.0.0
 
 * Rewritten helpers in Swift.

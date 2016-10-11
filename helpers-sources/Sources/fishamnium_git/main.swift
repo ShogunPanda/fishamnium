@@ -101,7 +101,7 @@ func git(_ arguments: [String], _ pipe: Bool = true, _ fatalMessage: String? = n
     task.standardOutput = Pipe()
   } else {
     // Show command that is being executed
-    print("\u{001b}[30m\u{22EF} Executing: git \(arguments.joined(separator: " "))\u{001b}[39m")
+    print("\u{001b}[33m\u{22EF} Executing: git \(arguments.joined(separator: " "))\u{001b}[39m")
   }
 
   // Launch the task and wait to exit
@@ -260,7 +260,11 @@ func commitWithTask(_ internalMessage: String?, _ task: String?, _ inputArgs: [S
   args.append("\(message)")
 
   // Execute and return
-  showExit(git(args, false).terminationStatus)
+  let termination = git(args, false).terminationStatus
+
+  if termination != 0 || internalMessage == nil {
+    showExit(termination)
+  }
 }
 
 func hardReset(){
@@ -320,7 +324,7 @@ func delete(_ otherArgs: [String]){
 }
 
 func workflowDebugStep(_ step: String) {
-  print("\u{001b}[30m\u{22EF} Workflow: \(step)\u{001b}[39m")
+  print("\u{001b}[33m\u{22EF} Workflow: \(step)\u{001b}[39m")
 }
 
 func workflowStart(_ otherArgs: [String]) {
@@ -366,7 +370,7 @@ func workflowFinish(_ otherArgs: [String], _ deleteAfter: Bool = false) {
   // Execute the chain
   gitChain([
     ["checkout", args["base"]!],
-    ["merge", "--no-ff", current],
+    ["merge", "--no-ff", "-m", "Merge branch \(current) into \(args["base"]!)", current],
     ["push", args["remote"]!, args["base"]!],
   ])
 
