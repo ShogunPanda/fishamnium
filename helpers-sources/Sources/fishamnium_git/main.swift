@@ -330,7 +330,7 @@ func workflowDebugStep(_ step: String) {
 func workflowStart(_ otherArgs: [String]) {
   // Parse args
   let args : [String: String] = parseArguments(otherArgs, ["name"], ["base", "remote"])
-  workflowDebugStep("Starting branch \(args["name"]!) out of branch \(args["remote"]!)/\(args["base"]!) ...")
+  workflowDebugStep("Creating a new branch \"\(args["name"]!)\" out of branch \"\(args["remote"]!)/\(args["base"]!)\" ...")
 
   // Execute the chain
   gitChain([
@@ -346,7 +346,7 @@ func workflowRefresh(_ otherArgs: [String]) {
 
   // Parse args
   let args: [String: String] = parseArguments(otherArgs, [], ["base", "remote"])
-  workflowDebugStep("Refreshing branch \(current) on branch \(args["remote"]!)/\(args["base"]!) ...")
+  workflowDebugStep("Refreshing branch \"\(current)\" on branch \"\(args["remote"]!)/\(args["base"]!)\" ...")
 
   // Execute the chain
   gitChain([
@@ -365,17 +365,17 @@ func workflowFinish(_ otherArgs: [String], _ deleteAfter: Bool = false) {
 
   // Parse args
   let args: [String: String] = parseArguments(otherArgs, [], ["base", "remote"])
-  workflowDebugStep("Merging branch \(current) to branch \(args["remote"]!)/\(args["base"]!) ...")
+  workflowDebugStep("Merging branch \"\(current)\ to branch \"\(args["remote"]!)/\(args["base"]!)\" ...")
 
   // Execute the chain
   gitChain([
     ["checkout", args["base"]!],
-    ["merge", "--no-ff", "-m", "Merge branch \(current) into \(args["base"]!)", current],
+    ["merge", "--no-ff", "-m", "Merge branch '\(current)' into '\(args["base"]!)'", current],
     ["push", args["remote"]!, args["base"]!],
   ])
 
   if deleteAfter {
-    workflowDebugStep("Deleting local branch \(current) ...")
+    workflowDebugStep("Deleting local branch \"\(current)\" ...")
     let _ = git(["branch", "-D", current], false)
   }
 }
@@ -399,9 +399,9 @@ func workflowRelease(_ otherArgs: [String]){
 
   // Execute the flow
   let _ = git(["branch", "-D", release], false)
-  workflowDebugStep("Creating release \(release) ...")
+  workflowDebugStep("Creating release \"\(release)\" ...")
   workflowStart([release, args["base"]!, args["remote"]!])
-  workflowDebugStep("Pushing release \(release) ...")
+  workflowDebugStep("Pushing release \"\(release)\" ...")
   gitChain([
     ["push", "-f", args["remote"]!, release],
     ["checkout", current],
