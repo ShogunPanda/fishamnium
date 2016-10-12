@@ -343,8 +343,8 @@ func workflowStart(_ otherArgs: [String]) {
   ])
 }
 
-func workflowRefresh(_ otherArgs: [String]) {
-  let current = getBranchName()
+func workflowRefresh(_ otherArgs: [String], _ currentBranch: String? = nil) {
+  let current = currentBranch ?? getBranchName()
 
   // Parse args
   let args: [String: String] = parseArguments(otherArgs, [], ["base", "remote"])
@@ -363,7 +363,7 @@ func workflowRefresh(_ otherArgs: [String]) {
 func workflowFinish(_ otherArgs: [String], _ deleteAfter: Bool = false, _ currentBranch: String? = nil) {
   let current = currentBranch ?? getBranchName()
 
-  workflowRefresh(otherArgs)
+  workflowRefresh(otherArgs, current)
 
   // Parse args
   let args: [String: String] = parseArguments(otherArgs, [], ["base", "remote"])
