@@ -101,7 +101,9 @@ func git(_ arguments: [String], _ pipe: Bool = true, _ fatalMessage: String? = n
     task.standardOutput = Pipe()
   } else {
     // Show command that is being executed
-    print("\u{001b}[33m\u{22EF} Executing: git \(arguments.joined(separator: " "))\u{001b}[39m")
+    let formattedArguments = arguments.map { $0.contains(" ") ? "\"\($0)\"" : $0}.joined(separator: " ")
+
+    print("\u{001b}[33m\u{22EF} Executing: git \(formattedArguments)\u{001b}[39m")
   }
 
   // Launch the task and wait to exit
@@ -365,7 +367,7 @@ func workflowFinish(_ otherArgs: [String], _ deleteAfter: Bool = false) {
 
   // Parse args
   let args: [String: String] = parseArguments(otherArgs, [], ["base", "remote"])
-  workflowDebugStep("Merging branch \"\(current)\ to branch \"\(args["remote"]!)/\(args["base"]!)\" ...")
+  workflowDebugStep("Merging branch \"\(current) to branch \"\(args["remote"]!)/\(args["base"]!)\" ...")
 
   // Execute the chain
   gitChain([

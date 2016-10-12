@@ -1,3 +1,7 @@
+### 2016-10-12 - 3.0.3
+
+* Minor formatting issue.
+
 ### 2016-10-11 - 3.0.2
 
 * Fixed labels.
