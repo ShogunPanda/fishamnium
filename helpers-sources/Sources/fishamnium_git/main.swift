@@ -383,8 +383,6 @@ func workflowFinish(_ otherArgs: [String], _ deleteAfter: Bool = false, _ curren
 }
 
 func workflowFastCommit(_ otherArgs: [String]) {
-  let current = getBranchName()
-
   // Parse args
   let args: [String: String] = parseArguments(otherArgs, ["name", "message"], ["base", "remote"])
 
@@ -392,7 +390,7 @@ func workflowFastCommit(_ otherArgs: [String]) {
   workflowStart([args["name"]!, args["base"]!, args["remote"]!])
   workflowDebugStep("Commiting with message: \"\(args["message"]!)\" ...")
   commitWithTask(args["message"], getTaskID(), ["-a"])
-  workflowFinish([args["name"]!, args["base"]!, args["remote"]!], true, current)
+  workflowFinish([args["base"]!, args["remote"]!], true, args["name"]!)
 }
 
 func workflowRelease(_ otherArgs: [String]){

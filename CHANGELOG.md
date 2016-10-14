@@ -1,3 +1,7 @@
+### 2016-10-14 - 3.0.6
+
+* Minor fast-commit issue.
+
 ### 2016-10-12 - 3.0.5
 
 * Minor fast-commit issue.
