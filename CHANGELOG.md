@@ -1,3 +1,7 @@
+### 2016-10-19 - 3.1.2
+
+* Bugfix.
+
 ### 2016-10-19 - 3.1.1
 
 * Added single bookmark shortcut.
