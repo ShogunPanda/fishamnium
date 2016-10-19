@@ -4,6 +4,12 @@ let defaultBranch = ProcessInfo().environment["GIT_DEFAULT_BRANCH"] ?? "developm
 let defaultRemote = ProcessInfo().environment["GIT_DEFAULT_REMOTE"] ?? "origin"
 let quiet = ProcessInfo().environment["QUIET"] != nil
 let useDebug = ProcessInfo().environment["DEBUG"] != nil
+let commands = [
+  "is_repository", "remotes", "full_branch_name", "branch_name", "full_sha", "sha", "task", "commit_with_task", "reset", "cleanup", "delete", "list-commands",
+  "start", "refresh", "finish", "full_finish", "fast_commit", "release", "import",
+  "start_from_release", "refresh_from_release", "finish_to_release", "full_finish_to_release", "import_release", "delete_release"
+  //"fbn", "bn", "t", "ct", "cat", "d", "s", "r", "f", "ff", "fc", "rt", "i", "rs", "rr", "rf", "rff", "ri", "rd"
+]
 
 func showExit(_ result: Int32) {
   if !quiet {
@@ -538,6 +544,10 @@ func main(){
     case "delete_release", "rd":
       isRepository()
       workflowDeleteRelease(otherArgs)
+    case "list-commands":
+      for c in commands {
+        print(c)
+      }
     default:
       print("Usage: \(CommandLine.arguments[0]) COMMAND [ARGS...]")
   }

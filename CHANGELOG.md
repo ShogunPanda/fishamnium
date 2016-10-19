@@ -1,3 +1,7 @@
+### 2016-10-19 - 3.1
+
+* Refactored helpers completions.
+
 ### 2016-10-14 - 3.0.6
 
 * Minor fast-commit issue.
