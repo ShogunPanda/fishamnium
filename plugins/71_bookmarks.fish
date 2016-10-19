@@ -8,6 +8,10 @@ function l --description "Show all bookmarks."
   eval ~/.fishamnium/helpers/fishamnium_bookmarks list $argv
 end
 
+function b --description "Show a bookmark."
+  ~/.fishamnium/helpers/fishamnium_bookmarks get $argv
+end
+
 function c --description "Change current directory to a saved bookmark."
   set -l OUTPUT (eval ~/.fishamnium/helpers/fishamnium_bookmarks get $argv)
   [ $status = 0 ]; and cd "$OUTPUT"

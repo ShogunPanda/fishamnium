@@ -4,6 +4,11 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
-complete -c g -f -a '(~/.fishamnium/helpers/fishamnium_git list-commands)'
+# Bookmarks
+complete -c b -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --names-only)'
 complete -c c -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --names-only)'
 complete -c d -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --names-only)'
+
+# GIT
+complete -c g -f -a '(~/.fishamnium/helpers/fishamnium_git list-commands)'
+

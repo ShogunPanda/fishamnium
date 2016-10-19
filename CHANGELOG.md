@@ -1,3 +1,7 @@
+### 2016-10-19 - 3.1.1
+
+* Added single bookmark shortcut.
+
 ### 2016-10-19 - 3.1
 
 * Refactored helpers completions.
