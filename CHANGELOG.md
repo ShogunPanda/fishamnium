@@ -1,3 +1,7 @@
+### 2016-12-09 - 3.2.0
+
+* Added `e` and `o` commands to the bookmark helper to edit bookmarks.
+
 ### 2016-10-19 - 3.1.2
 
 * Bugfix.

@@ -13,9 +13,19 @@ function b --description "Show a bookmark."
   [ $status = 0 ]; and echo "$OUTPUT"
 end
 
+function e --description "Edits a bookmark using the current terminal editor."
+  set -l OUTPUT (eval ~/.fishamnium/helpers/fishamnium_bookmarks get $argv)
+  [ $status = 0 ]; and eval $EDITOR "$OUTPUT"
+end
+
 function c --description "Change current directory to a saved bookmark."
   set -l OUTPUT (eval ~/.fishamnium/helpers/fishamnium_bookmarks get $argv)
   [ $status = 0 ]; and cd "$OUTPUT"
+end
+
+function o --description "Edits a bookmark using the current editor."
+  set -l OUTPUT (eval ~/.fishamnium/helpers/fishamnium_bookmarks get $argv)
+  [ $status = 0 ]; and eval $GEDITOR "$OUTPUT"
 end
 
 function s --description "Saves the current directory as new bookmark."

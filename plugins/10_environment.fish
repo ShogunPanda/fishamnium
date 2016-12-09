@@ -5,6 +5,7 @@
 #
 
 set -x -g EDITOR "nano"
+set -x -g GEDITOR "code"
 set -x -g fish_greeting
 
 function fishamnium_reload --description "Reloads Fishamnium"

@@ -8,6 +8,8 @@
 complete -c b -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --names-only)'
 complete -c c -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --names-only)'
 complete -c d -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --names-only)'
+complete -c e -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --names-only)'
+complete -c o -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --names-only)'
 
 # GIT
 complete -c g -f -a '(~/.fishamnium/helpers/fishamnium_git list-commands)'
