@@ -1,3 +1,9 @@
+### 2017-01-20 - 3.3.0
+
+* Replaced `nvm` with `n` (and `FISHAMNIUM_THEME_SHOW_NVM` with `FISHAMNIUM_THEME_SHOW_NODE` option) and added yarn support.
+* Replaced `rvm` with `rbenv` (and `FISHAMNIUM_THEME_SHOW_RVM` with `FISHAMNIUM_THEME_SHOW_RUBY` option).
+* Cleanup.
+
 ### 2016-12-09 - 3.2.0
 
 * Added `e` and `o` commands to the bookmark helper to edit bookmarks.

@@ -12,6 +12,3 @@ function fishamnium_reload --description "Reloads Fishamnium"
   echo "Reloading Fishamnium ..."
   . ~/.fishamnium/loader.fish
 end
-
-set FISHAMNIUM_NODE_DEFAULT (cat ~/.nvm/alias/default)
-set -x -g FISHAMNIUM_NODE "~/.nvm/versions/node/v$FISHAMNIUM_NODE_DEFAULT/bin/node"

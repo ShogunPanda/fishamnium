@@ -13,9 +13,7 @@ contents_directory = File.dirname(__FILE__)
 quiet = (ENV["FISHAMNIUM_QUIET"] =~ /^(1|on|true|yes|t|y)$/i)
 helpers = ["fishamnium_bookmarks", "fishamnium_git"]
 external_scripts = {
-  "plugins.rvm" => ["plugins/21_rvm", "https://raw.githubusercontent.com/lunks/fish-nuggets/master/functions/rvm.fish"],
-  "plugins.nvm" => ["plugins/41_nvm", "https://raw.githubusercontent.com/passcod/nvm-fish-wrapper/master/nvm.fish"],
-  "completions.git" => ["completions/31_git", "https://raw.github.com/zmalltalker/fish-nuggets/master/completions/git.fish"]
+  # name => [path, url]
 }
 
 desc "Releases a new version."

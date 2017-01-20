@@ -24,6 +24,7 @@ function fish_prompt -d "Write out the prompt"
   set -l yellow (set_color -o yellow)
   set -l green (set_color -o green)
   set -l red (set_color -o red)
+  set -l black (set_color -o black)
   set -l dir (set_color -o blue)
   set -l branch (set_color -o magenta)
   set -l commit (set_color magenta)
@@ -67,19 +68,19 @@ function fish_prompt -d "Write out the prompt"
   # User and host
   printf '\n%s[%s%s@%s' $yellow $user_color $user (hostname -s)
 
-  # RVM
-  if [ "$FISHAMNIUM_THEME_SHOW_RVM" != "" ]
-    if contains "22_rvm_prompt.fish" $FISHAMNIUM_LOADED_PLUGINS
-      set -l current_rvm (which ruby | sed -E -e "s#.+rubies/(.+)/bin/ruby#\1#" -e "s#^ruby-##")
-      [ "$current_rvm" != "" ]; and printf ' %srvm:%s' $red $current_rvm
+  # Ruby
+  if [ "$FISHAMNIUM_THEME_SHOW_RUBY" != "" ]
+    if contains "51_ruby.fish" $FISHAMNIUM_LOADED_PLUGINS
+      set -l current_ruby (cat ~/.rbenv/version ^ /dev/null)
+      [ "$current_ruby" != "" ]; and printf ' %sruby:%s' $black $current_ruby
     end
   end
 
-  # NVM
-  if [ "$FISHAMNIUM_THEME_SHOW_NVM" != "" ]
-    if contains "41_nvm.fish" $FISHAMNIUM_LOADED_PLUGINS
-      set -l current_nvm (which node | sed -E -e "s#.+versions/node/(.+)/bin/node#\1#" -e "s#^v##")
-      [ "$current_nvm" != "" ]; and printf ' %snvm:%s' $red $current_nvm
+  # Node.js
+  if [ "$FISHAMNIUM_THEME_SHOW_NODE" != "" ]
+    if contains "41_node.fish" $FISHAMNIUM_LOADED_PLUGINS
+      set -l current_node (cat $N_PREFIX/active ^ /dev/null)
+      [ "$current_node" != "" ]; and printf ' %snode:%s' $black $current_node
     end
   end
 

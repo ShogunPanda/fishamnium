@@ -4,4 +4,5 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
-set -x -g PATH $PATH ./node_modules/.bin
+set -x -g PATH ./node_modules/.bin $PATH
+set -x -g PATH ~/.yarn/bin $PATH

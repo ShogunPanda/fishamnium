@@ -4,12 +4,6 @@ Some useful shell extension for fish shell.
 
 https://sw.cowtech.it/fishamnium
 
-## Prerequisites
-
-To use git and bookmarks functions you need to have [Node.js 6+](https://nodejs.org) installed.
-
-We suggest to install it using NVM, by following this [instructions](https://github.com/creationix/nvm#installation).
-
 ## Install
 
 Type the following inside a fish shell and you're done!
@@ -40,9 +34,3 @@ set -e FISHAMNIUM_OPERATION
 Copyright (C) 2013 and above Shogun (shogun@cowtech.it).
 
 Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
-
-### External scripts included
-
-* `plugins/21_rvm.fish` was extracted from [lunks/fishnuggets](https://www.github.com/zmalltalker/lunks-nuggets).
-* `plugins/41_nvm.fish` was extracted from [passcod/nvm-fish-wrapper](https://www.github.com/passcod/nvm-fish-wrapper).
-* `completions/31_git.fish` was extracted from [lunks/fish-nuggets](https://www.github.com/lunks/fish-nuggets).

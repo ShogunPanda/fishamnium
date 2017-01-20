@@ -4,11 +4,12 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
-function rvm_current
-  which rvm-prompt > /dev/null
-  and test -n (rvm-prompt i)
-  and set -l rv
-  and rvm-prompt i v g
+function n
+  bash $N_PREFIX/bin/n $argv
+  set --local n_exit $status
+  node -v ^ /dev/null | sed -e "s#^v##" > $N_PREFIX/active 
+  return $n_exit
 end
 
-rvm reload > /dev/null ^ /dev/null
+set -x -g N_PREFIX ~/.nodejs
+set -x -g PATH ~/.nodejs/bin $PATH
