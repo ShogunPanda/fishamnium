@@ -8,7 +8,7 @@ let useDebug = ProcessInfo().environment["DEBUG"] != nil
 let commands = [
   "is_repository", "remotes", "full_branch_name", "branch_name", "full_sha", "sha", "task", "commit_with_task", "commit_all_with_task",
   "reset", "cleanup", "delete", "list-commands",
-  "start", "refresh", "finish", "full_finish", "fast_commit", "fast_pull_request", "release", "import",
+  "start", "refresh", "finish", "full_finish", "fast_commit", "pull_request", "fast_pull_request", "release", "import",
   "start_from_release", "refresh_from_release", "finish_to_release", "full_finish_to_release", "import_release", "delete_release"
   //"fbn", "bn", "t", "ct", "cat", "d", "s", "r", "f", "ff", "pr", fc", "fpr" "rt", "i", "rs", "rr", "rf", "rff", "ri", "rd"
 ]

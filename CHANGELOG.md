@@ -1,3 +1,7 @@
+### 2017-02-08 - 3.4.1
+
+* Minor fix.
+
 ### 2017-02-08 - 3.4.0
 
 * Added `pull_request` and `fast_pull_request` to the git helper.
