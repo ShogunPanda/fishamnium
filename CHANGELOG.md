@@ -1,3 +1,7 @@
+### 2017-02-08 - 3.4.0
+
+* Added `pull_request` and `fast_pull_request` to the git helper.
+
 ### 2017-01-20 - 3.3.0
 
 * Replaced `nvm` with `n` (and `FISHAMNIUM_THEME_SHOW_NVM` with `FISHAMNIUM_THEME_SHOW_NODE` option) and added yarn support.

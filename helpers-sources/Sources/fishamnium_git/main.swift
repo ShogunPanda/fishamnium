@@ -2,13 +2,15 @@ import Foundation
 let pwd = FileManager.default.currentDirectoryPath
 let defaultBranch = ProcessInfo().environment["GIT_DEFAULT_BRANCH"] ?? "development"
 let defaultRemote = ProcessInfo().environment["GIT_DEFAULT_REMOTE"] ?? "origin"
+let openPath = ProcessInfo().environment["OPEN"] ?? "/usr/bin/open"
 let quiet = ProcessInfo().environment["QUIET"] != nil
 let useDebug = ProcessInfo().environment["DEBUG"] != nil
 let commands = [
-  "is_repository", "remotes", "full_branch_name", "branch_name", "full_sha", "sha", "task", "commit_with_task", "reset", "cleanup", "delete", "list-commands",
-  "start", "refresh", "finish", "full_finish", "fast_commit", "release", "import",
+  "is_repository", "remotes", "full_branch_name", "branch_name", "full_sha", "sha", "task", "commit_with_task", "commit_all_with_task",
+  "reset", "cleanup", "delete", "list-commands",
+  "start", "refresh", "finish", "full_finish", "fast_commit", "fast_pull_request", "release", "import",
   "start_from_release", "refresh_from_release", "finish_to_release", "full_finish_to_release", "import_release", "delete_release"
-  //"fbn", "bn", "t", "ct", "cat", "d", "s", "r", "f", "ff", "fc", "rt", "i", "rs", "rr", "rf", "rff", "ri", "rd"
+  //"fbn", "bn", "t", "ct", "cat", "d", "s", "r", "f", "ff", "pr", fc", "fpr" "rt", "i", "rs", "rr", "rf", "rff", "ri", "rd"
 ]
 
 func showExit(_ result: Int32) {
@@ -141,9 +143,9 @@ func gitChain(_ steps: [[String]]) {
   }
 }
 
-func taskOutput(_ task: Process) -> String{
+func taskOutput(_ task: Process, _ useStandardError: Bool = false) -> String{
   // Read stdout
-  let outputData = (task.standardOutput as! Pipe).fileHandleForReading.readDataToEndOfFile()
+  let outputData = ((useStandardError ? task.standardError : task.standardOutput) as! Pipe).fileHandleForReading.readDataToEndOfFile()
 
   // Trim whitespaces and newlines
   return String(data: outputData, encoding: String.Encoding.utf8)!.trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet.newlines))
@@ -246,7 +248,7 @@ func getTaskID() -> String {
   return task
 }
 
-func commitWithTask(_ internalMessage: String?, _ task: String?, _ inputArgs: [String]){
+func commitWithTask(_ internalMessage: String?, _ task: String?, _ inputArgs: [String], _ addAll: Bool = false){
   var args = inputArgs
   guard internalMessage != nil || !args.isEmpty else { return fail("Please provide a commit message.") }
 
@@ -264,6 +266,10 @@ func commitWithTask(_ internalMessage: String?, _ task: String?, _ inputArgs: [S
 
   // Manipulate arguments
   args.insert("commit", at: 0)
+
+  if addAll {
+    args.append("-a")
+  }
   args.append("-m")
   args.append("\(message)")
 
@@ -395,8 +401,65 @@ func workflowFastCommit(_ otherArgs: [String]) {
   // Execute the flow
   workflowStart([args["name"]!, args["base"]!, args["remote"]!])
   workflowDebugStep("Commiting with message: \"\(args["message"]!)\" ...")
-  commitWithTask(args["message"], getTaskID(), ["-a"])
+  commitWithTask(args["message"], getTaskID(), [], true)
   workflowFinish([args["base"]!, args["remote"]!], true, args["name"]!)
+}
+
+func workflowPullRequest(_ otherArgs: [String], _ currentBranch: String? = nil) {
+  let current = currentBranch ?? getBranchName()
+
+  workflowRefresh(otherArgs, current)
+
+  // Parse args
+  let args: [String: String] = parseArguments(otherArgs, [], ["base", "remote"])
+
+  // Push the branch and parse remote output
+  workflowDebugStep("Pushing branch \"\(current)\" to \"\(args["remote"]!)\"...")
+
+  // Detect the link to create the PR
+  let url = taskOutput(git(["push", "-f", args["remote"]!, current]), true)
+    .components(separatedBy: "\n")
+    .map { (iline: String) -> String in
+      let line = iline.replacingOccurrences(of: "remote:", with: "").trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet.newlines))
+
+      if line.hasPrefix("To github.com:") { // Little fix for GitHub
+        let repository = line.replacingOccurrences(of: "To github.com:", with: "").replacingOccurrences(of: ".git", with: "")
+        return "https://github.com/\(repository)/compare/\(current)?expand=1"
+      } else {
+        return line
+      }
+    }
+    .filter {
+      return
+        ($0.hasPrefix("https://gitlab.com/") && $0.contains("/merge_requests/new")) || // GitLab
+        ($0.hasPrefix("https://github.com/") && $0.contains("/compare")) || // GitHub
+        ($0.contains("/compare/commits?sourceBranch=")) // JIRA
+    }
+    .first
+
+  // Delete the branch locally and switch to base branch
+  gitChain([
+    ["checkout", args["base"]!],
+    ["branch", "-D", current]
+  ])
+
+  if url == nil {
+    fail("Could not detect a Pull Request creation URL. Please take care of this last step manually.")
+  }
+
+  workflowDebugStep("Opening URL \(url!) to continue the Pull Request creation ...")
+  Process.launchedProcess(launchPath: openPath, arguments: [url!])
+}
+
+func workflowFastPullRequest(_ otherArgs: [String]) {
+  // Parse args
+  let args: [String: String] = parseArguments(otherArgs, ["name", "message"], ["base", "remote"])
+
+  // Execute the flow
+  workflowStart([args["name"]!, args["base"]!, args["remote"]!])
+  workflowDebugStep("Commiting with message: \"\(args["message"]!)\" ...")
+  commitWithTask(args["message"], getTaskID(), [], true)
+  workflowPullRequest([args["base"]!, args["remote"]!])
 }
 
 func workflowRelease(_ otherArgs: [String]){
@@ -413,7 +476,7 @@ func workflowRelease(_ otherArgs: [String]){
   gitChain([
     ["push", "-f", args["remote"]!, release],
     ["checkout", current],
-    ["branch", "-D", release],
+    ["branch", "-D", release]
   ])
 }
 
@@ -491,9 +554,9 @@ func main(){
       if !task.isEmpty {
         print(task)
       }
-    case "commit_with_task", "ct", "cat":
+    case "commit_with_task", "commit_all_with_task", "ct", "cat":
       isRepository()
-      commitWithTask(nil, getTaskID(), otherArgs)
+      commitWithTask(nil, getTaskID(), otherArgs, CommandLine.arguments[1] == "cat")
     case "reset":
       isRepository()
       hardReset()
@@ -519,7 +582,12 @@ func main(){
     case "fast_commit", "fc":
       isRepository()
       workflowFastCommit(otherArgs)
-
+    case "pull_request", "pr":
+      isRepository()
+      workflowPullRequest(otherArgs)
+    case "fast_pull_request", "fpr":
+      isRepository()
+      workflowFastPullRequest(otherArgs)
     case "release", "rt":
       isRepository()
       workflowRelease(otherArgs)

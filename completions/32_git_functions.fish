@@ -53,7 +53,7 @@ for i in g_start g_release
   complete -c $i -n "__fish_command_index 3" -f -a "(__fish_git_remotes)" --description "Remote"
 end
 
-for i in g_refresh g_finish g_full_finish
+for i in g_refresh g_finish g_full_finish g_pull_request
   complete -c $i -n "__fish_command_index 1" -f -a "(__fish_git_branches)" --description "Branch"
   complete -c $i -n "__fish_command_index 2" -f -a "(__fish_git_remotes)" --description "Remote"
 end

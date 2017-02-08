@@ -68,6 +68,14 @@ function g_fast_commit --description "Creates a local branch, commit changes and
   eval ~/.fishamnium/helpers/g fast_commit $argv
 end
 
+function g_pull_request --description "Sends a Pull Request and deletes the local branch."
+  eval ~/.fishamnium/helpers/g pull_request $argv
+end
+
+function g_fast_pull_request --description "Creates a local branch, commit changes and then sends a Pull Request."
+  eval ~/.fishamnium/helpers/g fast_pull_request $argv
+end
+
 function g_reset --description "Cleans up a local branch."
   eval ~/.fishamnium/helpers/g reset $argv
 end
