@@ -4,23 +4,27 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
-set required_fish_version 2
-set current_fish_version (fish --version ^| cut -d ' ' -f 3 | cut -d . -f 1)
-set command $1
 set destdir /tmp/fishamnium-(date +%Y%m%d%H%M%S)
-set rootdir ~/.fishamnium
 
-if [ $required_fish_version -gt $current_fish_version ];
-  echo "fishamnium requires at least Fish $required_fish_version.0 (you have $current_fish_version). You can obtain the latest version at http://fishshell.com/"
-  exit 1
+if [ "$FISHAMNIUM_OPERATION" = "uninstall" ]
+  set -l rootdir ~/.fishamnium
+  echo "* Removing directory $rootdir ..."; and /bin/rm -rf "$rootdir"
+  echo -e "\n-------\n\nfishamnium has been uninstalled. Enabling it is left to you."
+  echo -e "To enable, remove the following line to $HOME/.config/fish/config.fish:\n"
+  echo -e "source ~/.fishamnium/loader.fish\n"
+  echo -e "Hope you liked it. Farewell! ;)"
+  exit 0
 end
 
-[ "$FISHAMNIUM_OPERATION" != "uninstall" ]; and set FISHAMNIUM_OPERATION "install"
-echo "Running: git clone https://github.com/ShogunPanda/fishamnium -q -- \"$destdir\""; and git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
-and echo "Running: cd \"$destdir\""; and cd "$destdir"
-and echo "Running: mkdir -p \"$rootdir\""; and mkdir -p "$rootdir"
-and echo "Running: /bin/cp -a -f loader.fish completions helpers plugins themes \"$rootdir\""; and /bin/cp -a -f loader.fish completions helpers plugins themes "$rootdir"
-and echo "Running: /bin/ln -s -f \"$rootdir/helpers/fishamnium_git\" \"$rootdir/helpers/g\""; and /bin/ln -s -f "$rootdir/helpers/fishamnium_git" "$rootdir/helpers/g"
-and echo "Running: /bin/ln -s -f \"$rootdir/helpers/fishamnium_bookmarks\" \"$rootdir/helpers/d\""; and /bin/ln -s -f "$rootdir/helpers/fishamnium_bookmarks" "$rootdir/helpers/d"
-and echo "Running: chmod -R 755 \"$rootdir\""; and chmod -R 755 "$rootdir"
-and echo "Running: /bin/rm -rf \"$destdir\""; and /bin/rm -rf "$destdir"
+if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
+  echo "Cloning fishamnium into $destdir"; and git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
+  cd $destdir
+  yarn install fs-extra
+end
+
+yarn run perform-install
+
+if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
+  cd $HOME
+  and /bin/rm -rf "$destdir"
+end

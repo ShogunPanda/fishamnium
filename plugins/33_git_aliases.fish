@@ -5,6 +5,7 @@
 #
 
 # Status
+alias g='~/.fishamnium/helpers/fishamnium_git'
 alias gst='git status'
 alias gss='git status -s'
 

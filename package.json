@@ -1,0 +1,34 @@
+{
+  "name": "fishamnium",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Some useful shell extension for fish shell.",
+  "scripts": {
+    "dev": "nodemon -w helpers/fishamniumd helpers/fishamniumd",
+    "lint": "./node_modules/.bin/eslint helpers/* utils/*",
+    "convert-bookmarks": "node utils/convert-bookmarks",
+    "generate-git-autocomplete": "FISHAMNIMUM_GENERATING_AUTOCOMPLETE=true node utils/generate-git-autocomplete > completions/71_fishamnium_helpers_git.fish",
+    "perform-install": "node utils/install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShogunPanda/fishamnium"
+  },
+  "keywords": [],
+  "author": "Shogun <shogun@cowtech.it>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ShogunPanda/fishamnium/issues"
+  },
+  "homepage": "https://sw.cowtech.it/fishamnium",
+  "dependencies": {
+    "argsplit": "~1.0",
+    "commander": "~2.9"
+  },
+  "devDependencies": {
+    "eslint": "~> 3.18",
+    "eslint-config-cowtech": "~> 3.18",
+    "fs-extra": "^2.1.2",
+    "sprintf-js": "~1.0"
+  }
+}

@@ -1,3 +1,10 @@
+### 2017-04-06 - 4.0.0
+
+* Change format of bookmarks file. See README.md for more information on how to upgrade.
+* Renamed `is_git_repository` to `g_is_repository` and replace `git_` prefix with `g_` in `32_git_functions.fish`.
+* Rewritten helpers in Node.js (which now is a dependency along with Yarn) to maximize portability.
+* Rewritten core installer in Node.js
+
 ### 2017-02-08 - 3.4.1
 
 * Minor fix.

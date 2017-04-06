@@ -33,17 +33,6 @@ task :release, :version, :changelog do |_, args|
   system("git push -f github --tags")
 end
 
-namespace :build do
-  desc "Build helpers."
-  task :helpers do |_, args|
-
-    Dir.chdir("helpers-sources")
-    system("swift build -c release")
-    FileUtils.mv(helpers.map { |h| ".build/release/#{h}" }, "../helpers/", verbose: !quiet)
-    FileUtils.rm_rf(".build")
-  end
-end
-
 namespace :external do
   desc "Updates an external script."
   task :update, :name do |_, args|
@@ -59,58 +48,3 @@ namespace :external do
     end
   end
 end
-
-desc "Installs the environment."
-task :install do
-  files = FileList["loader.fish", "completions", "plugins", "helpers", "themes"]
-  FileUtils.rm_r(root)
-  FileUtils.mkdir_p(root)
-  FileUtils.cp_r(files, root, verbose: !quiet)
-  FileUtils.chmod_R(0755, root, verbose: false) # Never show this due to https://bugs.ruby-lang.org/issues/8547
-  FileUtils.ln_sf("#{root}/helpers/fishamnium_git", "#{root}/helpers/g", verbose: !quiet)
-  FileUtils.ln_sf("#{root}/helpers/fishamnium_bookmarks", "#{root}/helpers/d", verbose: !quiet)
-
-  puts <<-EOMESSAGE
--------
-fishamnium has been installed. Enabling it is left to you.
-To enable, add the following line to #{home}/.config/fish/config.fish:
-
-. #{root}/loader.fish
-
-To modify the behavior, modify the FISHAMIUM_PLUGINS, FISHAMIUM_COMPLETION and FISHAMIUM_THEME environment variables before that line.
-Enjoy! ;)"
-  EOMESSAGE
-end
-
-desc "Uninstalls the environment."
-task :uninstall do
-  FileUtils.rm_r(root, verbose: !quiet)
-  puts <<-EOMESSAGE
--------
-fishamnium has been uninstalled. Disabling it is left to you.
-To disable, remove the following line from #{home}/.config/fish/config.fish:
-
-. #{root}/loader.fish
-
-Hope you liked it. Farewell! ;)"
-  EOMESSAGE
-end
-
-namespace :external do
-  desc "Updates an external script."
-  task :update, :name do |_, args|
-    script_arg = args[:name].to_s
-
-    raise RuntimeError.new("You have to specify the name of script to update. Valid scripts are: #{external_scripts.keys.join(", ")}.") if script_arg.strip.length == 0
-    raise RuntimeError.new("External script #{script_arg} is not valid. Valid scripts are: #{external_scripts.keys.join(", ")}.") if !external_scripts[script_arg]
-    final_script = external_scripts[script_arg]
-
-    open(contents_directory + "/#{final_script[0]}.fish", "w", 0755) do |destination|
-      open(final_script[1]) do |source|
-        destination.write(source.read)
-      end
-    end
-  end
-end
-
-task default: ["install"]

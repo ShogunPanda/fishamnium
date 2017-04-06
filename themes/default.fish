@@ -54,15 +54,11 @@ function fish_prompt -d "Write out the prompt"
   printf ' %s%s' $dir (__truncated_cwd)
 
   # GIT
-  if is_git_repository
-    printf ' %s(%s %s%s%s)' $branch (git_branch) $commit (git_sha) $branch
-    set -l git_dirty (git status -s)
-
-    if [ "$git_dirty" != "" ]
-      printf ' %s✗' $red
-    else
-      printf ' %s✔' $green
-    end
+  set -l git_summary (g_summary)
+  if [ "$git_summary" != "" ]
+    set -l git_summary (string split " " $git_summary)
+    string match -r "^true" $git_summary[3] > /dev/null; and set git_status $red "✗"; or set -l git_status $green "✔"
+    printf ' %s(%s %s%s%s) %s%s' $branch $git_summary[1] $commit $git_summary[2] $branch $git_status[1] $git_status[2]
   end
 
   # User and host

@@ -4,6 +4,10 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
+function fishamnium_bookmarks --description "Manage bookmarks."
+  eval ~/.fishamnium/helpers/fishamnium_bookmarks $argv
+end
+
 function l --description "Show all bookmarks."
   eval ~/.fishamnium/helpers/fishamnium_bookmarks list $argv
 end

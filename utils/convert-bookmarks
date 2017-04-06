@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const filePath = `${process.env.HOME}/.fishamnium_bookmarks.json`;
+const source = require(filePath);
+
+const capitalize = function(input){
+  return input
+    .split("_")
+    .map(s => `${s[0].toUpperCase()}${s.substring(1).toLowerCase()}`)
+    .join(" ");
+};
+
+if(!Array.isArray(source)){
+  const destination = Object.keys(source).sort().map(bookmark => {
+    const rootPath = source[bookmark].replace(/\//g, "/").replace("$HOME", "$home");
+    return {name: capitalize(bookmark), bookmark, rootPath, paths: [], group: ""};
+  });
+
+  fs.writeFileSync(filePath, JSON.stringify(destination, null, 2), "utf8");
+}else{
+  console.error("File has already been converted.");
+  process.exitCode = 1;
+}
