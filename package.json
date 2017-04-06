@@ -1,11 +1,12 @@
 {
   "name": "fishamnium",
-  "version": "1.0.0",
+  "version": "3.4.1",
   "private": true,
   "description": "Some useful shell extension for fish shell.",
   "scripts": {
     "dev": "nodemon -w helpers/fishamniumd helpers/fishamniumd",
     "lint": "./node_modules/.bin/eslint helpers/* utils/*",
+    "postversion": "git push origin && git push origin -f --tags",
     "convert-bookmarks": "node utils/convert-bookmarks",
     "generate-git-autocomplete": "FISHAMNIMUM_GENERATING_AUTOCOMPLETE=true node utils/generate-git-autocomplete > completions/71_fishamnium_helpers_git.fish",
     "perform-install": "node utils/install"
