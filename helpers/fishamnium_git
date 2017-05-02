@@ -456,7 +456,7 @@ Git = {
 
   async cleanup(){
     // Get branches
-    const result = await Git.executeInternal("branch", "--merged");
+    const result = await Git.executeInternal("branch --merged");
 
     if(result.status !== 0)
       return Git.fail("Cannot get branches.");
@@ -471,6 +471,21 @@ Git = {
     // Perform command
     try{
       return Git.execute(`branch -D ${branches.join(" ")}`, false, true);
+    }catch(errorCode){
+      return Git.complete(errorCode);
+    }
+  },
+
+  async update(branch, {remote}){
+    if(!branch)
+      branch = Git.cli.defaultBranch;
+    if(!remote)
+      remote = Git.cli.defaultRemote;
+
+    try{
+      await Git.execute("fetch", false, true);
+      await Git.execute(`pull ${remote} ${branch}`, false, true);
+      return true;
     }catch(errorCode){
       return Git.complete(errorCode);
     }
@@ -522,6 +537,10 @@ Git = {
     cli.command("cleanup")
       .description("Deletes all non default branches.")
       .action(Git.performAction(cli, Git.cleanup));
+
+    cli.command("update [branch]").alias("u")
+      .description("Fetch from remote and pulls a a branch.")
+      .action(Git.performAction(cli, Git.update));
 
     cli.command("delete <branch...>").alias("d")
       .option("-r,--remote <REMOTE>", "The remote to act on.", cli.defaultRemote)

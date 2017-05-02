@@ -1,3 +1,8 @@
+### 2017-05-02 - 4.1.0
+
+* Added `update` to the git helper to fetch and pull a branch.
+* Bugfix for `g cleanup`.
+
 ### 2017-04-06 - 4.0.0
 
 * Change format of bookmarks file. See README.md for more information on how to upgrade.
