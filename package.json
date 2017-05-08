@@ -7,7 +7,7 @@
     "dev": "nodemon -w helpers/fishamniumd helpers/fishamniumd",
     "lint": "./node_modules/.bin/eslint helpers/* utils/*",
     "release": "node utils/release",
-    "postrelease1": "git push origin && git push origin -f --tags",
+    "postrelease": "git push origin && git push origin -f --tags",
     "convert-bookmarks": "node utils/convert-bookmarks",
     "generate-git-autocomplete": "FISHAMNIMUM_GENERATING_AUTOCOMPLETE=true node utils/generate-git-autocomplete > completions/71_fishamnium_helpers_git.fish",
     "local-install": "node utils/install"
