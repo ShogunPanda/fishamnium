@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+const semver = require("semver");
+const fs = require("fs");
+const childProcess = require("child_process");
+const moment = require("moment");
+
+const version = process.argv[2];
+const newVersion = semver.inc(require("../package.json").version, version);
+const changelogEntry = process.argv[3];
+
+// Update main file
+const loader = fs.readFileSync("./loader.fish", "utf8");
+fs.writeFileSync("./loader.fish", loader.replace(/set -x -g FISHAMNIUM_VERSION.+/, `set -x -g FISHAMNIUM_VERSION "${newVersion}"`), "utf8");
+
+// Update Changelog
+if(changelogEntry){
+  const changelog = fs.readFileSync("./CHANGELOG.md", "utf8");
+  fs.writeFileSync("./CHANGELOG.md", `### ${moment().format("YYYY-MM-DD")} - ${newVersion}\n\n* ${changelogEntry}\n\n${changelog}`, "utf8");
+  childProcess.execSync('git commit -a -m "Updated CHANGELOG.md"');
+}
+
+// Update version
+if(version)
+  childProcess.execSync(`npm version ${version}`);
