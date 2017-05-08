@@ -1,3 +1,11 @@
+### 2017-05-08 - 4.1.1
+
+* Bugfix for `g cleanup`.
+
+### 2017-05-08 - 4.1.1
+
+* Bugfix for `g cleanup`.
+
 ### 2017-05-02 - 4.1.0
 
 * Added `update` to the git helper to fetch and pull a branch.

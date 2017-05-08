@@ -462,7 +462,7 @@ Git = {
       return Git.fail("Cannot get branches.");
 
     // Filter branches
-    const filteredBranch = ["master", Git.cli.defaultBranch];
+    const filteredBranch = ["master", Git.cli.defaultBranch, await Git.branchName()];
     const branches = result.stdout.trim().split("\n").map(b => b.replace(/^\s*\*/, "").trim()).filter(b => !filteredBranch.includes(b));
 
     if(!branches.length)

@@ -22,7 +22,7 @@ if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
   yarn install fs-extra
 end
 
-yarn run perform-install
+yarn run local-install
 
 if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
   cd $HOME
