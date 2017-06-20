@@ -1,3 +1,7 @@
+### 2017-06-20 - 4.1.3
+
+* Fixed autocompletion.
+
 ### 2017-05-08 - 4.1.2
 
 * Bugfix for `g cleanup`.

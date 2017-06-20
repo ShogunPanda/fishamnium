@@ -5,7 +5,7 @@ const {sprintf} = require("sprintf-js");
 const Git = require("../helpers/fishamnium_git");
 
 const Autocomplete = {
-  header: "complete -c r -c fishamnium_git",
+  header: "complete -c g -c fishamnium_git",
 
   printOption(option, condition, args = null, description = null){
     console.log(sprintf(
