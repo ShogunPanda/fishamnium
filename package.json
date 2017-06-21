@@ -1,6 +1,6 @@
 {
   "name": "fishamnium",
-  "version": "4.1.2",
+  "version": "4.2.0",
   "private": true,
   "description": "Some useful shell extension for fish shell.",
   "scripts": {
