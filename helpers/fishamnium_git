@@ -491,6 +491,22 @@ Git = {
     }
   },
 
+  async push(_u, {remote}){
+    if(!remote)
+      remote = Git.cli.defaultRemote;
+
+    try{
+      // Get the task name
+      const bn = await Git.branchName(false);
+
+      await Git.execute(`push ${remote} ${bn}`, false, true);
+      return true;
+    }catch(errorCode){
+      console.log(errorCode);
+      return Git.complete(errorCode);
+    }
+  },
+
   async delete(standalone, branches, {remote}){
     if(!Array.isArray(branches))
       branches = [branches];
@@ -541,6 +557,11 @@ Git = {
     cli.command("update [branch]").alias("u")
       .description("Fetch from remote and pulls a a branch.")
       .action(Git.performAction(cli, Git.update));
+
+    cli.command("push").alias("p")
+      .option("-r,--remote <REMOTE>", "The remote to act on.", cli.defaultRemote)
+      .description("Pushes the current branch to the remote.")
+      .action(Git.performAction(cli, Git.push, null));
 
     cli.command("delete <branch...>").alias("d")
       .option("-r,--remote <REMOTE>", "The remote to act on.", cli.defaultRemote)

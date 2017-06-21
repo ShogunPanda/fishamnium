@@ -1,3 +1,7 @@
+### 2017-06-21 - 4.2.0
+
+* Added  to the git helper to push the current branch.
+
 ### 2017-06-20 - 4.1.3
 
 * Fixed autocompletion.
