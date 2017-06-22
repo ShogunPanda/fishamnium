@@ -106,7 +106,7 @@ const Workflow = {
         line = line.replace("remote: ", "").trim();
 
         if(line.match(/^(?:To github\.com:(.+)\.git)$/)) // Fix for Github
-          line = `https://github.com/${RegExp.$1}/compare/${current}?expand=1`;
+          line = `https://github.com/${RegExp.$1}/compare/${base}...${current}?expand=1`;
 
         return line;
       })

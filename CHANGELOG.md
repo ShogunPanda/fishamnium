@@ -1,3 +1,7 @@
+### 2017-06-22 - 4.2.2
+
+* Bugfix for GitHub PRs.
+
 ### 2017-06-22 - 4.2.1
 
 * Bugfix on reading local configuration file.
