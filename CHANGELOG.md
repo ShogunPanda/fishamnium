@@ -1,3 +1,7 @@
+### 2017-06-22 - 4.2.1
+
+* Bugfix on reading local configuration file.
+
 ### 2017-06-21 - 4.2.0
 
 * Added `push` to the git helper to push the current branch.

@@ -244,13 +244,26 @@ Git = {
     }
 
     // Environment variables always overrides configuration file
-    cli.defaultPrefix = process.env.GIT_DEFAULT_PREFIX || "release-";
-    cli.defaultBranch = process.env.GIT_DEFAULT_BRANCH || "development";
-    cli.defaultRemote = process.env.GIT_DEFAULT_REMOTE || "origin";
-    cli.openPath = process.env.OPEN || "/usr/bin/open";
-    cli.prependTask = process.env.GIT_TASK_PREPEND === "true";
-    cli.quiet = process.env.QUIET === "true";
-    cli.debug = process.env.DEBUG === "true";
+    if(!cli.defaultPrefix)
+      cli.defaultPrefix = process.env.GIT_DEFAULT_PREFIX || "release-";
+
+    if(!cli.defaultBranch)
+      cli.defaultBranch = process.env.GIT_DEFAULT_BRANCH || "development";
+
+    if(!cli.defaultRemote)
+      cli.defaultRemote = process.env.GIT_DEFAULT_REMOTE || "origin";
+
+    if(!cli.openPath)
+      cli.openPath = process.env.OPEN || "/usr/bin/open";
+
+    if(!cli.prependTask)
+      cli.prependTask = process.env.GIT_TASK_PREPEND === "true";
+
+    if(!cli.quiet)
+      cli.quiet = process.env.QUIET === "true";
+
+    if(!cli.debug)
+      cli.debug = process.env.DEBUG === "true";
   },
 
   execute(args, internal = false, standalone = false, completeReturn = false){
