@@ -504,7 +504,7 @@ Git = {
     }
   },
 
-  async push(_u, {remote}){
+  async push(_u, {remote, force}){
     if(!remote)
       remote = Git.cli.defaultRemote;
 
@@ -512,10 +512,9 @@ Git = {
       // Get the task name
       const bn = await Git.branchName(false);
 
-      await Git.execute(`push ${remote} ${bn}`, false, true);
+      await Git.execute(`push ${force ? "-f" : ""} ${remote} ${bn}`, false, true);
       return true;
     }catch(errorCode){
-      console.log(errorCode);
       return Git.complete(errorCode);
     }
   },
@@ -573,6 +572,7 @@ Git = {
 
     cli.command("push").alias("p")
       .option("-r,--remote <REMOTE>", "The remote to act on.", cli.defaultRemote)
+      .option("-f,--force", "If to perform a force push.")
       .description("Pushes the current branch to the remote.")
       .action(Git.performAction(cli, Git.push, null));
 

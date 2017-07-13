@@ -1,3 +1,11 @@
+### 2017-07-13 - 4.2.3
+
+* Add force flag to the push command of git helper.
+
+### 2017-07-13 - 4.2.3
+
+* Added `--force` flag to the `push` command of the git helper.
+
 ### 2017-06-22 - 4.2.2
 
 * Bugfix for GitHub PRs.
