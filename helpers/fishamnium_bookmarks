@@ -68,7 +68,7 @@ const Bookmarks = {
     return Bookmarks.success(Bookmarks.resolveDestination(saved));
   },
 
-  create(bookmark = '', name = ''){
+  create(bookmark = '', ...name){
     const bookmarks = Bookmarks.load();
 
     if(!bookmarks)
@@ -89,6 +89,7 @@ const Bookmarks = {
     const rootPath = process.cwd().replace(Bookmarks.rootPathFormatter, '$home');
 
     // Capitalize the name if nothing was given
+    name = name.join(' ');
     if(!name)
       name = Bookmarks.capitalize(bookmark);
 

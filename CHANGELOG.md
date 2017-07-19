@@ -1,3 +1,7 @@
+### 2017-07-19 - 4.3.2
+
+* Fixed name handling.
+
 ### 2017-07-19 - 4.3.1
 
 * Minor bugfix.
