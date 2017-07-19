@@ -92,7 +92,7 @@ const Bookmarks = {
     if(!name)
       name = Bookmarks.capitalize(bookmark);
 
-    bookmarks.push({name: Bookmarks.capitalize(bookmark), bookmark, rootPath, paths: [], group: ''});
+    bookmarks.push({name, bookmark, rootPath, paths: [], group: ''});
 
     return Bookmarks.save(bookmarks);
   },
