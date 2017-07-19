@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 
-const fs = require("fs-extra");
-const path = require("path");
-const childProcess = require("child_process");
-const root = path.resolve(process.env.HOME, ".fishamnium");
+const fs = require('fs-extra');
+const path = require('path');
+const childProcess = require('child_process');
+const root = path.resolve(process.env.HOME, '.fishamnium');
 
-console.log("* Cleaning existing Fishamnium installations ...");
+console.log('* Cleaning existing Fishamnium installations ...');
 fs.removeSync(root);
 fs.ensureDirSync(root);
 
 console.log(`* Copying Fishamnium files into directory ${root} ...`);
-for(const source of ["package.json", "loader.fish", "completions", "helpers", "plugins", "themes"])
+for(const source of ['package.json', 'loader.fish', 'completions', 'helpers', 'plugins', 'themes'])
   fs.copySync(source, path.resolve(root, source));
 
-console.log("* Changing permissions of files to 755 ...");
-childProcess.spawnSync("chmod", ["-R", "755", root], {stdio: "inherit"});
+console.log('* Changing permissions of files to 755 ...');
+childProcess.spawnSync('chmod', ['-R', '755', root], {stdio: 'inherit'});
 
-console.log("* Installing dependencies using Yarn ...");
+console.log('* Installing dependencies using Yarn ...');
 process.chdir(root);
-childProcess.spawnSync("yarn", ["install"], {stdio: "inherit"});
+childProcess.spawnSync('yarn', ['install'], {stdio: 'inherit'});
 
 console.log(`
 -------

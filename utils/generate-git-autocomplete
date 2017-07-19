@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const {sprintf} = require("sprintf-js");
-const Git = require("../helpers/fishamnium_git");
+const fs = require('fs');
+const {sprintf} = require('sprintf-js');
+const Git = require('../helpers/fishamnium_git');
 
 const Autocomplete = {
-  header: "complete -c g -c fishamnium_git",
+  header: 'complete -c g -c fishamnium_git',
 
   printOption(option, condition, args = null, description = null){
     console.log(sprintf(
       "%s -f %s -s %s -l %s %s %s -d '%s'",
-      Autocomplete.header, condition ? `-n '${condition}'` : "",
-      option.short.replace(/^-+/, ""), option.long.replace(/^-+/, ""),
-      option.required !== 0 ? "-r" : "", args ? `-a '${args}'` : "",
+      Autocomplete.header, condition ? `-n '${condition}'` : '',
+      option.short.replace(/^-+/, ''), option.long.replace(/^-+/, ''),
+      option.required !== 0 ? '-r' : '', args ? `-a '${args}'` : '',
       (description || option.description).replace(/'/g, "\\'")
     ));
   },
@@ -20,7 +20,7 @@ const Autocomplete = {
   printArgument(argument, description, condition, noFile = true){
     console.log(sprintf(
       "%s %s %s -a '%s' -d '%s'",
-      Autocomplete.header, noFile ? "-f" : "", condition ? `-n '${condition}'` : "", argument, description.replace(/'/g, "\\'")
+      Autocomplete.header, noFile ? '-f' : '', condition ? `-n '${condition}'` : '', argument, description.replace(/'/g, "\\'")
     ));
   },
 
@@ -31,21 +31,21 @@ const Autocomplete = {
     Git.addWriteCommands(cli);
 
     // Utility functions
-    console.log(fs.readFileSync("./utils/templates/71_fishamnium_helpers_git.fish", "utf8"));
+    console.log(fs.readFileSync('./utils/templates/71_fishamnium_helpers_git.fish', 'utf8'));
     console.log(`${Autocomplete.header} -e`);
 
     // Global options
     for(const opt of cli.options)
-      Autocomplete.printOption(opt, "__fishamnium_git_completion_is_global");
+      Autocomplete.printOption(opt, '__fishamnium_git_completion_is_global');
 
     // Commands
     for(const command of cli.commands){
-      if(command._name === "autocomplete")
+      if(command._name === 'autocomplete')
         continue;
 
-      Autocomplete.printArgument(command._name, command.description(), "__fishamnium_git_completion_is_global");
+      Autocomplete.printArgument(command._name, command.description(), '__fishamnium_git_completion_is_global');
       if(command._alias)
-        Autocomplete.printArgument(command._alias, command.description(), "__fishamnium_git_completion_is_global");
+        Autocomplete.printArgument(command._alias, command.description(), '__fishamnium_git_completion_is_global');
 
       for(const opt of command.options){
         Autocomplete.printOption(opt, `__fishamnium_git_completion_is_command "${command._name}"`);

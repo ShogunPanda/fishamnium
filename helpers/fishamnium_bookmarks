@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 const Bookmarks = {
-  path: path.resolve(process.env.HOME, ".fishamnium_bookmarks.json"),
+  path: path.resolve(process.env.HOME, '.fishamnium_bookmarks.json'),
   rootPathFormatter: new RegExp(`^(?:${process.env.HOME})`),
   destinationFormatter: new RegExp(`^(?:(?:\\$home)|(?:${process.env.HOME}))`),
 
   capitalize(input){
     return input
-      .split("_")
+      .split('_')
       .map(s => `${s[0].toUpperCase()}${s.substring(1).toLowerCase()}`)
-      .join(" ");
+      .join(' ');
   },
 
   resolveDestination(bookmark){
@@ -32,7 +32,7 @@ const Bookmarks = {
 
   load(){
     try{
-      return JSON.parse(fs.readFileSync(Bookmarks.path, "utf8"))
+      return JSON.parse(fs.readFileSync(Bookmarks.path, 'utf8'))
         .sort((a, b) => a.bookmark.localeCompare(b.bookmark)); // Sort by name
     }catch(e){
       return Bookmarks.fail(`Cannot load bookmarks file ${Bookmarks.path}.`);
@@ -42,21 +42,21 @@ const Bookmarks = {
   save(bookmarks){
     try{
       bookmarks = bookmarks.sort((a, b) => a.bookmark.localeCompare(b.bookmark)); // Sort by name
-      fs.writeFileSync(Bookmarks.path, JSON.stringify(bookmarks, null, 2), "utf8");
+      fs.writeFileSync(Bookmarks.path, JSON.stringify(bookmarks, null, 2), 'utf8');
       Bookmarks.success();
     }catch(e){
       Bookmarks.fail(`Cannot save bookmarks file ${Bookmarks.path}.`);
     }
   },
 
-  show(bookmark = ""){
+  show(bookmark = ''){
     const bookmarks = Bookmarks.load();
     if(!bookmarks)
       return null;
 
     // Validate the argument
     if(!bookmark.length)
-      return Bookmarks.fail("Please provide a bookmark name.");
+      return Bookmarks.fail('Please provide a bookmark name.');
 
     // Find the bookmark
     const saved = bookmarks.find(b => b.bookmark === bookmark);
@@ -68,7 +68,7 @@ const Bookmarks = {
     return Bookmarks.success(Bookmarks.resolveDestination(saved));
   },
 
-  create(bookmark = "", name = ""){
+  create(bookmark = '', name = ''){
     const bookmarks = Bookmarks.load();
 
     if(!bookmarks)
@@ -76,7 +76,7 @@ const Bookmarks = {
 
     // Validate the argument
     if(!bookmark.length)
-      return Bookmarks.fail("Please provide a bookmark name.");
+      return Bookmarks.fail('Please provide a bookmark name.');
     else if(!bookmark.match(/^(?:[a-z0-9-_.:@]+)$/i))
       return Bookmarks.fail('Please use only letters, numbers, and "-", "_", ".", ":" and "@" only.');
 
@@ -86,25 +86,25 @@ const Bookmarks = {
       return Bookmarks.fail(`The bookmark "${bookmark}" already exists and points to ${Bookmarks.resolveDestination(existing)}.`);
 
     // Create and save the bookmark
-    const rootPath = process.cwd().replace(Bookmarks.rootPathFormatter, "$home");
+    const rootPath = process.cwd().replace(Bookmarks.rootPathFormatter, '$home');
 
     // Capitalize the name if nothing was given
     if(!name)
       name = Bookmarks.capitalize(bookmark);
 
-    bookmarks.push({name: Bookmarks.capitalize(bookmark), bookmark, rootPath, paths: [], group: ""});
+    bookmarks.push({name: Bookmarks.capitalize(bookmark), bookmark, rootPath, paths: [], group: ''});
 
     return Bookmarks.save(bookmarks);
   },
 
-  delete(bookmark = ""){
+  delete(bookmark = ''){
     const bookmarks = Bookmarks.load();
     if(!bookmarks)
       return null;
 
     // Validate the argument
     if(!bookmark.length)
-      return Bookmarks.fail("Please provide a bookmark name.");
+      return Bookmarks.fail('Please provide a bookmark name.');
 
     // Find the bookmark
     const bookmarkIndex = bookmarks.findIndex(b => b.bookmark === bookmark);
@@ -119,27 +119,27 @@ const Bookmarks = {
 
   list(type){
     const bookmarks = Bookmarks.load();
-    let response = "";
+    let response = '';
 
     if(!bookmarks)
       return null;
-    else if(type === "-n" || type === "--names-only") // Only show names
-      response = bookmarks.map(b => b.bookmark).sort().join("\n");
-    else if(type === "--autocomplete") // Autocomplete
-      response = bookmarks.map(b => `${b.bookmark}\t${b.name}`).sort().join("\n");
+    else if(type === '-n' || type === '--names-only') // Only show names
+      response = bookmarks.map(b => b.bookmark).sort().join('\n');
+    else if(type === '--autocomplete') // Autocomplete
+      response = bookmarks.map(b => `${b.bookmark}\t${b.name}`).sort().join('\n');
     else{
       // Prepare printing
       const maximumLength = Math.max(...bookmarks.map(b => b.bookmark.length));
-      const padder = " ".repeat(maximumLength);
+      const padder = ' '.repeat(maximumLength);
 
       // Print
       response = bookmarks
         .map(bookmark => {
           const name = (bookmark.bookmark + padder).substring(0, maximumLength); // Pad name
-          const destination = bookmark.rootPath.replace(Bookmarks.destinationFormatter, "\x1b[33m$HOME\x1b[39m"); // Replace home folder in destination
+          const destination = bookmark.rootPath.replace(Bookmarks.destinationFormatter, '\x1b[33m$HOME\x1b[39m'); // Replace home folder in destination
           return `\x1b[32m${name}\x1b[39m \u{2192} \x1b[1m${destination}\x1b[22m`;
         })
-        .join("\n");
+        .join('\n');
     }
 
     // Show reply
@@ -148,31 +148,31 @@ const Bookmarks = {
 
   main(command, ...args){
     switch(command){
-      case "g":
-      case "get":
-      case "show":
-      case "load":
-      case "read":
+      case 'g':
+      case 'get':
+      case 'show':
+      case 'load':
+      case 'read':
         Bookmarks.show(args[0]);
         break;
-      case "s":
-      case "set":
-      case "save":
-      case "write":
+      case 's':
+      case 'set':
+      case 'save':
+      case 'write':
         Bookmarks.create(...args);
         break;
-      case "d":
-      case "delete":
-      case "erase":
-      case "remove":
+      case 'd':
+      case 'delete':
+      case 'erase':
+      case 'remove':
         Bookmarks.delete(args[0]);
         break;
-      case "l":
-      case "list":
+      case 'l':
+      case 'list':
         Bookmarks.list(args[0]);
         break;
       default:
-        Bookmarks.fail("Usage: fishamnium_bookmarks s|d|l|get|set|delete|list|load|save|erase|read|write|remove [NAME] [DESCRIPTION]");
+        Bookmarks.fail('Usage: fishamnium_bookmarks s|d|l|get|set|delete|list|load|save|erase|read|write|remove [NAME] [DESCRIPTION]');
         break;
     }
   }
