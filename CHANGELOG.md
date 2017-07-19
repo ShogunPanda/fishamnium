@@ -1,3 +1,7 @@
+### 2017-07-19 - 4.2.4
+
+* Version 4.3.0
+
 ### 2017-07-19 - 4.3.0
 
 * Add name as second optional argument to the bookmark saving.
