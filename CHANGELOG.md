@@ -1,3 +1,7 @@
+### 2017-07-19 - 4.3.0
+
+* Add name as second optional argument to the bookmark saving.
+
 ### 2017-07-13 - 4.2.3
 
 * Add force flag to the push command of git helper.

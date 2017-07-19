@@ -49,63 +49,68 @@ const Bookmarks = {
     }
   },
 
-  show(name = ""){
+  show(bookmark = ""){
     const bookmarks = Bookmarks.load();
     if(!bookmarks)
       return null;
 
     // Validate the argument
-    if(!name.length)
+    if(!bookmark.length)
       return Bookmarks.fail("Please provide a bookmark name.");
 
     // Find the bookmark
-    const bookmark = bookmarks.find(b => b.bookmark === name);
+    const saved = bookmarks.find(b => b.bookmark === bookmark);
 
-    if(!bookmark)
-      return Bookmarks.fail(`The bookmark "${name}" does not exist.`);
+    if(!saved)
+      return Bookmarks.fail(`The bookmark "${bookmark}" does not exist.`);
 
     // Show the bookmark
-    return Bookmarks.success(Bookmarks.resolveDestination(bookmark));
+    return Bookmarks.success(Bookmarks.resolveDestination(saved));
   },
 
-  create(name = ""){
+  create(bookmark = "", name = ""){
     const bookmarks = Bookmarks.load();
 
     if(!bookmarks)
       return null;
 
     // Validate the argument
-    if(!name.length)
+    if(!bookmark.length)
       return Bookmarks.fail("Please provide a bookmark name.");
-    else if(!name.match(/^(?:[a-z0-9-_.:@]+)$/i))
+    else if(!bookmark.match(/^(?:[a-z0-9-_.:@]+)$/i))
       return Bookmarks.fail('Please use only letters, numbers, and "-", "_", ".", ":" and "@" only.');
 
     // Check that the bookmark doesn't already exists
-    const existing = bookmarks.find(b => b.bookmark === name);
+    const existing = bookmarks.find(b => b.bookmark === bookmark);
     if(existing)
-      return Bookmarks.fail(`The bookmark "${name}" already exists and points to ${Bookmarks.resolveDestination(existing)}.`);
+      return Bookmarks.fail(`The bookmark "${bookmark}" already exists and points to ${Bookmarks.resolveDestination(existing)}.`);
 
     // Create and save the bookmark
     const rootPath = process.cwd().replace(Bookmarks.rootPathFormatter, "$home");
-    bookmarks.push({name: Bookmarks.capitalize(name), bookmark: name, rootPath, paths: [], group: ""});
+
+    // Capitalize the name if nothing was given
+    if(!name)
+      name = Bookmarks.capitalize(bookmark);
+
+    bookmarks.push({name: Bookmarks.capitalize(bookmark), bookmark, rootPath, paths: [], group: ""});
 
     return Bookmarks.save(bookmarks);
   },
 
-  delete(name = ""){
+  delete(bookmark = ""){
     const bookmarks = Bookmarks.load();
     if(!bookmarks)
       return null;
 
     // Validate the argument
-    if(!name.length)
+    if(!bookmark.length)
       return Bookmarks.fail("Please provide a bookmark name.");
 
     // Find the bookmark
-    const bookmarkIndex = bookmarks.findIndex(b => b.bookmark === name);
+    const bookmarkIndex = bookmarks.findIndex(b => b.bookmark === bookmark);
 
     if(bookmarkIndex === -1)
-      return Bookmarks.fail(`The bookmark "${name}" does not exist.`);
+      return Bookmarks.fail(`The bookmark "${bookmark}" does not exist.`);
 
     // Perform deletion and save
     bookmarks.splice(bookmarkIndex, 1);
@@ -141,33 +146,33 @@ const Bookmarks = {
     return Bookmarks.success(response);
   },
 
-  main(command, arg){
+  main(command, ...args){
     switch(command){
       case "g":
       case "get":
       case "show":
       case "load":
       case "read":
-        Bookmarks.show(arg);
+        Bookmarks.show(args[0]);
         break;
       case "s":
       case "set":
       case "save":
       case "write":
-        Bookmarks.create(arg);
+        Bookmarks.create(...args);
         break;
       case "d":
       case "delete":
       case "erase":
       case "remove":
-        Bookmarks.delete(arg);
+        Bookmarks.delete(args[0]);
         break;
       case "l":
       case "list":
-        Bookmarks.list(arg);
+        Bookmarks.list(args[0]);
         break;
       default:
-        Bookmarks.fail("Usage: fishamnium_bookmarks s|d|l|get|set|delete|list|load|save|erase|read|write|remove [NAME]");
+        Bookmarks.fail("Usage: fishamnium_bookmarks s|d|l|get|set|delete|list|load|save|erase|read|write|remove [NAME] [DESCRIPTION]");
         break;
     }
   }

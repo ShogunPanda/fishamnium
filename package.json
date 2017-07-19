@@ -25,14 +25,14 @@
   "homepage": "https://sw.cowtech.it/fishamnium",
   "dependencies": {
     "argsplit": "~1.0",
-    "commander": "~2.9"
+    "commander": "~2.11"
   },
   "devDependencies": {
-    "eslint": "~> 3.18",
-    "eslint-config-cowtech": "~> 3.18",
-    "fs-extra": "^2.1.2",
-    "moment": "^2.18.1",
-    "semver": "^5.3.0",
-    "sprintf-js": "~1.0"
+    "@cowtech/eslint-config": "~> 4.2",
+    "eslint": "~> 4.2",
+    "fs-extra": "~4.0",
+    "moment": "~2.18",
+    "semver": "~5.3",
+    "sprintf-js": "~1.1"
   }
 }
