@@ -90,7 +90,7 @@ export async function fetchSha(_: Arguments = null, standalone = false, short = 
 }
 
 export async function summary(_: Arguments = null): Promise<void | string>{
-  if(!await isRepository(null, false))
+  if(!await isRepository(null, false, false))
     return null;
 
   return console.log([await branchName(), await fetchSha(), await isDirty()].join(' '));

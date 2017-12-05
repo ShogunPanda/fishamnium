@@ -5,8 +5,8 @@
 #
 
 
-complete -c fishamnium_git -n "" -s q -l quiet -d "Be more quiet."
-complete -c fishamnium_git -n "" -s n -l dry-run -d "Do not execute write action."
+complete -c fishamnium_git -n "__fishamnium_completion_is_global" -s q -l quiet -d "Be more quiet."
+complete -c fishamnium_git -n "__fishamnium_completion_is_global" -s n -l dry-run -d "Do not execute write action."
 complete -f -c fishamnium_git -n "__fishamnium_completion_is_global" -a "is_repository ir" -d "Check if the current directory is a GIT repository."
 complete -f -c fishamnium_git -n "__fishamnium_completion_is_global" -a "is_dirty id" -d "Check if the current GIT repository has uncommitted changes."
 complete -f -c fishamnium_git -n "__fishamnium_completion_is_global" -a "remotes lr" -d "Show GIT remotes."

@@ -159,7 +159,7 @@ const autocompleteModule = function(manager: (y: Argv) => Argv, module: 'bookmar
 
   // Global options
   for(const opt of wrapper.options)
-    output += printOption(opt, executable);
+    output += printOption(opt, executable, '__fishamnium_completion_is_global');
 
   // Commands
   for(const command of wrapper.commands)
