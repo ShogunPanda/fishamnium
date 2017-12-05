@@ -5,6 +5,7 @@
 #
 
 # Bookmarks
+# TODO@PI: Move to generate autocompletion
 complete -c b -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --autocomplete)'
 complete -c c -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --autocomplete)'
 complete -c d -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks list --autocomplete)'

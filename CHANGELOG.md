@@ -1,3 +1,8 @@
+### 2017-11-26 - 5.0.0
+
+* Rewritten helper to avoid external dependencies.
+* Improved installer.
+
 ### 2017-07-19 - 4.3.2
 
 * Fixed name handling.

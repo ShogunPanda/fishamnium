@@ -1,13 +1,8 @@
 {
   "name": "fishamnium",
   "version": "4.3.2",
+  "private": true,
   "description": "Some useful shell extension for fish shell.",
-  "main": "index.js",
-  "files": [
-    "bin",
-    "README.md",
-    "CHANGELOG.md"
-  ],
   "scripts": {
     "dev": "rollup -w -c rollup.config.js",
     "postdev": "chmod a+x bin/fishamnium",
@@ -16,28 +11,25 @@
     "postbuild": "chmod a+x bin/fishamnium",
     "lint": "./node_modules/.bin/tslint --project tsconfig.json -t stylish --type-check",
     "postpublish": "git push origin && git push origin -f --tags",
-
-    "convert-bookmarks": "ts-node scripts/convert-bookmarks.ts",
-    "generate-autocompletions": "ts-node scripts/generate-autocompletions.ts",
-    "o:generate-git-autocompletion": "FISHAMNIMUM_GENERATING_AUTOCOMPLETE=true ts-node utils/generate-git-autocomplete.ts > completions/71_fishamnium_helpers_git.fish",
     "old:release": "node utils/release",
+    "old:postrelease": "git push origin && git push origin -f --tags",
+    "old:convert-bookmarks": "node utils/convert-bookmarks",
+    "old:generate-git-autocomplete": "FISHAMNIMUM_GENERATING_AUTOCOMPLETE=true node utils/generate-git-autocomplete > completions/71_fishamnium_helpers_git.fish",
     "old:local-install": "node utils/install"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ShogunPanda/fishamnium-helpers"
+    "url": "https://github.com/ShogunPanda/fishamnium"
   },
   "keywords": [],
   "author": "Shogun <shogun@cowtech.it>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ShogunPanda/fishamnium-helpers/issues"
+    "url": "https://github.com/ShogunPanda/fishamnium/issues"
   },
-  "homepage": "https://github.com/ShogunPanda/fishamnium-helpers",
+  "homepage": "https://sw.cowtech.it/fishamnium",
   "dependencies": {
-    "argsplit": "~1.0",
     "chalk": "~2.3",
-    "commander": "~2.11",
     "yargs": "~10.0"
   },
   "devDependencies": {

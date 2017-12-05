@@ -1,0 +1,744 @@
+#!/usr/bin/env node
+var packageInfo = {"version":"4.3.2"};
+'use strict';
+
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var yargs = require('yargs');
+var fs = require('fs');
+var path = require('path');
+var chalk = _interopDefault(require('chalk'));
+var util = require('util');
+var child_process = require('child_process');
+var argsplit = _interopDefault(require('argsplit'));
+
+function success(message, print = true, colored = true, icon = '\u{1F37B}') {
+    const formatted = chalk `{${colored ? 'green' : ''} ${icon}\u0020 ${message}}`;
+    return print ? console.error(formatted) : formatted;
+}
+function warn(message, print = true, colored = true, icon = '\u{26A0}') {
+    const formatted = chalk `{${colored ? 'yellow' : ''} ${icon}\u0020 ${message}}`;
+    return print ? console.log(formatted) : formatted;
+}
+function fail(message, print = true, errorCode = 1, icon = '\u{274C}') {
+    const formatted = chalk `{red ${icon}\u0020 ${message}} `;
+    if (print)
+        console.error(formatted);
+    if (errorCode)
+        process.exit(errorCode);
+    return formatted;
+}
+function debug(message, print = true, colored = true, icon = '\u{1F4AC}') {
+    const formatted = chalk `{${colored ? 'blue' : ''} ${icon}\u0020 ${message}}`;
+    return print ? console.log(formatted) : formatted;
+}
+
+function capitalize(input) {
+    return input
+        .split(/_+/)
+        .map((s) => `${s[0].toUpperCase()}${s.substring(1).toLowerCase()}`)
+        .join(' ');
+}
+
+const FILE_PATH = path.resolve(process.env.HOME, '.fishamnium_bookmarks.json');
+const ROOT_FORMATTER = new RegExp(`^(?:${process.env.HOME})`);
+const DESTINATION_FORMATTER = new RegExp(`^(?:(?:\\$home)|(?:${process.env.HOME}))`);
+const loadBookmarks = function () {
+    try {
+        // Load raw bookmarks
+        const raw = JSON.parse(fs.readFileSync(FILE_PATH, 'utf8'))
+            .sort((a, b) => a.bookmark.localeCompare(b.bookmark)); // Sort by name
+        // Convert to a map
+        const bookmarks = new Map();
+        for (const b of raw)
+            bookmarks.set(b.bookmark, b);
+        // Return them back
+        return bookmarks;
+    }
+    catch (e) {
+        fail(`Cannot load bookmarks file ${FILE_PATH}.`);
+    }
+};
+const storeBookmarks = function (bookmarks) {
+    try {
+        // Convert back to raw format
+        const raw = [...bookmarks.values()]
+            .sort((a, b) => a.bookmark.localeCompare(b.bookmark)); // Sort by name
+        // Write to the file
+        fs.writeFileSync(FILE_PATH, JSON.stringify(raw, null, 2), 'utf8');
+        success(`Bookmarks updated successfully!`);
+    }
+    catch (e) {
+        fail(`Cannot save bookmarks file ${FILE_PATH}.`);
+    }
+};
+const resolveDestination = function (bookmark) {
+    return bookmark.rootPath.replace(/^\$home/, process.env.HOME);
+};
+const readBookmark = function (args) {
+    const bookmark = loadBookmarks().get(args.name);
+    if (!bookmark)
+        return fail(chalk `The bookmark {bold ${args.name}} does not exists.`);
+    console.log(resolveDestination(bookmark));
+};
+const saveBookmark = function (args) {
+    const bookmarks = loadBookmarks();
+    const bookmarkName = args.name;
+    const bookmark = bookmarks.get(bookmarkName);
+    // Validate
+    if (bookmark)
+        return fail(chalk `The bookmark {bold ${args.name}} already exists and points to {bold ${resolveDestination(bookmark)}}.`);
+    else if (!bookmarkName.match(/^(?:[a-z0-9-_.:@]+)$/i))
+        return fail('Please use only letters, numbers, and "-", "_", ".", ":" and "@" only for the name.');
+    // Adjust parameters
+    const name = args.description ? args.description : capitalize(bookmarkName);
+    const rootPath = process.cwd().replace(ROOT_FORMATTER, '$home');
+    // Save the bookmark
+    bookmarks.set(bookmarkName, { name, bookmark: bookmarkName, rootPath, paths: [], group: '' });
+    storeBookmarks(bookmarks);
+};
+const deleteBookmark = function (args) {
+    const bookmarks = loadBookmarks();
+    const bookmark = bookmarks.get(args.name);
+    if (!bookmark)
+        return fail(chalk `The bookmark {bold ${args.name}} does not exists.`);
+    // Delete the bookmark
+    bookmarks.delete(args.name);
+    storeBookmarks(bookmarks);
+};
+const listBookmarks = function (args) {
+    let bookmarks = Array.from(loadBookmarks().values());
+    let response = '';
+    if (args.query)
+        bookmarks = bookmarks.filter((b) => b.bookmark.includes(args.query));
+    if (!bookmarks.length)
+        return;
+    else if (args.namesOnly)
+        response = bookmarks.map((b) => b.bookmark).join('\n');
+    else if (args.autocomplete)
+        response = bookmarks.map((b) => `${b.bookmark}\t${b.name}`).join('\n');
+    else {
+        const maximumLength = Math.max(...bookmarks.map(b => b.bookmark.length));
+        response = bookmarks.map((b) => {
+            const destination = b.rootPath.replace(DESTINATION_FORMATTER, chalk `{yellow $HOME}`); // Replace home folder in destination
+            return chalk `{green ${b.bookmark.padEnd(maximumLength)}} \u2192 ${destination}`;
+        }).join('\n');
+    }
+    if (response)
+        console.log(response);
+};
+function buildBookmarksManager(y) {
+    return y
+        .command({ command: 'read <name>', aliases: ['get', 'show', 'load', 'r', 'g'], describe: 'Reads a bookmark', handler: readBookmark })
+        .command({ command: 'write <name> [description]', aliases: ['set', 'save', 'store', 'w', 's'], describe: 'Writes a bookmark', handler: saveBookmark })
+        .command({ command: 'delete <name>', aliases: ['erase', 'remove', 'd', 'e'], describe: 'Deletes a bookmark', handler: deleteBookmark })
+        .command({ command: 'list [query]', aliases: ['all', 'l', 'a'], describe: 'Lists all bookmarks', handler: listBookmarks, builder: (ly) => (ly
+            .option('n', { alias: 'names-only', describe: 'Only list bookmarks names', type: 'boolean' })
+            .option('a', { alias: 'autocomplete', describe: 'Only list bookmarks name and description for autocompletion', type: 'boolean' })) });
+}
+
+let configuration = null;
+const fallbackConfiguration = {
+    defaultBranch: 'development',
+    defaultRemote: 'origin',
+    defaultPrefix: 'release-',
+    openPath: '/usr/bin/open',
+    prependTask: false,
+    quiet: false,
+    debug: false
+};
+function environmentConfiguration() {
+    const envConfiguration = {};
+    if (Reflect.has(process.env, 'GIT_DEFAULT_BRANCH'))
+        envConfiguration.defaultBranch = process.env.GIT_DEFAULT_BRANCH;
+    if (Reflect.has(process.env, 'GIT_DEFAULT_REMOTE'))
+        envConfiguration.defaultRemote = process.env.GIT_DEFAULT_REMOTE;
+    if (Reflect.has(process.env, 'GIT_DEFAULT_PREFIX'))
+        envConfiguration.defaultPrefix = process.env.GIT_DEFAULT_PREFIX;
+    if (Reflect.has(process.env, 'GIT_OPEN_PATH'))
+        envConfiguration.openPath = process.env.GIT_OPEN_PATH;
+    if (Reflect.has(process.env, 'GIT_TASK_PREPEND'))
+        envConfiguration.prependTask = process.env.GIT_TASK_PREPEND === 'true';
+    if (Reflect.has(process.env, 'QUIET'))
+        envConfiguration.quiet = process.env.QUIET === 'true';
+    if (Reflect.has(process.env, 'DEBUG'))
+        envConfiguration.debug = process.env.DEBUG === 'true';
+    return envConfiguration;
+}
+function loadConfiguration() {
+    // First of all, try to load the file starting from the current folder and traversing up to root - Then trying with the home folder
+    let configPath = null;
+    const folders = new Set();
+    for (let currentFolder of [process.cwd(), process.env['HOME']]) {
+        while (currentFolder !== '') {
+            if (folders.has(currentFolder))
+                break;
+            folders.add(currentFolder);
+            currentFolder = currentFolder === '/' ? '' : path.dirname(currentFolder);
+        }
+    }
+    for (const currentFolder of Array.from(folders)) {
+        const temporaryPath = path.resolve(currentFolder, '.fishamnium_git.json');
+        if (fs.existsSync(temporaryPath)) {
+            configPath = temporaryPath;
+            break;
+        }
+    }
+    // Now load the file
+    if (configPath) {
+        try {
+            configuration = require(configPath);
+        }
+        catch (e) {
+            warn(chalk `The configuration file {bold ${configPath}} is not a valid JSON. Ignoring it.`);
+        }
+    }
+    // Now merge configuration
+    configuration = Object.assign({}, fallbackConfiguration, configuration, environmentConfiguration());
+    return configuration;
+}
+
+const exec$1 = util.promisify(child_process.exec);
+function complete() {
+    success('All operations completed successfully!');
+}
+function stepCompleted() {
+    success('Exited with status 0.', true, true, '\u{1F4AC}');
+}
+function stepFailed(code) {
+    fail(`Exited with status ${code}.`, true, null, '\u{1F4AC}');
+}
+function wrapOutput(output) {
+    const indent = '\u0020\u0020\u0020';
+    return output.replace(/(^.)/mg, `${indent}$1`);
+}
+function handleReadOutput(output, standalone) {
+    if (standalone) {
+        console.log(output);
+        return '';
+    }
+    return output;
+}
+function executeCommand(command, args) {
+    const execution = child_process.spawn(command, argsplit(args), { stdio: 'pipe' });
+    return new Promise((resolve$$1) => {
+        // Create buffers
+        let stdout = '';
+        let stderr = '';
+        // For stdout and stderr, both write to terminal and buffer for return value
+        execution.stdout.on('data', (data) => {
+            const dataString = data.toString('utf8');
+            process.stdout.write(wrapOutput(dataString));
+            stdout += dataString;
+        });
+        execution.stderr.on('data', (data) => {
+            const dataString = data.toString('utf8');
+            process.stderr.write(wrapOutput(dataString));
+            stderr += dataString;
+        });
+        // When done, return with all informations
+        execution.on('close', (status) => resolve$$1({ status, stdout, stderr }));
+    });
+}
+async function git(readOnly, cliArgs, ...gitArgs) {
+    try {
+        const cmdline = `${gitArgs.join(' ')}`;
+        const showOutput = !readOnly && cliArgs && !cliArgs.quiet;
+        let result = { status: 0, stdout: '', stderr: '' };
+        // Debugging
+        if (cliArgs) {
+            if (!cliArgs.quiet)
+                console.log(chalk `{yellow ${'\u{1F4AC}'}\u0020 ${cliArgs.dryRun ? 'Will execute' : 'Executing'}: {bold git ${cmdline}}}`);
+            if (!readOnly && cliArgs.dryRun)
+                return result;
+        }
+        // If not reading and not quiet, use full mode, otherwise a simpler interface
+        result = Object.assign({}, result, (await (showOutput ? executeCommand('git', cmdline) : exec$1(`git ${cmdline}`))));
+        if (showOutput)
+            result.status === 0 ? stepCompleted() : stepFailed(result.status);
+        return result;
+    }
+    catch (e) {
+        return { status: e.code, stdout: e.stdout, stderr: e.stderr };
+    }
+}
+async function gitChain(readOnly, cliArgs, chain) {
+    if (!Array.isArray(chain))
+        chain = [chain];
+    for (const args of chain) {
+        // Execute the command
+        const result = await git(readOnly, cliArgs, args);
+        if (result.status !== 0)
+            return fail(`One of operations failed with code ${result.status}.`, true, result.status);
+    }
+}
+async function readFromGit(...gitArgs) {
+    return git(true, null, ...gitArgs);
+}
+async function isRepository(_ = null, standalone = false, fatal = true) {
+    // Execute command
+    const result = await readFromGit('rev-parse --is-inside-work-tree');
+    const inside = result.status === 0;
+    // Return output
+    if (standalone)
+        return console.log(inside);
+    else if (!inside && fatal)
+        fail("You're not inside a git repository.");
+    return inside;
+}
+
+const taskMatcher = new RegExp('^(?:' +
+    '(?:((?:[a-z#]+-)?\\d+)-{1,2})?' + // Task in the prefix
+    '(?:.+?)' + // Task subject
+    '(?:-{1,2}((?:[a-z#]+-)?\\d+))?' + // Task in the suffix
+    ')$', 'i');
+async function isDirty(standalone = false) {
+    // Execute command
+    const result = await readFromGit('status -s');
+    const dirty = result.stdout.length !== 0;
+    return handleReadOutput(dirty, standalone);
+}
+async function showRemotes(args = null) {
+    // Execute command
+    const result = await readFromGit('remote -v');
+    // Parse output
+    const remotes = result.stdout.trim().split('\n').reduce((accu, line) => {
+        const [name, url] = line.split(/\s+/);
+        if (!accu[name])
+            accu[name] = url;
+        else if (accu[name] !== url)
+            accu[name] = { fetch: accu[name], push: url };
+        return accu;
+    }, {});
+    if (args.autocomplete) {
+        for (const r of Object.keys(remotes)) {
+            const remote = remotes[r];
+            console.log(`${r}\t${remote.fetch || remote}`);
+        }
+    }
+    else {
+        // Show as JSON
+        console.log(JSON.stringify(remotes, null, 2));
+    }
+}
+async function branchName(_ = null, standalone = false, short = true) {
+    // Execute some commands to get the name
+    let result = await readFromGit('symbolic-ref HEAD');
+    if (result.status !== 0)
+        result = await readFromGit('rev-parse --short HEAD');
+    // Check results
+    if (result.status !== 0)
+        return standalone ? fail('Cannot get git branch name.') : null;
+    // Get the name and shorten it if needed
+    let name = result.stdout.trim();
+    if (short)
+        name = name.replace('refs/heads/', '');
+    // Show output
+    return handleReadOutput(name, standalone);
+}
+async function fetchSha(_ = null, standalone = false, short = true) {
+    // Execute command
+    const result = await readFromGit(`rev-parse ${short ? '--short' : ''} HEAD`);
+    // Check results
+    if (result.status !== 0)
+        return standalone ? fail('Cannot get git SHA.') : null;
+    const sha = result.stdout.trim();
+    // Show output
+    return handleReadOutput(sha, standalone);
+}
+async function summary(_ = null) {
+    if (!await isRepository(null, false))
+        return null;
+    return console.log([await branchName(), await fetchSha(), await isDirty()].join(' '));
+}
+async function fetchTask(_ = null, standalone = false) {
+    // Get the branch name
+    const bn = await branchName(null, false);
+    if (!bn)
+        return standalone ? fail('Cannot get task name.') : null;
+    // Find the task portion
+    const mo = bn.split('/').pop().match(taskMatcher);
+    const task = mo[1] || mo[2] || null;
+    // Return output
+    return handleReadOutput(task, standalone);
+}
+async function commitWithTask(args, addAll, showCompletion = true) {
+    let message = args.message;
+    const task = args.task || await fetchTask();
+    if (task)
+        message = configuration.prependTask ? `[#${task}] ${message}` : `${message} [#${task}]`;
+    // Write the commit message to a file
+    const commitPath = `/tmp/fishamnium-git-commit-${new Date().getTime()}.txt`;
+    try {
+        fs.writeFileSync(commitPath, message, 'utf8');
+    }
+    catch (e) {
+        fail(chalk `Cannot write temporary commit file {bold ${commitPath}}.`);
+    }
+    // Perform the command then delete the temp file
+    const chain = [`commit -F ${commitPath}`];
+    if (addAll)
+        chain.unshift('add -A');
+    await gitChain(false, args, chain);
+    fs.unlinkSync(commitPath);
+    if (showCompletion)
+        complete();
+}
+async function reset(args) {
+    await gitChain(false, args, ['reset --hard', 'clean -f']);
+    complete();
+}
+async function cleanup(args) {
+    // Get branches
+    const result = await readFromGit('branch --merged');
+    if (result.status !== 0)
+        fail('Cannot get git branches.');
+    // Filter branches
+    const filteredBranchs = new Set(['master', '', await branchName(null, false, true)]);
+    const branches = result.stdout.trim().split('\n').map(b => b.replace(/^\s*\*/, '').trim()).filter(b => !filteredBranchs.has(b));
+    if (branches.length)
+        await git(false, args, `branch -D ${branches.join(' ')}`);
+    complete();
+}
+async function update(args) {
+    const branch = args.branch || configuration.defaultBranch;
+    const remote = args.remote || configuration.defaultRemote;
+    await gitChain(false, args, [`fetch ${remote}`, `pull ${remote} ${branch}`]);
+    complete();
+}
+async function push(args) {
+    const branch = args.branch || await branchName(args, false, true);
+    const remote = args.remote || configuration.defaultRemote;
+    const force = args.force;
+    await gitChain(false, args, `push ${force ? ' -f' : ''}${remote} ${branch}`);
+    complete();
+}
+async function deleteBranches(args, branchesToDelete = null) {
+    const branches = branchesToDelete || args.branch;
+    const remote = args.remote || configuration.defaultRemote;
+    if (branches.length) {
+        // Not using gitChain since commands are independent
+        await git(false, args, `branch -D ${branches.join(' ')}`);
+        await git(false, args, `push ${remote} ${branches.map((b) => `:${b}`).join(' ')}`);
+    }
+    if (!branchesToDelete)
+        complete();
+}
+
+async function workflowDebug(message) {
+    if (configuration.quiet)
+        return;
+    return debug(`Workflow: ${message}`);
+}
+async function workflowStart(args, destination = null, source = null) {
+    // Parse arguments
+    const branch = destination || args.branch;
+    const base = source || args.base || configuration.defaultBranch;
+    const remote = args.remote || configuration.defaultRemote;
+    // Execute commands
+    workflowDebug(chalk `Creating a new branch {yellow ${branch}} using base branch {yellow ${base}} on remote {yellow ${remote}} ...`);
+    await gitChain(false, args, [`fetch ${remote}`, `checkout ${base}`, `pull ${remote} ${base}`, `checkout -b ${branch}`]);
+    if (!destination)
+        complete();
+}
+async function workflowRefresh(args, destination = null, source = null) {
+    // Parse arguments
+    const branch = destination || await branchName(args, false, true);
+    const base = source || args.base || configuration.defaultBranch;
+    const remote = args.remote || configuration.defaultRemote;
+    // Sanity check
+    if (branch === base)
+        fail('You are already on the base branch.');
+    // Execute commands
+    if (!destination)
+        workflowDebug(chalk `Refreshing current branch {yellow ${branch}} on top of base branch {yellow ${base}} on remote {yellow ${remote}} ...`);
+    await gitChain(false, args, [`fetch ${remote}`, `checkout ${base}`, `pull ${remote} ${base}`, `checkout ${branch}`, `rebase ${base}`]);
+    if (!destination)
+        complete();
+}
+async function workflowFinish(args, deleteAfter = false, source = null, destination = null, showCompletion = true) {
+    // Parse arguments
+    const branch = source || await branchName(args, false, true);
+    const base = destination || args.base || configuration.defaultBranch;
+    const remote = args.remote || configuration.defaultRemote;
+    // Sanity check
+    if (branch === base)
+        fail('You are already on the base branch.');
+    // Debug info
+    workflowDebug(chalk `Merging current branch {yellow ${branch}} to the base branch {yellow ${base}} on remote {yellow ${remote}} ...`);
+    if (deleteAfter)
+        workflowDebug(chalk `After merging, the new current branch will be {yellow ${base}} and the current branch {yellow ${branch}} will be deleted.`);
+    // Refresh branch
+    await workflowRefresh(args, branch, base);
+    // Prepare commands
+    const commands = [
+        `checkout ${base}`,
+        `merge --no-ff --no-edit ${branch}`
+    ];
+    if (deleteAfter)
+        commands.push(`branch -D ${branch}`);
+    // Execute commands
+    await gitChain(false, args, commands);
+    if (showCompletion)
+        complete();
+}
+async function workflowFastCommit(args) {
+    // Parse arguments
+    const message = args.message;
+    // Execute commands
+    await workflowStart(args, args.branch);
+    workflowDebug(`Committing all changes with message: "${message}" ...`);
+    await commitWithTask(args, true, false);
+    await workflowFinish(args, true, args.branch);
+}
+async function workflowTagRelease(args) {
+    // Parse arguments
+    const prefix = args.prefix || configuration.defaultPrefix;
+    const release = args.branch = `${prefix}${args.spec}`;
+    const current = await branchName(args, false, true);
+    const remote = args.remote || configuration.defaultRemote;
+    // Execute commands
+    await workflowStart(args);
+    workflowDebug(chalk `Pushing release tag {yellow ${release}} to the remote {yellow ${remote}} and then deleting the local branch...`);
+    await gitChain(false, args, [`push -f ${remote} ${release}`, `checkout ${current}`, `branch -D ${release}`]);
+    complete();
+}
+async function workflowImport(args) {
+    // Parse arguments
+    const source = args.source;
+    const destination = args.destination || await branchName(args, false, true);
+    const temporary = args.temporary || `import-${source}`;
+    const remote = args.remote || configuration.defaultRemote;
+    // Execute commands
+    workflowDebug(chalk `Deleting eventually existing branch {yellow ${temporary}} ...`);
+    await deleteBranches(args, [temporary]);
+    await workflowStart(args, temporary, source);
+    await workflowFinish(args, true, temporary, destination, false);
+    workflowDebug(chalk `Pushing updated branch {yellow ${destination}} to remote {yellow ${remote}} ...`);
+    await gitChain(false, args, `push -f ${remote} ${destination}`);
+    complete();
+}
+async function workflowPullRequest(args) {
+    // Parse arguments
+    const branch = args.branch || await branchName(args, false, true);
+    const base = args.base || configuration.defaultBranch;
+    const remote = args.remote || configuration.defaultRemote;
+    // Sanity check
+    if (branch === base)
+        fail('You are already on the base branch.');
+    workflowDebug(chalk `Creating a pull request from branch {yellow ${branch}} to base branch {yellow ${base}} on remote {yellow ${remote}} ...`);
+    workflowDebug(chalk `After creation, the new current branch will be {yellow ${base}} and the current branch {yellow ${branch}} will be deleted..`);
+    // Refresh branch
+    await workflowRefresh(args, branch, base);
+    // Push branch
+    const output = await git(false, args, `push -f ${remote} ${branch}`);
+    await gitChain(false, args, [`checkout ${base}`, `branch -D ${branch}`]);
+    // Find the PR url
+    const url = output.stderr.trim().split('\n')
+        .map((line) => {
+        line = line.replace('remote: ', '').trim();
+        if (line.match(/^(?:To github\.com:(.+)\.git)$/))
+            line = `https://github.com/${RegExp.$1}/compare/${base}...${branch}?expand=1`;
+        return line;
+    })
+        .find((line) => ((line.startsWith('https://gitlab.com/') && line.includes('/merge_requests/new')) || // GitLab
+        (line.startsWith('https://github.com/') && line.includes('/compare')) || // GitHub
+        (line.includes('/compare/commits?sourceBranch=')) // JIRA
+    ));
+    if (url) {
+        // Open the URL
+        workflowDebug(chalk `Opening URL {yellow ${url}} to finalize the Pull Request creation ...`);
+        await child_process.exec(`${configuration.openPath} "${url}"`);
+    }
+    else
+        fail('Could not detect a Pull Request creation URL after pushing. Please create the Pull Request on the remote website manually.', true, null);
+    complete();
+}
+async function workflowFastPullRequest(args) {
+    // Parse arguments
+    const message = args.message;
+    // Execute commands
+    await workflowStart(args, args.branch);
+    workflowDebug(`Committing all changes with message: "${message}" ...`);
+    await commitWithTask(args, true, false);
+    await workflowPullRequest(args);
+}
+async function workflowReleaseStart(args) {
+    // Parse arguments
+    args.base = `${args.prefix || configuration.defaultPrefix}${args.spec}`;
+    // Execute commands
+    return workflowStart(args);
+}
+async function workflowReleaseRefresh(args) {
+    // Parse arguments
+    args.base = `${args.prefix || configuration.defaultPrefix}${args.spec}`;
+    // Execute commands
+    return workflowRefresh(args);
+}
+async function workflowReleaseFinish(args, deleteAfter = false) {
+    // Parse arguments
+    args.base = `${args.prefix || configuration.defaultPrefix}${args.spec}`;
+    // Execute commands
+    return workflowFinish(args, deleteAfter);
+}
+async function workflowReleaseImport(args) {
+    // Parse arguments
+    args.source = `${args.prefix || configuration.defaultPrefix}${args.spec}`;
+    // Execute commands
+    return workflowImport(args);
+}
+async function workflowReleaseDelete(args) {
+    // Parse arguments
+    args.branch = [`${args.prefix || configuration.defaultPrefix}${args.spec}`];
+    // Execute commands
+    deleteBranches(args);
+}
+
+const sanityCheck = function (handler, ...otherArgs) {
+    return async (args) => {
+        if (await isRepository())
+            return handler(args, ...otherArgs);
+    };
+};
+function buildGitManager(y) {
+    // First of all, load the configuration - Try to load the file starting here to the parent directorys
+    loadConfiguration();
+    const remoteOption = (ly) => (ly.option('r', { alias: 'remote', describe: 'The remote to act on.', default: configuration.defaultRemote, type: 'string', demandOption: true }));
+    const prefixOption = (ly) => (ly.option('p', { alias: 'prefix', describe: 'The prefix to use.', default: configuration.defaultPrefix, type: 'string', demandOption: true }));
+    const temporaryOption = (ly) => (ly.option('t', { alias: 'temporary', describe: 'Name of the temporary branch.', default: '', type: 'string', demandOption: true }));
+    const forceOption = (ly) => (ly.option('f', { alias: 'force', describe: 'If to perform a force push.', type: 'boolean' }));
+    const standardOption = (ly) => prefixOption(remoteOption(ly));
+    return y
+        .option('q', { alias: 'quiet', describe: 'Be more quiet.', type: 'boolean' })
+        .option('n', { alias: 'dry-run', describe: 'Do not execute write action.', type: 'boolean' })
+        .command({
+        command: 'is_repository', aliases: ['ir'], describe: 'Check if the current directory is a GIT repository.',
+        handler: isRepository.bind(null, true)
+    })
+        .command({
+        command: 'is_dirty', aliases: ['id'], describe: 'Check if the current GIT repository has uncommitted changes.',
+        handler: isDirty.bind(null, true)
+    })
+        .command({
+        command: 'remotes', aliases: ['lr'], describe: 'Show GIT remotes.',
+        builder: (ly) => (ly.option('a', { alias: 'autocomplete', describe: 'Format for autocompletion.', type: 'boolean' })),
+        handler: sanityCheck(showRemotes)
+    })
+        .command({ command: 'full_branch_name', aliases: ['fbn'], describe: 'Get the full current branch name.', handler: sanityCheck(branchName, true, false) })
+        .command({ command: 'branch_name', aliases: ['bn'], describe: 'Get the current branch name.', handler: sanityCheck(branchName, true) })
+        .command({ command: 'full_sha', describe: 'Get the full current GIT SHA.', handler: sanityCheck(fetchSha, true, false) })
+        .command({ command: 'sha', describe: 'Get the current GIT SHA.', handler: sanityCheck(fetchSha, true) })
+        .command({ command: 'summary', aliases: ['ls'], describe: 'Get a summary of current GIT repository branch, SHA and dirty status.', handler: summary })
+        .command({ command: 'task', aliases: ['t'], describe: 'Get the current task name from the branch name.', handler: sanityCheck(fetchTask, true) })
+        .command({
+        command: 'commit_with_task <message> [task]', aliases: ['ct'], describe: 'Commit changes including the task name.',
+        handler: sanityCheck(commitWithTask)
+    })
+        .command({
+        command: 'commit_all_with_task <message> [task]', aliases: ['cat'], describe: 'Commit all changes including the task name.',
+        builder: (ly) => (ly.option('a', { alias: 'add-all', describe: 'Add all files before commiting.', type: 'boolean' })),
+        handler: sanityCheck(commitWithTask, true)
+    })
+        .command({ command: 'reset', aliases: ['re'], describe: 'Reset all uncommitted changes.', handler: sanityCheck(reset) })
+        .command({ command: 'cleanup', aliases: ['cl'], describe: 'Deletes all non default branches.', handler: sanityCheck(cleanup) })
+        .command({
+        command: 'update [branch]', aliases: ['u'], describe: 'Fetch from remote and pulls a a branch.',
+        builder: remoteOption, handler: sanityCheck(update)
+    })
+        .command({
+        command: 'push [branch]', aliases: ['p'], describe: 'Pushes the current branch to the remote.',
+        builder: (ly) => forceOption(remoteOption(ly)), handler: sanityCheck(push)
+    })
+        .command({
+        command: 'delete <branch...>', aliases: ['d'], describe: 'Deletes one or more branch both locally and on a remote.',
+        builder: remoteOption, handler: sanityCheck(deleteBranches)
+    })
+        .command({
+        command: 'start <branch> [base]', aliases: ['s'], describe: 'Starts a new branch out of the base one.',
+        builder: remoteOption, handler: sanityCheck(workflowStart)
+    })
+        .command({
+        command: 'refresh [base]', aliases: ['r'], describe: 'Rebases the current branch on top of an existing remote branch.',
+        builder: remoteOption, handler: sanityCheck(workflowRefresh)
+    })
+        .command({
+        command: 'finish [base]', aliases: ['f'], describe: 'Merges a branch back to its base remote branch.',
+        builder: remoteOption, handler: sanityCheck(workflowFinish)
+    })
+        .command({
+        command: 'full_finish [base]', aliases: ['ff'], describe: 'Merges a branch back to its base remote branch and then deletes the local copy.',
+        builder: remoteOption, handler: sanityCheck(workflowFinish, true)
+    })
+        .command({
+        command: 'fast_commit <branch> <message> [base]', aliases: ['fc'],
+        describe: 'Creates a local branch, commit changes and then merges it back to the base branch.',
+        builder: remoteOption, handler: sanityCheck(workflowFastCommit)
+    })
+        .command({
+        command: 'pull_request [base]', aliases: ['pr'], describe: 'Sends a Pull Request and deletes the local branch.',
+        builder: remoteOption, handler: sanityCheck(workflowPullRequest)
+    })
+        .command({
+        command: 'fast_pull_request <branch> <message> [base]', aliases: ['fpr'],
+        describe: 'Creates a local branch, commit changes and then sends a Pull Request, deleting the local branch at the end.',
+        builder: remoteOption, handler: sanityCheck(workflowFastPullRequest)
+    })
+        .command({
+        command: 'release <spec> [base]', aliases: ['rt'], describe: 'Tags and pushes a new release branch out of the base one.',
+        builder: standardOption, handler: sanityCheck(workflowTagRelease)
+    })
+        .command({
+        command: 'import <source> [destination]', aliases: ['i'], describe: 'Imports latest changes to a local branch on top of an existing remote branch.',
+        builder: (ly) => temporaryOption(remoteOption(ly)), handler: sanityCheck(workflowImport)
+    })
+        .command({
+        command: 'start_from_release <branch> <spec>', aliases: ['rs'], describe: 'Starts a new branch out of a remote release branch.',
+        builder: standardOption, handler: sanityCheck(workflowReleaseStart)
+    })
+        .command({
+        command: 'refresh_from_release <spec>', aliases: ['rr'], describe: 'Rebases the current branch on top of an existing remote release branch.',
+        builder: standardOption, handler: sanityCheck(workflowReleaseRefresh)
+    })
+        .command({
+        command: 'finish_to_release <spec>', aliases: ['rf'], describe: 'Merges a branch back to its base remote release branch.',
+        builder: standardOption, handler: sanityCheck(workflowReleaseFinish)
+    })
+        .command({
+        command: 'full_finish_to_release <spec>', aliases: ['rff'],
+        describe: 'Merges a branch back to its base remote release branch and then deletes the local copy.',
+        builder: standardOption, handler: sanityCheck(workflowReleaseFinish, true)
+    })
+        .command({
+        command: 'import_release <spec> [destination]', aliases: ['ri'],
+        describe: 'Imports latest changes to a local branch on top of an existing remote release branch.',
+        builder: (ly) => temporaryOption(standardOption(ly)), handler: sanityCheck(workflowReleaseImport)
+    })
+        .command({
+        command: 'delete_release <spec>', aliases: ['rd'], describe: 'Deletes a release branch locally and remotely.',
+        builder: standardOption, handler: sanityCheck(workflowReleaseDelete)
+    });
+}
+
+// Move this to fish code - Require that very first command is either g or b
+const verifyAutocompletion = function () {
+    const args = process.argv.slice(3);
+    let commands = [];
+    // Parse valid commands
+    if (args[0] !== '--')
+        commands = args.shift().split('#');
+    args.shift(); // Remove --
+    args.shift(); // Remove fishamnium
+    const currentCommand = args[0];
+    process.exit((!currentCommand && !commands.length) || commands.includes(currentCommand) ? 0 : 1);
+};
+yargs.version(packageInfo.version)
+    .command({ command: 'bookmarks', aliases: ['b'], describe: 'manages bookmarks', builder: buildBookmarksManager, handler: () => yargs.showHelp() })
+    .command({ command: 'git', aliases: ['g'], describe: 'manages git workflow', builder: buildGitManager, handler: () => yargs.showHelp() })
+    .command({ command: 'autocomplete', aliases: ['a'], describe: 'verify autocompletion', handler: verifyAutocompletion })
+    .command({ command: '*', handler: () => yargs.showHelp() })
+    .help('help').alias('h', 'help')
+    .strict()
+    .locale('en')
+    .wrap(0)
+    .showHelpOnFail(true)
+    .argv;
