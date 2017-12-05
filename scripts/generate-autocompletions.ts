@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import {writeFileSync} from 'fs';
-import {format} from 'util';
+import {writeFileSync, readFileSync} from 'fs';
+import {resolve} from 'path';
 
-import {buildBookmarksManager} from '../src/helper/modules/bookmarks';
-import {buildGitManager} from '../src/helper/modules/git/cli';
+import {buildBookmarksManager} from '../src/helpers/modules/bookmarks';
+import {buildGitManager} from '../src/helpers/modules/git/cli';
 import { Argv } from 'yargs';
 
 // Define interfaces
@@ -12,6 +12,7 @@ interface Argument{
   name: string;
   description: string;
   required: boolean;
+  completions: string;
 }
 
 interface Option{
@@ -19,6 +20,7 @@ interface Option{
   long: string;
   description: string;
   wantsArg: boolean;
+  completions: string;
 }
 
 interface Command{
@@ -30,8 +32,13 @@ interface Command{
 
 // Compatibility wrapper for yargs to get all defined options
 class YArgsParser{
+  manager: string = '';
   commands: Array<Command> = [];
   options: Array<Option> = [];
+
+  constructor(manager: string){
+    this.manager = manager;
+  }
 
   command(
     {command: name, aliases, describe, builder}: {command: string, aliases: Array<string>, describe: string, builder(local: YArgsParser): YArgsParser}
@@ -43,38 +50,48 @@ class YArgsParser{
       description: describe, options: [],
       arguments: syntax.slice(1).map((arg: string) => { // Parse <arg> or [arg] syntax
         const mo: RegExpMatchArray = arg.match(/^([<[])(.+).$/);
+        let completions: string = null;
         let argDescription: string = `MISSING: ${mo[2]}`;
 
-        switch(mo[2]){
-          case 'branch':
-            argDescription = 'GIT Branch';
-            break;
-          case 'base':
-            argDescription = 'Base GIT branch';
-            break;
-          case 'message':
-            argDescription = 'Commit message';
-            break;
-          case 'task':
-            argDescription = 'Task ID';
-            break;
-          case 'source':
-            argDescription = 'Source GIT branch';
-            break;
-          case 'task':
-            argDescription = 'Destination GIT branch';
-            break;
-          case 'spec':
-            argDescription = 'Version number';
-            break;
+        if(this.manager === 'git'){
+          switch(mo[2]){
+            case 'branch':
+              argDescription = 'GIT Branch';
+              break;
+            case 'base':
+              argDescription = 'Base GIT branch';
+              break;
+            case 'message':
+              argDescription = 'Commit message';
+              break;
+            case 'task':
+              argDescription = 'Task ID';
+              break;
+            case 'source':
+              argDescription = 'Source GIT branch';
+              break;
+            case 'task':
+              argDescription = 'Destination GIT branch';
+              break;
+            case 'spec':
+              argDescription = 'Version number';
+              break;
+          }
+        }else{
+          switch(mo[2]){
+            case 'name':
+              argDescription = 'Bookmark name';
+              completions = 'fishamnium_bookmarks l -a';
+              break;
+          }
         }
 
-        return {name: mo[2], description: argDescription, required: mo[1] === '<'};
+        return {name: mo[2], description: argDescription, completions, required: mo[1] === '<'};
       })
     };
 
     if(builder){ // Local options
-      const local: YArgsParser = new YArgsParser();
+      const local: YArgsParser = new YArgsParser(this.manager);
       builder(local);
       command.options = local.options;
     }
@@ -86,80 +103,71 @@ class YArgsParser{
   }
 
   option(short: string, {alias: long, describe: description, demandOption: wantsArg}: {alias: string, describe: string, demandOption: boolean}): YArgsParser{
-    this.options.push({short, long, description, wantsArg});
+    let completions = '';
+
+    if(this.manager === 'git' && long === 'remote')
+      completions = ' -a "(fishamnium_git lr -a)"';
+
+    this.options.push({short, long, description, wantsArg, completions});
 
     return this;
   }
 }
 
-const banner: string = `
-#!/usr/bin/env fish
-#
-# This file is part of fishamnium. Copyright (C) 2013 and above Shogun <shogun@cowtech.it>.
-# Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
-#
+const banner: string = readFileSync(resolve(process.cwd(), './scripts/templates/autocompletions.fish'), 'utf-8');
 
-function __fishamnium_git_verify
-  set cmd (commandline -opc)
-  ~/.fishamnium/helpers/fishamnium autocomplete $argv -- $cmd
-  return $status
-end
-`.trim();
-
-const header: string = 'complete -c g -c fishamnium';
-
-const printOption = function(option: Option, condition: string, manager: 'bookmarks' | 'git', short: 'b' | 'g'): string{
-  return format(
-    '%s -n "__fishamnium_autocomplete_verify %s#%s%s" %s -s %s -l %s -d "%s"%s\n',
-    header, manager, short,
-    condition ? ` ${condition}` : '',
-    option.wantsArg ? '-x' : '-f',
-    option.short, option.long, option.description,
-    option.long === 'remote' ? ' -a "(fishamnium g lr -a)"' : ''
-  ).replace(/'/g, "\\'");
+const formatCompletion = function(completion: string): string{
+  return completion.replace(/[\t\n]+/g, '').replace(/\s+/g, ' ').trim() + '\n';
 };
 
-const printArgument = function(command: Command, condition: string, manager: 'bookmarks' | 'git', short: 'b' | 'g'): string{
-  return format(
-    'ATG:%s -n "__fishamnium_autocomplete_verify %s#%s%s" %s -a "%s" -d "%s"\n',
-    header, manager, short,
-    condition ? ` ${condition}` : '',
-    command.arguments.length ? '-x' : '-f',
-    command.names.join(' '),
-    command.description
-  );
+const printOption = function(o: Option, executable: string, condition: string = ''): string{
+  return formatCompletion(`
+    complete ${o.wantsArg ? '-x' : ''} -c ${executable} -n "${condition}"
+    -s ${o.short} -l ${o.long} ${o.completions} -d "${o.description}"
+  `);
 };
 
-const addManager = function(manager: (y: Argv) => Argv, managerSection: 'bookmarks' | 'git', short: 'b' | 'g'): string{
-  let output: string = `complete -c ${short} -e\n`;
-  const wrapper: YArgsParser = new YArgsParser();
-  manager(wrapper as any);
+const printCommand = function(command: Command, executable: string): string{
+  let output: string = formatCompletion(`
+    complete ${command.arguments.length ? '-x' : '-f'} -c ${executable} -n "__fishamnium_completion_is_global"
+    -a "${command.names.join(' ')}" -d "${command.description}"
+  `);
 
-  // Global options
-  for(const opt of wrapper.options)
-    output += printOption(opt, '', managerSection, short);
-
-  // Commands
-  for(const command of wrapper.commands){
-    output += printArgument(command, '', managerSection, short);
-
-    // Local options
-    for(const opt of command.options){
-      output += printOption(opt, command.names.join('#'), managerSection, short);
+  // Local arguments
+  if(command.arguments.length){
+    for(const argument of command.arguments.filter((a: Argument) => a.completions)){
+      output += formatCompletion(`
+        complete -f -c ${executable} -n "__fishamnium_completion_is_command ${command.names.join(' ')}"
+        -a "(${argument.completions})" -d "${argument.description}"
+      `);
     }
   }
 
-  return output + '\n';
+  // Local options
+  for(const opt of command.options)
+    output += printOption(opt, executable, `__fishamnium_completion_is_command ${command.names.join(' ')}`);
+
+  return output;
 };
 
-const execute = function(): void{
-  let output: string = `${banner}\n\ncomplete -c fishamnium -e\n`;
+const autocompleteModule = function(manager: (y: Argv) => Argv, module: 'bookmarks' | 'git'){
+  const executable: string = `fishamnium_${module}`;
+  const wrapper: YArgsParser = new YArgsParser(module);
+  manager(wrapper as any);
 
-  output += addManager(buildBookmarksManager, 'bookmarks', 'b');
-  output += addManager(buildGitManager, 'git', 'g');
+  let output: string = `${banner}\n\n`;
 
-  writeFileSync('./src/completions/71_fishamnium_git.fish', output, {encoding: 'utf8'});
-  console.log(output);
+  // Global options
+  for(const opt of wrapper.options)
+    output += printOption(opt, executable);
+
+  // Commands
+  for(const command of wrapper.commands)
+    output += printCommand(command, executable);
+
+  console.log(`---- ${module} ----\n${output}\n`);
+  writeFileSync(`./src/completions/71_fishamnium_${module}.fish`, output, {encoding: 'utf8'});
 };
 
-execute();
+autocompleteModule(buildBookmarksManager, 'bookmarks');
+autocompleteModule(buildGitManager, 'git');

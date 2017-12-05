@@ -1,6 +1,6 @@
-### 2017-11-26 - 5.0.0
+### 2017-12-05 - 5.0.0
 
-* Rewritten helper to avoid external dependencies.
+* Rewritten helpers to avoid external dependencies.
 * Improved installer.
 
 ### 2017-07-19 - 4.3.2
