@@ -1,6 +1,6 @@
 {
   "name": "fishamnium",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Some useful shell extension for fish shell.",
   "main": "index.js",
   "files": [
