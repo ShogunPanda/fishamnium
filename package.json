@@ -4,7 +4,8 @@
   "description": "Some useful shell extension for fish shell.",
   "main": "index.js",
   "files": [
-    "bin",
+    "dist",
+    "installer",
     "README.md",
     "CHANGELOG.md"
   ],
