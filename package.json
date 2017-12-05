@@ -16,6 +16,7 @@
     "build:embed": "pkg -t node9-macos ./dist/helpers/js/fishamnium_$MODULE -o ./dist/helpers/fishamnium_$MODULE",
     "build:bundle": "rm -rf ./dist/helpers/js && cp -a src/{completions,plugins,themes,loader.fish} dist && chmod -R a+x dist",
     "postbuild": "chmod a+x ./dist/helpers/js/* && MODULE=git yarn run build:embed && MODULE=bookmarks yarn run build:embed && yarn build:bundle",
+    "postrelease": "git push origin && git push origin -f --tags",
     "lint": "./node_modules/.bin/tslint --project tsconfig.json -t stylish --type-check",
     "convert-bookmarks": "ts-node scripts/convert-bookmarks.ts",
     "generate-autocompletions": "ts-node scripts/generate-autocompletions.ts"
