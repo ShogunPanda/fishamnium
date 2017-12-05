@@ -4,8 +4,12 @@
   "description": "Some useful shell extension for fish shell.",
   "main": "index.js",
   "files": [
-    "dist",
+    "src",
+    "scripts",
     "installer",
+    "rollup.config.js",
+    "tsconfig.json",
+    "tslint.json",
     "README.md",
     "CHANGELOG.md"
   ],
