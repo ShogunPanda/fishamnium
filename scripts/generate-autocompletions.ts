@@ -3,7 +3,6 @@
 import {writeFileSync, readFileSync} from 'fs';
 import {resolve} from 'path';
 
-import {buildBookmarksManager} from '../src/helpers/modules/bookmarks';
 import {buildGitManager} from '../src/helpers/modules/git/cli';
 import { Argv } from 'yargs';
 
@@ -169,5 +168,4 @@ const autocompleteModule = function(manager: (y: Argv) => Argv, module: 'bookmar
   writeFileSync(`./src/completions/71_fishamnium_${module}.fish`, output, {encoding: 'utf8'});
 };
 
-autocompleteModule(buildBookmarksManager, 'bookmarks');
 autocompleteModule(buildGitManager, 'git');

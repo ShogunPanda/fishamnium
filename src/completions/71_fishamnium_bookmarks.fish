@@ -4,6 +4,11 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
+complete -c b -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks l -a)'
+complete -c c -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks l -a)'
+complete -c d -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks l -a)'
+complete -c e -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks l -a)'
+complete -c o -f -a '(~/.fishamnium/helpers/fishamnium_bookmarks l -a)'
 
 complete -x -c fishamnium_bookmarks -n "__fishamnium_completion_is_global" -a "read get show load r g" -d "Reads a bookmark"
 complete -f -c fishamnium_bookmarks -n "__fishamnium_completion_is_command read get show load r g" -a "(fishamnium_bookmarks l -a)" -d "Bookmark name"
