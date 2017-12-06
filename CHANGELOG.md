@@ -1,3 +1,7 @@
+### 2017-12-06 / 5.2.1
+
+* Bugfix.
+
 ### 2017-12-05 - 5.0.0
 
 * Rewritten helpers to avoid external dependencies.

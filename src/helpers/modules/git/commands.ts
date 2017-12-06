@@ -174,7 +174,7 @@ export async function push(args: Arguments): Promise<void>{
   const remote: string = args.remote || configuration.defaultRemote;
   const force: boolean = args.force;
 
-  await gitChain(false, args, `push ${force ? ' -f' : ''}${remote} ${branch}`);
+  await gitChain(false, args, `push ${force ? '-f ' : ' '}${remote} ${branch}`);
   complete();
 }
 
