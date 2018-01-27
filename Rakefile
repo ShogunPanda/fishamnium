@@ -72,6 +72,8 @@ namespace :release do
 
       lines[current_version[0]] = "set -x -g FISHAMNIUM_VERSION \"#{current_version[1]}\"\n"
       File.write("shell/loader.fish", lines.join(""))
+
+      changelog = ["Version #{current_version[1]}"] if changelog.empty?
     end
 
     if !changelog.empty? # There is a changelog entry, insert it
