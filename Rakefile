@@ -45,7 +45,7 @@ task :release do
   lines = File.readlines("shell/loader.fish").map {|l| l }
   version = detect_version(lines)
 
-  ["git tag -f v#{version[1]}", "git push origin", "git push origin --tags"].each do |cmd|
+  ["git tag -f v#{version[1]}", "git push origin", "git push origin -f --tags"].each do |cmd|
     puts cmd
     system(cmd)
   end
