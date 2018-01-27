@@ -4,6 +4,19 @@
 # Licensed under the MIT license, which can be found at http://www.opensource.org/licenses/mit-license.php.
 #
 
+require "version"
+
+def detect_version
+  catch :version do
+    lines.each_with_index do |l, i|
+      mo = /set -x -g FISHAMNIUM_VERSION \"(?<version>.+)\"/i.match(l)
+      throw(:version, [i, mo[:version].to_version]) if mo
+    end
+
+    [-1, "1.0.0".to_version]
+  end
+end
+
 desc "Build the helper and prepare the dist folder."
 task :build => [:clean, "build:shell"] do
   ENV["GOARCH"] = "amd64"
@@ -27,32 +40,48 @@ namespace :build do
   end
 end
 
+desc "Releases the software."
 task :release do
-#   #!/usr/bin/env node
+  version = detect_version
 
-# const semver = require('semver');
-# const fs = require('fs');
-# const childProcess = require('child_process');
-# const moment = require('moment');
+  system("git tag -f v#{version[1]}")
+  system("git push origin")
+  system("git push origin --tags")
+end
 
-# const version = process.argv[2];
-# const newVersion = semver.inc(require('../package.json').version, version);
-# const changelogEntry = process.argv[3];
+namespace :release do
+  desc "Updates the version and updates the CHANGELOG.md file"
+  task :change, [:version] do |_, args|
+    version = args[:version]
+    changelog = args.extras
 
-# // Update main file
-# const loader = fs.readFileSync('./loader.fish', 'utf8');
-# fs.writeFileSync('./loader.fish', loader.replace(/set -x -g FISHAMNIUM_VERSION.+/, `set -x -g FISHAMNIUM_VERSION "${newVersion}"`), 'utf8');
+    lines = File.readlines("shell/loader.fish").map {|l| l }
 
-# // Update Changelog
-# if(changelogEntry){
-#   const changelog = fs.readFileSync('./CHANGELOG.md', 'utf8');
-#   fs.writeFileSync('./CHANGELOG.md', `### ${moment().format('YYYY-MM-DD')} - ${newVersion}\n\n* ${changelogEntry}\n\n${changelog}`, 'utf8');
-#   childProcess.execSync('git commit -a -m "Updated CHANGELOG.md"');
-# }
+    # Find current version
+    current_version = detect_version
 
-# // Update version
-# if(version)
-#   childProcess.execSync(`npm version ${version}`);
+    if version && !version.empty? # Upgrade the version
+      if version =~ /patch|minor|major/
+        version = "revision" if version == "patch"
+        current_version[1].bump!(version.to_sym)
+      else
+        current_version[1] = version.to_version
+      end
+
+      lines[current_version[0]] = "set -x -g FISHAMNIUM_VERSION \"#{current_version[1]}\"\n"
+      File.write("shell/loader.fish", lines.join(""))
+    end
+
+    if !changelog.empty? # There is a changelog entry, insert it
+      entries = changelog.map {|c| "* #{c}" }
+      entry = "### #{Time.now.strftime("%F")} / #{current_version[1]}\n\n#{entries.join("\n")}"
+
+      File.write("./CHANGELOG.md", "#{entry}\n\n#{File.read("./CHANGELOG.md")}")
+      puts entry
+
+      system('git commit -a -m "Updated CHANGELOG.md"')
+    end
+  end
 end
 
 desc "Cleans the build directories."
