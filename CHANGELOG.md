@@ -1,3 +1,7 @@
+### 2018-01-27 / 6.0.0
+
+* Updated release script
+
 ### 2017-01-25 / 6.0.0
 
 * Rewrite the helper in go and provide libraries for all platforms (on amd64 architecture).

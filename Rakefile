@@ -6,7 +6,7 @@
 
 require "version"
 
-def detect_version
+def detect_version(lines)
   catch :version do
     lines.each_with_index do |l, i|
       mo = /set -x -g FISHAMNIUM_VERSION \"(?<version>.+)\"/i.match(l)
@@ -42,11 +42,13 @@ end
 
 desc "Releases the software."
 task :release do
-  version = detect_version
+  lines = File.readlines("shell/loader.fish").map {|l| l }
+  version = detect_version(lines)
 
-  system("git tag -f v#{version[1]}")
-  system("git push origin")
-  system("git push origin --tags")
+  ["git tag -f v#{version[1]}", "git push origin", "git push origin --tags"].each do |cmd|
+    puts cmd
+    system(cmd)
+  end
 end
 
 namespace :release do
@@ -58,7 +60,7 @@ namespace :release do
     lines = File.readlines("shell/loader.fish").map {|l| l }
 
     # Find current version
-    current_version = detect_version
+    current_version = detect_version(lines)
 
     if version && !version.empty? # Upgrade the version
       if version =~ /patch|minor|major/
