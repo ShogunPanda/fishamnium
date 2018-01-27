@@ -5,11 +5,6 @@ Some useful shell extension for fish shell.
 https://sw.cowtech.it/fishamnium
 
 ## Install
-
-To use fishamnium you need a recent version of [Node.js](https://nodejs.org) installed.
-
-The minimum version required must be able to run async function (this means Node.js version 7.6.0 or above).
-
 Type the following inside a fish shell and you're done!
 
 `curl -sL http://sw.cowtech.it/fishamnium/installer | fish`
@@ -18,7 +13,7 @@ Type the following inside a fish shell and you're done!
 
 Starting with version 4.0.0, format of bookmarks file has changed.
 
-To update your local file, please clone the [repository](https://github.com/ShogunPanda/fishamnium) locally, then run `yarn run convert-bookmarks`.
+To update your local file, please run `~/.fishamnium/helpers/fishamnium bookmarks convert`.
 
 ## Uninstall
 

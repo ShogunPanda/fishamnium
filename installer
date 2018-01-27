@@ -19,10 +19,23 @@ end
 if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
   echo "Cloning fishamnium into $destdir"; and git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
   cd $destdir
+else
+  rake build:shell
 end
 
 rm -rf $rootdir
 cp -a dist $rootdir
+
+set os (uname -s)
+
+switch (uname -s)
+    case Linux
+        ln -sf ~/.fishamnium/helpers/fishamnium-linux ~/.fishamnium/helpers/fishamnium
+    case Darwin
+        ln -sf ~/.fishamnium/helpers/fishamnium-darwin ~/.fishamnium/helpers/fishamnium
+    case '*'
+        ln -sf ~/.fishamnium/helpers/fishamnium-windows ~/.fishamnium/helpers/fishamnium
+end
 
 if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
   cd $HOME

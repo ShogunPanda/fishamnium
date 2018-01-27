@@ -1,3 +1,11 @@
+### 2017-01-25 / 6.0.0
+
+* Rewrite the helper in go and provide libraries for all platforms (on amd64 architecture).
+* Discard any dependency to Node.js.
+* Embed convert utility in the bookmarks module.
+* Vastly improve autocompletion.
+* Discard `g_*` functions
+
 ### 2017-12-06 / 5.2.1
 
 * Bugfix.

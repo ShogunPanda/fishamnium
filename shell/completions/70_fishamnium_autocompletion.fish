@@ -19,7 +19,6 @@ function __fishamnium_complete
 
   string match -r "$regexp" "$cmd"
   set match $status # Do not directly return $status since we might want to insert a echo statement below for debugging
-  echo ">$cmd<" >> /tmp/completions
   return $match
 end
 
