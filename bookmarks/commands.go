@@ -180,6 +180,7 @@ func ListBookmarks(cmd *cobra.Command, args []string) {
 			maxLength = len(k)
 		}
 	}
+	sort.Sort(sort.StringSlice(keys))
 
 	// Check if we just want names
 	if namesOnly {

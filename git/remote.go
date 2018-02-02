@@ -82,11 +82,8 @@ URLScanning:
 
 			prURL = tempURL.String()
 		}
-
-		fmt.Println(line)
 	}
 
 	// Now find the PR url
-	fmt.Println(prURL)
 	return prURL
 }

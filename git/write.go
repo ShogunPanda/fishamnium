@@ -169,6 +169,7 @@ func Delete(cmd *cobra.Command, branches []string) {
 func Cleanup(cmd *cobra.Command, args []string) {
 	prepareWriteCommand(cmd)
 
+	gitChain(false, [][]string{[]string{"fetch"}})
 	result := git(true, "branch", "--merged")
 
 	if !result.Success() { // The command failed
