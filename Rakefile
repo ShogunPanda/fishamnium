@@ -83,6 +83,7 @@ namespace :release do
       File.write("./CHANGELOG.md", "#{entry}\n\n#{File.read("./CHANGELOG.md")}")
       puts entry
 
+      system('git add -A')
       system('git commit -a -m "Updated CHANGELOG.md"')
     end
   end
