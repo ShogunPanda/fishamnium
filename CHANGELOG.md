@@ -1,3 +1,7 @@
+### 2018-02-04 / 6.0.3
+
+* Update license file.
+
 ### 2018-02-04 / 6.0.2
 
 * Correctly tag version.
