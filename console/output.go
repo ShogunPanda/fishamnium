@@ -9,30 +9,32 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+
+	"github.com/ShogunPanda/tempera"
 )
 
 // Success shows a success message.
 func Success(message string, args ...interface{}) {
-	message = Colorize(fmt.Sprintf("{green}🍻\u0020 %s\n{-}", message)) // Emoji code: 1F37B
+	message = tempera.ColorizeTemplate(fmt.Sprintf("{green}🍻\u0020 %s\n{-}", message)) // Emoji code: 1F37B
 	fmt.Fprintf(os.Stdout, message, args...)
 }
 
 // Warn shows a warning message.
 func Warn(message string, args ...interface{}) {
-	message = Colorize(fmt.Sprintf("{yellow}⚠️\u0020 %s\n{-}", message)) // Emoji code: 26A0
+	message = tempera.ColorizeTemplate(fmt.Sprintf("{yellow}⚠️\u0020 %s\n{-}", message)) // Emoji code: 26A0
 	fmt.Fprintf(os.Stderr, message, args...)
 }
 
 // Fail shows a error message.
 func Fail(message string, args ...interface{}) {
-	message = Colorize(fmt.Sprintf("{red}❌\u0020 %s\n{-}", message)) // Emoji code: 274C
+	message = tempera.ColorizeTemplate(fmt.Sprintf("{red}❌\u0020 %s\n{-}", message)) // Emoji code: 274C
 
 	fmt.Fprintf(os.Stderr, message, args...)
 }
 
 // Debug shows a debug message.
 func Debug(message string, args ...interface{}) {
-	message = Colorize(fmt.Sprintf("{blue}💬\u0020 %s\n{-}", message)) // Emoji code: 1F4AC
+	message = tempera.ColorizeTemplate(fmt.Sprintf("{blue}💬\u0020 %s\n{-}", message)) // Emoji code: 1F4AC
 
 	fmt.Fprintf(os.Stderr, message, args...)
 }
@@ -56,7 +58,7 @@ func FinishStep(code int) {
 		color = "red"
 	}
 
-	fmt.Fprintf(os.Stdout, Colorize(fmt.Sprintf("{%s}💬\u0020 Exited with status %d.\n{-}", color, code))) // Emoji code: 1F4AC
+	fmt.Fprintf(os.Stdout, tempera.ColorizeTemplate(fmt.Sprintf("{%s}💬\u0020 Exited with status %d.\n{-}", color, code))) // Emoji code: 1F4AC
 }
 
 // WrapOutput indents output to align to emojis.

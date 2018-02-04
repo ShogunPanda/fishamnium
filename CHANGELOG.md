@@ -1,3 +1,7 @@
+### 2018-02-dd / 6.0.1
+
+* Minor fixes
+
 ### 2018-01-27 / 6.0.0
 
 * Updated release script

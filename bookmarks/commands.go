@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/ShogunPanda/fishamnium/console"
+	"github.com/ShogunPanda/tempera"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +44,7 @@ func resolveDestination(bookmark Bookmark) string {
 }
 
 func humanizeDestination(bookmark Bookmark) string {
-	return strings.Replace(resolveDestination(bookmark), os.Getenv("HOME"), console.Colorize("{yellow}$HOME{-}"), 1)
+	return strings.Replace(resolveDestination(bookmark), os.Getenv("HOME"), tempera.ColorizeTemplate("{yellow}$HOME{-}"), 1)
 }
 
 func loadBookmarks(filePath string) (bookmarks map[string]Bookmark) {
@@ -195,7 +196,7 @@ func ListBookmarks(cmd *cobra.Command, args []string) {
 		if autocomplete {
 			fmt.Printf("%s\t%s\n", bookmark.Bookmark, bookmark.Name)
 		} else {
-			fmt.Printf(console.Colorize(fmt.Sprintf("{green}%%-%ds{-} \u2192 {yellow}%%s{-}\n", maxLength)), bookmark.Bookmark, humanizeDestination(bookmark))
+			fmt.Printf(tempera.ColorizeTemplate(fmt.Sprintf("{green}%%-%ds{-} \u2192 {yellow}%%s{-}\n", maxLength)), bookmark.Bookmark, humanizeDestination(bookmark))
 		}
 	}
 }
