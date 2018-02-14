@@ -81,11 +81,10 @@ namespace :release do
       entry = "### #{Time.now.strftime("%F")} / #{current_version[1]}\n\n#{entries.join("\n")}"
 
       File.write("./CHANGELOG.md", "#{entry}\n\n#{File.read("./CHANGELOG.md")}")
-      puts entry
-
-      system('git add -A')
-      system('git commit -a -m "Updated CHANGELOG.md"')
     end
+
+    system('git add -A')
+    system('git commit -a -m "Updated CHANGELOG.md"')
   end
 end
 
