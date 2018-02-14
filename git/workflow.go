@@ -86,7 +86,8 @@ func workflowPullRequest(branch, base, remote string) {
 
 	chain := [][]string{
 		[]string{"push", "-f", remote, branch},
-		//[]string{"branch", "-D", base},
+		[]string{"checkout", base},
+		[]string{"branch", "-D", branch},
 	}
 
 	// Perform operations to merge the branch, then find the PR URL

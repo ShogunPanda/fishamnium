@@ -185,6 +185,9 @@ func Cleanup(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	gitChain(false, [][]string{append([]string{"branch", "-D"}, toDelete...)})
+	if len(toDelete) > 0 {
+		gitChain(false, [][]string{append([]string{"branch", "-D"}, toDelete...)})
+	}
+
 	console.Complete()
 }

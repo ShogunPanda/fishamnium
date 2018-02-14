@@ -1,3 +1,8 @@
+### 2018-02-14 / 6.0.4
+
+* Do not cleanup if there is nothing to clean.
+* PR correctly moves to the base branch.
+
 ### 2018-02-04 / 6.0.3
 
 * Update license file.
