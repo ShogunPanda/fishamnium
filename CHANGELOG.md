@@ -1,3 +1,7 @@
+### 2018-02-14 / 6.0.5
+
+* Version 6.0.5
+
 ### 2018-02-14 / 6.0.4
 
 * Do not cleanup if there is nothing to clean.
