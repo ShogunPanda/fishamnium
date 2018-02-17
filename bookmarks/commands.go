@@ -120,7 +120,7 @@ func WriteBookmark(cmd *cobra.Command, args []string) {
 		console.Fatal("The bookmark {white}%s{-} already exists and points to {white}%s{-}.", bookmarkName, humanizeDestination(bookmark))
 		return
 	} else if !bookmarkValidator.MatchString(bookmarkName) {
-		console.Fatal(`Use only {white}letters{-}, {white}numbers{-}, and {white}-{-}, {white}_{-}, {white}.{-}, {white}:{-} and {white}@{-} for the bookmark name.`)
+		console.Fatal(`Use only {white}letters{-}, {white}numbers{-}, and {white}-{-}, {white}_{-}, {white}.{-}, {white}:{-} and {white}@{-} for the name.`)
 		return
 	}
 

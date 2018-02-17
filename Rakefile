@@ -93,4 +93,9 @@ task :clean do
   FileUtils.rm_rf(["dist"], verbose: true)
 end
 
+desc "Verifies the code."
+task :lint do
+  Kernel.exec("go vet")
+end
+
 task default: ["build"]

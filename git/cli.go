@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func addSubcommand(parent *cobra.Command, cmd *cobra.Command, optionsHook func(cmd *cobra.Command)) {
+func addSubcommand(parent, cmd *cobra.Command, optionsHook func(cmd *cobra.Command)) {
 	parent.AddCommand(cmd)
 
 	if optionsHook != nil {
@@ -100,7 +100,8 @@ func InitCLI() *cobra.Command {
 	}, nil)
 
 	addSubcommand(parent, &cobra.Command{
-		Use: "delete <branch...>", Aliases: []string{"d"}, Short: "Deletes one or more branch both locally and on a remote.", Args: cobra.MinimumNArgs(1), Run: Delete,
+		Use: "delete <branch...>", Aliases: []string{"d"},
+		Short: "Deletes one or more branch both locally and on a remote.", Args: cobra.MinimumNArgs(1), Run: Delete,
 	}, nil)
 
 	addSubcommand(parent, &cobra.Command{Use: "cleanup", Aliases: []string{"cl"}, Short: "Deletes all non default branches.", Run: Cleanup}, nil)
