@@ -76,6 +76,8 @@ namespace :release do
       changelog = ["Version #{current_version[1]}"] if changelog.empty?
     end
 
+    Rake::Task["build"].invoke
+
     if !changelog.empty? # There is a changelog entry, insert it
       entries = changelog.map {|c| "* #{c}" }
       entry = "### #{Time.now.strftime("%F")} / #{current_version[1]}\n\n#{entries.join("\n")}"

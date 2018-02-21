@@ -6,17 +6,17 @@
 
 
 function e --description "Edits a bookmark using the current terminal editor."
-  set -l OUTPUT (~/.fishamnium/helpers/fishamnium bookmarks get $argv)
+  set -l OUTPUT (b $argv)
   [ $status = 0 ]; and eval $EDITOR "$OUTPUT"
 end
 
 function c --description "Change current directory to a saved bookmark."
-  set -l OUTPUT (eval ~/.fishamnium/helpers/fishamnium bookmarks get $argv)
+  set -l OUTPUT (b $argv)
   [ $status = 0 ]; and cd "$OUTPUT"
 end
 
 function o --description "Edits a bookmark using the current editor."
-  set -l OUTPUT (eval ~/.fishamnium/helpers/fishamnium bookmarks get $argv)
+  set -l OUTPUT (b $argv)
   [ $status = 0 ]; and eval $GEDITOR "$OUTPUT"
 end
 
