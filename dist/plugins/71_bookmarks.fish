@@ -4,17 +4,9 @@
 # Licensed under the MIT license, which can be found at https://choosealicense.com/licenses/mit.
 #
 
-function l --description "Show all bookmarks."
-  eval ~/.fishamnium/helpers/fishamnium bookmarks list $argv
-end
-
-function b --description "Show a bookmark."
-  set -l OUTPUT (eval ~/.fishamnium/helpers/fishamnium bookmarks get $argv)
-  [ $status = 0 ]; and echo "$OUTPUT"
-end
 
 function e --description "Edits a bookmark using the current terminal editor."
-  set -l OUTPUT (eval ~/.fishamnium/helpers/fishamnium bookmarks get $argv)
+  set -l OUTPUT (~/.fishamnium/helpers/fishamnium bookmarks get $argv)
   [ $status = 0 ]; and eval $EDITOR "$OUTPUT"
 end
 
@@ -28,10 +20,7 @@ function o --description "Edits a bookmark using the current editor."
   [ $status = 0 ]; and eval $GEDITOR "$OUTPUT"
 end
 
-function s --description "Saves the current directory as new bookmark."
-  eval ~/.fishamnium/helpers/fishamnium bookmarks save $argv
-end
-
-function d --description "Deletes an existing bookmark."
-  eval ~/.fishamnium/helpers/fishamnium bookmarks delete $argv
-end
+alias l='~/.fishamnium/helpers/fishamnium bookmarks list'
+alias b='~/.fishamnium/helpers/fishamnium bookmarks show'
+alias s='~/.fishamnium/helpers/fishamnium bookmarks save'
+alias d='~/.fishamnium/helpers/fishamnium bookmarks delete'

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
 
@@ -197,26 +198,28 @@ func Summary(cmd *cobra.Command, args []string) {
 	}
 
 	// Prepare structures
+	var wg sync.WaitGroup
 	var name, shaHash string
 	var dirty bool
-	nameChan := make(chan string)
-	shaChan := make(chan string)
-	dirtyChan := make(chan bool)
 
 	// Execute commands in parallel
-	go func() { nameChan <- branchName(false, true, false) }()
-	go func() { shaChan <- sha(false, true, false) }()
-	go func() { dirtyChan <- isDirty(false, false) }()
+	wg.Add(3)
+	go func(wg *sync.WaitGroup, dest *string) {
+		defer wg.Done()
+		*dest = branchName(false, true, false)
+	}(&wg, &name)
 
-	// Get information
-	for i := 0; i < 3; i++ {
-		select {
-		case name = <-nameChan:
-		case shaHash = <-shaChan:
-		case dirty = <-dirtyChan:
-		}
-	}
+	go func(wg *sync.WaitGroup, dest *string) {
+		defer wg.Done()
+		*dest = sha(false, true, false)
+	}(&wg, &shaHash)
+
+	go func(wg *sync.WaitGroup, dest *bool) {
+		defer wg.Done()
+		*dest = isDirty(false, false)
+	}(&wg, &dirty)
 
 	// Print result
+	wg.Wait()
 	fmt.Printf("%s %s %v\n", name, shaHash, dirty)
 }

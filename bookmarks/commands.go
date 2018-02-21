@@ -16,6 +16,7 @@ import (
 
 	"github.com/ShogunPanda/fishamnium/console"
 	"github.com/ShogunPanda/tempera"
+	"github.com/apcera/termtables"
 	"github.com/spf13/cobra"
 )
 
@@ -159,7 +160,6 @@ func ListBookmarks(cmd *cobra.Command, args []string) {
 	bookmarks := loadBookmarks(getBookmarksFilePath(cmd))
 
 	// Parse arguments
-	maxLength := 0
 	namesOnly, _ := cmd.Flags().GetBool("names-only")
 	autocomplete, _ := cmd.Flags().GetBool("autocomplete")
 	var query string
@@ -176,10 +176,6 @@ func ListBookmarks(cmd *cobra.Command, args []string) {
 		}
 
 		keys = append(keys, k)
-
-		if len(k) > maxLength { // Track the maximum name length for pretty printing
-			maxLength = len(k)
-		}
 	}
 	sort.Sort(sort.StringSlice(keys))
 
@@ -190,14 +186,25 @@ func ListBookmarks(cmd *cobra.Command, args []string) {
 	}
 
 	// Print bookmarks, either in human or autocomplete mode
+	table := termtables.CreateTable()
+	table.AddHeaders("ID", "Destination", "Name")
+
 	for _, k := range keys {
 		bookmark := bookmarks[k]
 
 		if autocomplete {
 			fmt.Printf("%s\t%s\n", bookmark.Bookmark, bookmark.Name)
 		} else {
-			fmt.Printf(tempera.ColorizeTemplate(fmt.Sprintf("{green}%%-%ds{-} \u2192 {yellow}%%s{-}\n", maxLength)), bookmark.Bookmark, humanizeDestination(bookmark))
+			table.AddRow(
+				tempera.ColorizeTemplate("{green}"+bookmark.Bookmark+"{-}"),
+				humanizeDestination(bookmark),
+				tempera.ColorizeTemplate("{blue}"+bookmark.Name+"{-}"),
+			)
 		}
+	}
+
+	if !autocomplete {
+		fmt.Printf(table.Render())
 	}
 }
 
