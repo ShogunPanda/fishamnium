@@ -1,3 +1,11 @@
+### 2018-04-22 / 6.1.2
+
+* Improve generation file.
+* Improve updating of the version.
+* Replace Rakefile with Magefile.
+* Removed vendor folder from GIT.
+* Added dep file.
+
 ### 2018-02-21 / 6.1.1
 
 * Bugfixes.
