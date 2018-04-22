@@ -1,3 +1,4 @@
 #!/bin/sh
 
+mage build
 sed -i "" "s#@@FISHAMNIUM_VERSION@@#$1#" dist/loader.fish
