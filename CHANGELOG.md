@@ -1,3 +1,7 @@
+### 2018-04-27 / 6.2.0
+
+* Improved output emoji handling.
+
 ### 2018-04-22 / 6.1.8
 
 
