@@ -15,7 +15,7 @@ import (
 )
 
 func workflowDebug(message string, args ...interface{}) {
-	console.Info(fmt.Sprintf("Workflow: %s", message), args...)
+	console.Info(fmt.Sprintf("{bold blue}Workflow: %s", message), args...)
 }
 
 func workflowStart(branch, base, remote string) {

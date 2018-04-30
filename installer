@@ -20,7 +20,7 @@ if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
   echo "Cloning fishamnium into $destdir"; and git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
   cd $destdir
 else
-  rake build:shell
+  mage build
 end
 
 rm -rf $rootdir
