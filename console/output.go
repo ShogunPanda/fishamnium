@@ -6,73 +6,56 @@
 package console
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
 	"regexp"
-	"strconv"
-	"strings"
+	"sync"
 
 	"github.com/ShogunPanda/tempera"
 )
 
-var emojiSpacer = "\x1b[0E\x1b[3C"
+var outputMutex = sync.Mutex{}
 
-func setTerminalMode(mode string) {
-	cmd := exec.Command("/bin/stty", mode)
-	cmd.Stdin = os.Stdin
-	_ = cmd.Run()
-	cmd.Wait()
+// Log shows a output message
+func Log(destination *os.File, message string, args ...interface{}) {
+	outputMutex.Lock()
+	fmt.Fprintf(destination, message, args...)
+	outputMutex.Unlock()
 }
 
-// GetEmojiWidth Detects handling of emoji
-func GetEmojiWidth() {
-	setTerminalMode("raw")
+// LogWithIcon shows a message with a custom icon
+func LogWithIcon(destination *os.File, icon, message string, args ...interface{}) {
+	message = fmt.Sprintf("%s%s\n", SpacedEmoji(icon), message)
 
-	os.Stdout.Write([]byte("💬\x1b[6n"))
-	reader := bufio.NewReader(os.Stdin)
-	position, _ := reader.ReadSlice('R')
-
-	// Set the terminal back from raw mode to 'cooked'
-	setTerminalMode("-raw")
-
-	// Delete the current line
-	os.Stdout.Write([]byte("\x1b[0E\x1b[0K"))
-
-	// Parse the position
-	coordinates := strings.Split(string(position[2:len(position)-1]), ";")
-	width, _ := strconv.ParseInt(coordinates[1], 0, 4)
-	emojiSpacer = strings.Repeat(" ", 4-int(width))
+	Log(destination, tempera.ColorizeTemplate(message), args...)
 }
 
-// Success shows a success message.
+// Info shows a info message
+func Info(message string, args ...interface{}) {
+	LogWithIcon(os.Stdout, "💬", message, args) // Emoji code: 1F4AC
+}
+
+// Success shows a success message
 func Success(message string, args ...interface{}) {
-	message = tempera.ColorizeTemplate(fmt.Sprintf("{green}🍻%s%s\n{-}", emojiSpacer, message)) // Emoji code: 1F37B
-	fmt.Fprintf(os.Stdout, message, args...)
+	LogWithIcon(os.Stdout, "🍻", fmt.Sprintf("{green}%s{-}", message), args...) // Emoji code: 1F4AC
 }
 
-// Warn shows a warning message.
+// Warn shows a warning message
 func Warn(message string, args ...interface{}) {
-	message = tempera.ColorizeTemplate(fmt.Sprintf("{yellow}⚠️%s%s\n{-}", emojiSpacer, message)) // Emoji code: 26A0
-	fmt.Fprintf(os.Stderr, message, args...)
+	LogWithIcon(os.Stdout, "⚠️", fmt.Sprintf("{bold yellow}%s{-}", message), args...) // Emoji code: 26A0+FEOF
 }
 
-// Fail shows a error message.
+// Fail shows a error message
 func Fail(message string, args ...interface{}) {
-	message = tempera.ColorizeTemplate(fmt.Sprintf("{red}❌%s%s\n{-}", emojiSpacer, message)) // Emoji code: 274C
-
-	fmt.Fprintf(os.Stderr, message, args...)
+	LogWithIcon(os.Stderr, "❌", fmt.Sprintf("{red}%s{-}", message), args...) // Emoji code: 274C
 }
 
-// Debug shows a debug message.
+// Debug shows a debug message
 func Debug(message string, args ...interface{}) {
-	message = tempera.ColorizeTemplate(fmt.Sprintf("{blue}💬%s%s\n{-}", emojiSpacer, message)) // Emoji code: 1F4AC
-
-	fmt.Fprintf(os.Stderr, message, args...)
+	LogWithIcon(os.Stderr, "⚙️", fmt.Sprintf("{bold ANSI:3,0,3}%s{-}", message), args...) // Emoji code: 2699+FEOF
 }
 
-// Fatal aborts the executable with a error message.
+// Fatal aborts the executable with a error message
 func Fatal(message string, args ...interface{}) {
 	Fail(message, args...)
 	os.Exit(1)
@@ -91,7 +74,7 @@ func FinishStep(code int) {
 		color = "red"
 	}
 
-	fmt.Fprintf(os.Stdout, tempera.ColorizeTemplate(fmt.Sprintf("💬%s{%s}Exited with status %d.\n{-}", emojiSpacer, color, code))) // Emoji code: 1F4AC
+	LogWithIcon(os.Stdout, "💬", fmt.Sprintf("%sExited with status %d{-}", color, code)) // Emoji code: 2699+FEOF
 }
 
 // WrapOutput indents output to align to emojis.
