@@ -32,7 +32,7 @@ func LogWithIcon(destination *os.File, icon, message string, args ...interface{}
 
 // Info shows a info message
 func Info(message string, args ...interface{}) {
-	LogWithIcon(os.Stdout, "💬", message, args) // Emoji code: 1F4AC
+	LogWithIcon(os.Stdout, "💬", message, args...) // Emoji code: 1F4AC
 }
 
 // Success shows a success message
@@ -74,7 +74,7 @@ func FinishStep(code int) {
 		color = "red"
 	}
 
-	LogWithIcon(os.Stdout, "💬", fmt.Sprintf("%sExited with status %d{-}", color, code)) // Emoji code: 2699+FEOF
+	LogWithIcon(os.Stdout, "💬", fmt.Sprintf("{%s}Exited with status %d{-}", color, code)) // Emoji code: 2699+FEOF
 }
 
 // WrapOutput indents output to align to emojis.
