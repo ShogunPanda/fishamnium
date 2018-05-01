@@ -80,5 +80,5 @@ func FinishStep(code int) {
 // WrapOutput indents output to align to emojis.
 func WrapOutput(output string) string {
 	replacer, _ := regexp.Compile("(?m)(^.)")
-	return replacer.ReplaceAllString(output, fmt.Sprintf("%s$1", emojiSpacer))
+	return replacer.ReplaceAllString(output, "\x1b[4G$1")
 }
