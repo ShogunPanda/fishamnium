@@ -1,3 +1,13 @@
+### 2018-05-25 / 6.3.0
+
+* feat: Use master as default git branch.
+* Emoji fixes.
+* Fixed installer.
+* Minor fix.
+* Minor fix.
+* Added missing file.
+* Improved logging.
+
 ### 2018-04-27 / 6.2.0
 
 * Improved output emoji handling.
