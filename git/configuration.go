@@ -108,7 +108,7 @@ func loadConfiguration() (rv Configuration) {
 }
 
 var defaultConfiguration = Configuration{
-	DefaultBranch: "development", DefaultRemote: "origin", DefaultPrefix: "release-", OpenPath: "/usr/bin/open", PrependTask: false, Quiet: false, Debug: false,
+	DefaultBranch: "master", DefaultRemote: "origin", DefaultPrefix: "release-", OpenPath: "/usr/bin/open", PrependTask: false, Quiet: false, Debug: false,
 }
 
 var configuration = loadConfiguration()
