@@ -18,26 +18,47 @@ function __truncated_cwd
   echo $rv
 end
 
+function __clean_prompt
+  string replace -a -r '(\x1b|\e|\033)\[\d{1,3}(;\d{1,3})*[mGK]?' '' $argv[1]
+end
+
 function fish_prompt -d "Write out the prompt"
   # Terminal codes
-  set -l white (set_color -o white)
-  set -l yellow (set_color -o yellow)
-  set -l green (set_color -o green)
-  set -l red (set_color -o red)
-  set -l black (set_color -o black)
-  set -l dir (set_color -o blue)
-  set -l branch (set_color -o magenta)
-  set -l commit (set_color magenta)
+  # set -l white (set_color -o white)
+  # set -l yellow (set_color -o yellow)
+  # set -l green (set_color -o green)
+  # set -l red (set_color -o red)
+  # set -l black (set_color -o black)
+  # set -l dir (set_color -o blue)
+  # set -l branch (set_color -o magenta)
+  # set -l commit (set_color magenta)
 
   # RGB Codes
-  #set -l white (set_color -o ffffff)
-  #set -l yellow (set_color ffdf00)
-  #set -l green (set_color -o 00ff00)
-  #set -l red (set_color -o ff0000)
-  #set -l dir (set_color 5fafff)
-  #set -l branch (set_color -o af5fff)
-  #set -l commit (set_color -o af87af)
+  set -l white (set_color -o FFFFFF)
+  set -l yellow (set_color FFDF00)
+  set -l green (set_color -o 00CC00)
+  set -l red (set_color -o CC0000)
+  set -l black (set_color -o 000000)
+  set -l dir (set_color 5FAFFF)
+  set -l branch (set_color -o AF5FFF)
+  set -l commit (set_color -o AF87AF)
 
+  # --- Upper prompt ---
+  # Date
+  set -l upper_prompt (printf '%s[%s%s%s]%s' $yellow $white (date "+%Y-%m-%d %H:%M:%S") $yellow)
+
+  # Current directory
+  set upper_prompt (printf '%s %s%s' $upper_prompt $dir (pwd |sed -e "s#$HOME#~#"))
+
+  # GIT
+  set -l git_summary (~/.fishamnium/helpers/fishamnium git summary)
+  if [ "$git_summary" != "" ]
+    set git_summary (string split " " $git_summary)
+    string match -r "^true" $git_summary[3] > /dev/null; and set git_status $red "✗"; or set -l git_status $green "✔"
+    set upper_prompt (printf '%s %s(%s %s%s%s) %s%s' $upper_prompt $branch $git_summary[1] $commit $git_summary[2] $branch $git_status[1] $git_status[2])
+  end
+
+  # --- Lower prompt ---
   set -l user (whoami)
   set user_color $green
   set symbol "%"
@@ -47,28 +68,14 @@ function fish_prompt -d "Write out the prompt"
     set user_color $red
   end
 
-  # Date
-	printf '%s[%s%s%s]%s' $yellow $white (date "+%Y-%m-%d %H:%M:%S") $yellow
-
-  # Current directory
-  printf ' %s%s' $dir (pwd |sed -e "s#$HOME#~#")
-
-  # GIT
-  set -l git_summary (~/.fishamnium/helpers/fishamnium git summary)
-  if [ "$git_summary" != "" ]
-    set -l git_summary (string split " " $git_summary)
-    string match -r "^true" $git_summary[3] > /dev/null; and set git_status $red "✗"; or set -l git_status $green "✔"
-    printf ' %s(%s %s%s%s) %s%s' $branch $git_summary[1] $commit $git_summary[2] $branch $git_status[1] $git_status[2]
-  end
-
   # User and host
-  printf '\n%s[%s%s@%s' $yellow $user_color $user (hostname -s)
+  set lower_prompt (printf '%s[%s%s@%s' $yellow $user_color $user (hostname -s))
 
   # Ruby
   if [ "$FISHAMNIUM_THEME_SHOW_RUBY" != "" ]
     if contains "51_ruby.fish" $FISHAMNIUM_LOADED_PLUGINS
       set -l current_ruby (cat ~/.rbenv/version ^ /dev/null)
-      [ "$current_ruby" != "" ]; and printf ' %sruby:%s' $black $current_ruby
+      [ "$current_ruby" != "" ]; and set lower_prompt (printf '%s %sruby:%s' $lower_prompt $black $current_ruby)
     end
   end
 
@@ -76,10 +83,19 @@ function fish_prompt -d "Write out the prompt"
   if [ "$FISHAMNIUM_THEME_SHOW_NODE" != "" ]
     if contains "41_node.fish" $FISHAMNIUM_LOADED_PLUGINS
       set -l current_node (cat $N_PREFIX/active ^ /dev/null)
-      [ "$current_node" != "" ]; and printf ' %snode:%s' $black $current_node
+      [ "$current_node" != "" ]; and set lower_prompt (printf '%s %snode:%s' $lower_prompt $black $current_node)
     end
   end
 
   # Shell symbol and end
-  printf '%s] %s> %s' $yellow $symbol (set_color normal)
+  set lower_prompt (printf '%s%s] %s> %s' $lower_prompt $yellow $symbol (set_color normal))
+
+  set -l clean_upper_prompt (__clean_prompt $upper_prompt)
+  set -l clean_lower_prompt (__clean_prompt $lower_prompt)
+
+  if test (math $COLUMNS-(string length $clean_lower_prompt)) -gt (string length $clean_upper_prompt)
+    printf '%s\n%s' $upper_prompt $lower_prompt
+  else
+    echo $lower_prompt
+  end
 end
