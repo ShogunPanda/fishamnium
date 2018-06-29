@@ -1,3 +1,7 @@
+### 2018-06-29 / 6.3.1
+
+* fix(prompt): Improved prompt for smaller windows.
+
 ### 2018-05-25 / 6.3.0
 
 * feat: Use master as default git branch.
