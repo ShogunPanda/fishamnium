@@ -1,3 +1,7 @@
+### 2018-07-06 / 6.4.1
+
+* fix: Minor Node fix.
+
 ### 2018-07-06 / 6.4.0
 
 * feat: Use /usr/local for n.
