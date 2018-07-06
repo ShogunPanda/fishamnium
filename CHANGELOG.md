@@ -1,3 +1,7 @@
+### 2018-07-06 / 6.4.0
+
+* feat: Use /usr/local for n.
+
 ### 2018-06-29 / 6.3.1
 
 * fix(prompt): Improved prompt for smaller windows.
