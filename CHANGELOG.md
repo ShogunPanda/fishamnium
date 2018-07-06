@@ -1,3 +1,55 @@
+### 2018-07-06 / 6.1.0
+
+* fix: Minor Node fix.
+* chore: Version 6.4.0.
+* chore: Updated CHANGELOG.md.
+* feat: Use /usr/local for n.
+* chore: Version 6.3.1.
+* chore: Updated CHANGELOG.md.
+* fix(prompt): Improved prompt for smaller windows.
+* chore: Version 6.3.0.
+* chore: Updated CHANGELOG.md.
+* feat: Use master as default git branch.
+* Emoji fixes.
+* Fixed installer.
+* Minor fix.
+* Minor fix.
+* Added missing file.
+* Improved logging.
+*  Version 6.2.0
+* Updated CHANGELOG.md.
+* Improved output emoji handling.
+*  Version 6.1.8
+* Updated CHANGELOG.md.
+*  Version 6.1.7
+* Updated CHANGELOG.md.
+*  Version 6.1.6
+* Updated CHANGELOG.md.
+*  Version 6.1.5
+* Updated CHANGELOG.md.
+*  Version 6.1.4
+* Updated CHANGELOG.md.
+* Allow multiple releasing.
+*  Version 6.1.3
+* Updated CHANGELOG.md.
+* Updated CHANGELOG.md.
+* Improve generation file.
+* Improve updating of the version.
+* Replace Rakefile with Magefile.
+* Removed vendor folder from GIT.
+* Added dep file.
+* Updated CHANGELOG.md
+* Updated CHANGELOG.md
+* Added lint command.
+* Updated CHANGELOG.md
+* Version 6.0.5.
+* Updated CHANGELOG.md
+* Updated CHANGELOG.md
+* Updated license links and badges.
+* Updated CHANGELOG.md
+* Updated CHANGELOG.md
+* Updated CHANGELOG.md
+
 ### 2018-07-06 / 6.4.0
 
 * feat: Use /usr/local for n.
