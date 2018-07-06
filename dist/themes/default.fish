@@ -82,7 +82,7 @@ function fish_prompt -d "Write out the prompt"
   # Node.js
   if [ "$FISHAMNIUM_THEME_SHOW_NODE" != "" ]
     if contains "41_node.fish" $FISHAMNIUM_LOADED_PLUGINS
-      set -l current_node (cat $N_PREFIX/active ^ /dev/null)
+      set -l current_node (cat $N_PREFIX/n/active ^ /dev/null)
       [ "$current_node" != "" ]; and set lower_prompt (printf '%s %snode:%s' $lower_prompt $black $current_node)
     end
   end
