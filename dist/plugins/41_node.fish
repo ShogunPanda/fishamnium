@@ -7,7 +7,7 @@
 function n
   bash $N_PREFIX/bin/n $argv
   set --local n_exit $status
-  node -v ^ /dev/null | sed -e "s#^v##" > $N_PREFIX/active 
+  node -v ^ /dev/null | sed -e "s#^v##" > $N_PREFIX/n/active 
   return $n_exit
 end
 
