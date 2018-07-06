@@ -11,5 +11,5 @@ function n
   return $n_exit
 end
 
-set -x -g N_PREFIX ~/.nodejs
-set -x -g PATH ~/.nodejs/bin $PATH
+set -x -g N_PREFIX /usr/local
+set -x -g PATH $N_PREFIX/bin $PATH

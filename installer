@@ -37,6 +37,11 @@ switch (uname -s)
         ln -sf ~/.fishamnium/helpers/fishamnium-windows ~/.fishamnium/helpers/fishamnium
 end
 
+echo -e "\n-------\n\nfishamnium has been installed. Enabling it is left to you."
+echo -e "To enable, add the following line to $HOME/.config/fish/config.fish:\n"
+echo -e "source ~/.fishamnium/loader.fish\n"
+echo -e "Hope you will like it. Enjoy! ;)"
+
 if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
   cd $HOME
   and /bin/rm -rf "$destdir"
