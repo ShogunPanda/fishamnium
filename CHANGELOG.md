@@ -1,3 +1,7 @@
+### 2018-08-07 / 6.5.0
+
+* feat: Added no-verify flag
+
 ### 2018-07-06 / 6.4.1
 
 * fix: Minor Node fix.
