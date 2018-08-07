@@ -23,6 +23,7 @@ set _facTemporaryArg "(\\s+(-t|--temporay)\\s+\\S+)*"
 for i in g fishamnium
   complete -f -c $i -n "__fishamnium_complete 'git.*'" -s q -l quiet -d "Be more quiet"
   complete -f -c $i -n "__fishamnium_complete 'git.*'" -s n -l dry-run -d "Do not execute write action"
+  complete -f -c $i -n "__fishamnium_complete 'git.*'" -s F -l no-verify -d "Do not execute commit or push related hooks"
   complete -x -c $i -n "__fishamnium_complete 'git.*'" -s r -l remote -d "The remote to act on" -a "(fishamnium git remotes --autocomplete)"
 
   # All the commands below are grouped by similar arguments

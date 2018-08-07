@@ -73,7 +73,7 @@ func workflowFinish(branch, base, remote string, deleteAfter bool) {
 	gitChain(false, chain)
 }
 
-func workflowPullRequest(branch, base, remote string) {
+func workflowPullRequest(cmd *cobra.Command, branch, base, remote string) {
 	if branch == base {
 		console.Fatal("You are already on the base branch.")
 	}
@@ -85,7 +85,7 @@ func workflowPullRequest(branch, base, remote string) {
 	workflowDebug("After merging, the new current branch will be {yellow}%s{-} and the current branch {yellow}%s{-} will be deleted.", base, branch)
 
 	chain := [][]string{
-		[]string{"push", "-f", remote, branch},
+		[]string{"push", getNoVerifyOption(cmd), "-f", remote, branch},
 		[]string{"checkout", base},
 		[]string{"branch", "-D", branch},
 	}
@@ -178,7 +178,7 @@ func WorkflowFastCommit(cmd *cobra.Command, args []string) {
 	// Perform commands
 	workflowStart(branch, base, remote)
 	workflowDebug("Committing all changes with message: {yellow}\"%s\"{-} ...", message)
-	commitWithTask([]string{message}, true, false)
+	commitWithTask(cmd, []string{message}, true, false)
 	workflowFinish(branch, base, remote, true)
 	console.Complete()
 }
@@ -192,7 +192,7 @@ func WorkflowPullRequest(cmd *cobra.Command, args []string) {
 	base := getPositionalArgument(args, 0, configuration.DefaultBranch)
 	remote := getRemoteOption(cmd)
 
-	workflowPullRequest(branch, base, remote)
+	workflowPullRequest(cmd, branch, base, remote)
 	console.Complete()
 }
 
@@ -209,8 +209,8 @@ func WorkflowFastPullRequest(cmd *cobra.Command, args []string) {
 	// Perform commands
 	workflowStart(branch, base, remote)
 	workflowDebug("Committing all changes with message: {yellow}\"%s\"{-} ...", message)
-	commitWithTask([]string{message}, true, false)
-	workflowPullRequest(branch, base, remote)
+	commitWithTask(cmd, []string{message}, true, false)
+	workflowPullRequest(cmd, branch, base, remote)
 	console.Complete()
 }
 
@@ -256,7 +256,7 @@ func WorkflowImport(cmd *cobra.Command, args []string) {
 	workflowStart(temporary, source, remote)
 	workflowFinish(temporary, destination, remote, true)
 	workflowDebug("Pushing updated branch {yellow}%s{-} to remote {yellow}%s{-} ...", destination, remote)
-	gitChain(false, [][]string{[]string{"push", "-f", remote, destination}})
+	gitChain(false, [][]string{[]string{"push", getNoVerifyOption(cmd), "-f", remote, destination}})
 	console.Complete()
 }
 

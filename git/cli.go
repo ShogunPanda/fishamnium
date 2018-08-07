@@ -47,11 +47,20 @@ func getRemoteOption(cmd *cobra.Command) (remote string) {
 	return getStringOption(cmd, "remote", configuration.DefaultRemote)
 }
 
+func getNoVerifyOption(cmd *cobra.Command) (noVerify string) {
+	if arg, _ := cmd.Flags().GetBool("no-verify"); arg {
+		noVerify = "--no-verify"
+	}
+
+	return
+}
+
 // InitCLI setups the GIT module
 func InitCLI() *cobra.Command {
 	parent := &cobra.Command{Use: "git", Short: "Manage GIT Repositories."}
 
 	parent.PersistentFlags().StringP("remote", "r", configuration.DefaultRemote, "The remote to act on.")
+	parent.PersistentFlags().BoolP("no-verify", "F", false, "Do not execute commit or push related hooks.")
 	parent.PersistentFlags().BoolP("quiet", "q", false, "Be more quiet.")
 	parent.PersistentFlags().BoolP("dry-run", "n", false, "Do not execute write action.")
 

@@ -28,7 +28,7 @@ func prepareWriteCommand(cmd *cobra.Command) {
 	isRepository(true, false)
 }
 
-func commitWithTask(args []string, addAll bool, showMessage bool) {
+func commitWithTask(cmd *cobra.Command, args []string, addAll bool, showMessage bool) {
 	// Get arguments
 	message := args[0]
 	taskArg := ""
@@ -68,7 +68,12 @@ func commitWithTask(args []string, addAll bool, showMessage bool) {
 		chain = append(chain, []string{"add", "-A"})
 	}
 
-	chain = append(chain, []string{"commit", "-F", tmpfile.Name()})
+	commit := []string{"commit", "-F", tmpfile.Name()}
+	noVerify := getNoVerifyOption(cmd)
+	if noVerify != "" {
+		commit = append(commit, noVerify)
+	}
+	chain = append(chain, commit)
 
 	gitChain(false, chain)
 }
@@ -84,20 +89,20 @@ func deleteBranches(cmd *cobra.Command, branches []string) {
 	for _, branch := range branches {
 		remoteBranches = append(remoteBranches, ":"+branch)
 	}
-	git(false, append([]string{"push", remote}, remoteBranches...)...)
+	git(false, append([]string{"push", getNoVerifyOption(cmd), remote}, remoteBranches...)...)
 }
 
 // CommitWithTask commits changes with the task name
 func CommitWithTask(cmd *cobra.Command, args []string) {
 	prepareWriteCommand(cmd)
-	commitWithTask(args, false, true)
+	commitWithTask(cmd, args, false, true)
 	console.Complete()
 }
 
 // CommitAllWithTask commits all changes with the task name
 func CommitAllWithTask(cmd *cobra.Command, args []string) {
 	prepareWriteCommand(cmd)
-	commitWithTask(args, true, true)
+	commitWithTask(cmd, args, true, true)
 	console.Complete()
 }
 
@@ -114,7 +119,7 @@ func Push(cmd *cobra.Command, args []string) {
 		branch = branchName(false, true, false)
 	}
 
-	pushArgs := []string{"push", remote, branch}
+	pushArgs := []string{"push", getNoVerifyOption(cmd), remote, branch}
 
 	if force, _ := cmd.Flags().GetBool("force"); force {
 		pushArgs = append(pushArgs[:1], append([]string{"-f"}, pushArgs[1:]...)...)
