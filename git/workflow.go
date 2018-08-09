@@ -84,8 +84,15 @@ func workflowPullRequest(cmd *cobra.Command, branch, base, remote string) {
 	workflowDebug("Creating a pull request from current branch {yellow}%s{-} to the base branch {yellow}%s{-} on remote {yellow}%s{-} ...", branch, base, remote)
 	workflowDebug("After merging, the new current branch will be {yellow}%s{-} and the current branch {yellow}%s{-} will be deleted.", base, branch)
 
+	push := []string{"push"}
+	noVerify := getNoVerifyOption(cmd)
+	if noVerify != "" {
+		push = append(push, noVerify)
+	}
+	push = append(push, "-f", remote, branch)
+
 	chain := [][]string{
-		[]string{"push", getNoVerifyOption(cmd), "-f", remote, branch},
+		push,
 		[]string{"checkout", base},
 		[]string{"branch", "-D", branch},
 	}

@@ -89,7 +89,16 @@ func deleteBranches(cmd *cobra.Command, branches []string) {
 	for _, branch := range branches {
 		remoteBranches = append(remoteBranches, ":"+branch)
 	}
-	git(false, append([]string{"push", getNoVerifyOption(cmd), remote}, remoteBranches...)...)
+
+	push := []string{"push"}
+	noVerify := getNoVerifyOption(cmd)
+	if noVerify != "" {
+		push = append(push, noVerify)
+	}
+	push = append(push, "-f", remote)
+	push = append(push, remoteBranches...)
+
+	git(false, push...)
 }
 
 // CommitWithTask commits changes with the task name
