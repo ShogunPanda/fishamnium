@@ -1,3 +1,7 @@
+### 2018-08-09 / 6.5.1
+
+* fix: Fixed no-verify pushing.
+
 ### 2018-08-07 / 6.5.0
 
 * feat: Added no-verify flag
