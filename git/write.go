@@ -128,7 +128,13 @@ func Push(cmd *cobra.Command, args []string) {
 		branch = branchName(false, true, false)
 	}
 
-	pushArgs := []string{"push", getNoVerifyOption(cmd), remote, branch}
+	pushArgs := []string{"push"}
+	noVerify := getNoVerifyOption(cmd)
+	if noVerify != "" {
+		pushArgs = append(pushArgs, noVerify)
+	}
+
+	pushArgs = append(pushArgs, remote, branch)
 
 	if force, _ := cmd.Flags().GetBool("force"); force {
 		pushArgs = append(pushArgs[:1], append([]string{"-f"}, pushArgs[1:]...)...)
