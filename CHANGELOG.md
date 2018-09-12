@@ -1,3 +1,7 @@
+### 2018-09-12 / 6.5.3
+
+* fix: Fixed task and Github PR.
+
 ### 2018-08-11 / 6.5.2
 
 * fix: Fixed no-verify pushing.
