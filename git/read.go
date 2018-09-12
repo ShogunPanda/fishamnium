@@ -21,10 +21,11 @@ var regexpMEmulator, _ = regexp.Compile("\\s+")
 var taskMatcher, _ = regexp.Compile(regexpMEmulator.ReplaceAllString(`(?i)
   ^(?:
 		(?:((?:[a-z#]+-)?\d+)-{1,2})?
-		(?:.+?)
+		(?:[a-z].+?)
 		(?:-{1,2}((?:[a-z#]+-)?\d+))?
   )$
 `, ""))
+var shortTaskMatcher, _ = regexp.Compile(regexpMEmulator.ReplaceAllString(`(?i)^(?:(?:[a-z#]+-)?\d+)$`, ""))
 
 func isRepository(fatal, standalone bool) bool {
 	// Execute the command
@@ -103,13 +104,22 @@ func task(fatal, standalone bool) string {
 
 	// Apply the matcher on the last part of the branch name
 	nameTokens := strings.Split(name, "/")
-	match := taskMatcher.FindStringSubmatch(nameTokens[len(nameTokens)-1])
+	taskPart := nameTokens[len(nameTokens)-1]
 
+	// Match the long matcher
+	match := taskMatcher.FindStringSubmatch(taskPart)
+
+	fmt.Println(match)
 	task := ""
 	if len(match) == 3 && match[1] == "" && match[2] != "" {
 		task = match[2]
 	} else if len(match) > 1 && match[1] != "" {
 		task = match[1]
+	}
+
+	// Match the short matcher
+	if shortTaskMatcher.MatchString(taskPart) {
+		task = taskPart
 	}
 
 	return handleReadOutput(task, standalone)

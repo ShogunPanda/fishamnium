@@ -19,7 +19,12 @@ type Remote struct {
 	Push  string
 }
 
-var remoteTypeGithubMatcher, _ = regexp.Compile("(?i)^(?:To github\\.com:)(.+)(?:\\.git)$")
+/*
+remote: Create a pull request for 'feature/pinsogna/DEV-2370' on GitHub by visiting:
+	 remote:      https://github.com/icemobilelab/loyalty-schemas-utils/pull/new/feature/pinsogna/DEV-2370
+*/
+
+var remoteTypeGithubMatcher, _ = regexp.Compile("(?i)^(?:Create a pull request for .+ on GitHub by visiting:)(.+)(?:\\.git)$")
 var remoteTypeGitlabMatcher, _ = regexp.Compile("(?i)^(?:To gitlab\\.com:)(.+)(?:\\.git)$")
 var remoteTypeBitbucketMatcher, _ = regexp.Compile("(?i)^(?:remote:\\s+)(.+compare/commits)(\\?sourceBranch.+)$")
 
