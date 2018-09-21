@@ -18,14 +18,14 @@ import (
 )
 
 var regexpMEmulator, _ = regexp.Compile("\\s+")
-var taskMatcher, _ = regexp.Compile(regexpMEmulator.ReplaceAllString(`(?i)
+var taskMatcher, _ = regexp.Compile(regexpMEmulator.ReplaceAllString(`
   ^(?:
-		(?:((?:[a-z#]+-)?\d+)-{1,2})?
-		(?:[a-z].+?)
-		(?:-{1,2}((?:[a-z#]+-)?\d+))?
+		(?:((?:[A-Z#]+-)?\d+)-{1,2})?
+		(?:[a-zA-Z].+?)
+		(?:-{1,2}((?:[A-Z#]+-)?\d+))?
   )$
 `, ""))
-var shortTaskMatcher, _ = regexp.Compile(regexpMEmulator.ReplaceAllString(`(?i)^(?:(?:[a-z#]+-)?\d+)$`, ""))
+var shortTaskMatcher, _ = regexp.Compile(regexpMEmulator.ReplaceAllString(`^(?:(?:[A-Z#]+-)?\d+)$`, ""))
 
 func isRepository(fatal, standalone bool) bool {
 	// Execute the command
@@ -109,7 +109,6 @@ func task(fatal, standalone bool) string {
 	// Match the long matcher
 	match := taskMatcher.FindStringSubmatch(taskPart)
 
-	fmt.Println(match)
 	task := ""
 	if len(match) == 3 && match[1] == "" && match[2] != "" {
 		task = match[2]
@@ -199,6 +198,17 @@ func Sha(cmd *cobra.Command, args []string) {
 func Task(cmd *cobra.Command, args []string) {
 	isRepository(true, false)
 	task(true, true)
+}
+
+// PullRequestURL shows a pull request URL
+func PullRequestURL(cmd *cobra.Command, args []string) {
+	branch := branchName(false, true, false)
+	base := getPositionalArgument(args, 0, configuration.DefaultBranch)
+	remote := getRemoteOption(cmd)
+
+	url := buildPRURL(base, branch, remote)
+
+	fmt.Println(url)
 }
 
 // Summary shows the current branch name, the current SHA and whether the working directory is dirty

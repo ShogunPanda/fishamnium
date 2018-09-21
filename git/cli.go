@@ -84,6 +84,10 @@ func InitCLI() *cobra.Command {
 	addSubcommand(parent, &cobra.Command{
 		Use: "summary", Aliases: []string{"ls"}, Short: "Get a summary of current GIT repository branch, SHA and dirty status.", Run: Summary,
 	}, nil)
+	addSubcommand(parent, &cobra.Command{
+		Use: "pull_request_url [base]", Aliases: []string{"pru"}, Args: cobra.MaximumNArgs(1),
+		Short: "Get a Pull Request URL.", Run: PullRequestURL,
+	}, nil)
 
 	// Write commands
 	addSubcommand(parent, &cobra.Command{

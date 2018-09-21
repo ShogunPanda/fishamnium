@@ -6,7 +6,6 @@
 package git
 
 import (
-	"bufio"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -19,14 +18,9 @@ type Remote struct {
 	Push  string
 }
 
-/*
-remote: Create a pull request for 'feature/pinsogna/DEV-2370' on GitHub by visiting:
-	 remote:      https://github.com/icemobilelab/loyalty-schemas-utils/pull/new/feature/pinsogna/DEV-2370
-*/
-
-var remoteTypeGithubMatcher, _ = regexp.Compile("(?i)^(?:Create a pull request for .+ on GitHub by visiting:)(.+)(?:\\.git)$")
-var remoteTypeGitlabMatcher, _ = regexp.Compile("(?i)^(?:To gitlab\\.com:)(.+)(?:\\.git)$")
-var remoteTypeBitbucketMatcher, _ = regexp.Compile("(?i)^(?:remote:\\s+)(.+compare/commits)(\\?sourceBranch.+)$")
+var remoteTypeGithubMatcher, _ = regexp.Compile("(?i)^.+github\\.com[:/](.+)\\.git$")
+var remoteTypeGitlabMatcher, _ = regexp.Compile("(?i)^.+gitlab\\.com[:/](.+)\\.git$")
+var remoteTypeBitbucketMatcher, _ = regexp.Compile("(?i)^.+:7999/(?:scm/?)(.+)\\.git$")
 
 // Update updates the field of a Remote
 func (t *Remote) Update(field, value string) {
@@ -51,44 +45,33 @@ func (t Remote) MarshalJSON() (out []byte, err error) {
 	return
 }
 
-func buildPRURL(output, base, branch string) string {
-	scanner := bufio.NewScanner(strings.NewReader(output))
+func buildPRURL(base, branch, remote string) string {
 	var prURL string
 
-URLScanning:
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
+	// Get the full URL for the remote
+	remoteURL := strings.TrimSpace(git(true, "remote", "get-url", remote).Stdout)
+	parsedRemoteURL, _ := url.Parse(remoteURL)
 
-		var match []string
-		if match = remoteTypeGithubMatcher.FindStringSubmatch(line); len(match) > 1 { // GitHub
-			tempURL, _ := url.Parse("https://github.com/")
-			tempURL.Path = fmt.Sprintf("%s/compare/%s...%s", match[1], base, branch)
-			query := tempURL.Query()
-			query.Set("expand", "1")
-			tempURL.RawQuery = query.Encode()
+	// Check the provider
+	if strings.HasPrefix(remoteURL, "https://github.com") || strings.HasPrefix(remoteURL, "git@github.com") { // GitHub
+		repo := remoteTypeGithubMatcher.FindStringSubmatch(remoteURL)[1]
+		prURL = fmt.Sprintf("https://github.com/%s/compare/%s...%s?expand=1", repo, base, branch)
+	} else if strings.HasPrefix(remoteURL, "https://gitlab.com") || strings.HasPrefix(remoteURL, "git@gitlab.com") { // Gitlab
+		repo := remoteTypeGitlabMatcher.FindStringSubmatch(remoteURL)[1]
+		prURL = fmt.Sprintf(
+			"https://gitlab.com/%s/merge_requests/new?merge_request%%5Btarget_branch%%5D=%s&merge_request%%5Bsource_branch%%5D=%s",
+			repo, base, branch,
+		)
+	} else if (strings.HasPrefix(parsedRemoteURL.Scheme, "http") && parsedRemoteURL.Port() == "7990") ||
+		(strings.HasPrefix(parsedRemoteURL.Scheme, "ssh") && parsedRemoteURL.Port() == "7999") { // Hosted bitbucket
 
-			prURL = tempURL.String()
-			break URLScanning
-		} else if match = remoteTypeGitlabMatcher.FindStringSubmatch(line); len(match) > 1 { // Gitlab
-			tempURL, _ := url.Parse("https://gitlab.com/")
-			tempURL.Path = fmt.Sprintf("%s/merge_requests/new", match[1])
-			query := tempURL.Query()
-			query.Set("merge_request[source_branch]", branch)
-			query.Set("merge_request[target_branch]", base)
-			tempURL.RawQuery = query.Encode()
+		repo := strings.Split(strings.TrimPrefix(strings.TrimPrefix(strings.TrimSuffix(parsedRemoteURL.Path, ".git"), "/scm/"), "/"), "/")
 
-			prURL = tempURL.String()
-		} else if match = remoteTypeBitbucketMatcher.FindStringSubmatch(line); len(match) > 1 { // BitBucket
-			tempURL, _ := url.Parse(match[1])
-			query := tempURL.Query()
-			query.Set("sourceBranch", branch)
-			query.Set("targetBranch", base)
-			tempURL.RawQuery = query.Encode()
-
-			prURL = tempURL.String()
-		}
+		prURL = fmt.Sprintf(
+			"http://%s:7990/projects/%s/repos/%s/compare/commits?targetBranch=refs%%2Fheads%%2F%s&sourceBranch=refs%%2Fheads%%2F%s",
+			parsedRemoteURL.Hostname(), repo[0], repo[1], base, branch,
+		)
 	}
 
-	// Now find the PR url
 	return prURL
 }

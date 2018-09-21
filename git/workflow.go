@@ -84,6 +84,9 @@ func workflowPullRequest(cmd *cobra.Command, branch, base, remote string) {
 	workflowDebug("Creating a pull request from current branch {yellow}%s{-} to the base branch {yellow}%s{-} on remote {yellow}%s{-} ...", branch, base, remote)
 	workflowDebug("After merging, the new current branch will be {yellow}%s{-} and the current branch {yellow}%s{-} will be deleted.", base, branch)
 
+	// Get PR Info
+	prURL := buildPRURL(base, branch, remote)
+
 	push := []string{"push"}
 	noVerify := getNoVerifyOption(cmd)
 	if noVerify != "" {
@@ -98,13 +101,11 @@ func workflowPullRequest(cmd *cobra.Command, branch, base, remote string) {
 	}
 
 	// Perform operations to merge the branch, then find the PR URL
-	results := gitChain(false, chain)
+	gitChain(false, chain)
 
 	if configuration.DryRun {
 		return
 	}
-
-	prURL := buildPRURL(results[0].Stderr, base, branch)
 
 	// If there is a URL, open it
 	if prURL != "" {
