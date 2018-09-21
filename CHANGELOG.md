@@ -1,3 +1,7 @@
+### 2018-09-21 / 6.6.0
+
+* feat: Improved Pull Request URL detection and exposed as command.
+
 ### 2018-09-12 / 6.5.3
 
 * fix: Fixed task and Github PR.
