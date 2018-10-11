@@ -17,16 +17,6 @@ import (
 	"github.com/ShogunPanda/fishamnium/console"
 )
 
-var regexpMEmulator, _ = regexp.Compile("\\s+")
-var taskMatcher, _ = regexp.Compile(regexpMEmulator.ReplaceAllString(`
-  ^(?:
-		(?:((?:[A-Z#]+-)?\d+)-{1,2})?
-		(?:[a-zA-Z].+?)
-		(?:-{1,2}((?:[A-Z#]+-)?\d+))?
-  )$
-`, ""))
-var shortTaskMatcher, _ = regexp.Compile(regexpMEmulator.ReplaceAllString(`^(?:(?:[A-Z#]+-)?\d+)$`, ""))
-
 func isRepository(fatal, standalone bool) bool {
 	// Execute the command
 	result := git(true, "rev-parse", "--is-inside-work-tree").Success()
@@ -106,19 +96,27 @@ func task(fatal, standalone bool) string {
 	nameTokens := strings.Split(name, "/")
 	taskPart := nameTokens[len(nameTokens)-1]
 
-	// Match the long matcher
-	match := taskMatcher.FindStringSubmatch(taskPart)
-
+	// Cycle all defined matchers and return the first matching
 	task := ""
-	if len(match) == 3 && match[1] == "" && match[2] != "" {
-		task = match[2]
-	} else if len(match) > 1 && match[1] != "" {
-		task = match[1]
-	}
+	for _, matcher := range configuration.TaskMatchers {
+		// Try exact match
+		mo := regexp.MustCompile(fmt.Sprintf("(?i)^(%s)$", matcher)).FindStringSubmatch(taskPart)
 
-	// Match the short matcher
-	if shortTaskMatcher.MatchString(taskPart) {
-		task = taskPart
+		// Go on prefix
+		if mo == nil {
+			mo = regexp.MustCompile(fmt.Sprintf("(?i)^(?:(%s)-+)", matcher)).FindStringSubmatch(taskPart)
+		}
+
+		// Go on suffix
+		if mo == nil {
+			mo = regexp.MustCompile(fmt.Sprintf("(?i)(?:-+(%s))$", matcher)).FindStringSubmatch(taskPart)
+		}
+
+		// Match found
+		if mo != nil {
+			task = strings.TrimSpace(mo[1])
+			break
+		}
 	}
 
 	return handleReadOutput(task, standalone)

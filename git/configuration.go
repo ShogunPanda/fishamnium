@@ -10,20 +10,22 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/ShogunPanda/fishamnium/console"
 )
 
 // Configuration represents the Fishamnium GIT configuration
 type Configuration struct {
-	DefaultBranch string `json:"defaultBranch"`
-	DefaultRemote string `json:"defaultRemote"`
-	DefaultPrefix string `json:"defaultPrefix"`
-	OpenPath      string `json:"openPath"`
-	PrependTask   bool   `json:"prependTask"`
-	Quiet         bool   `json:"quiet"`
-	Debug         bool   `json:"debug"`
-	DryRun        bool   `json:"dryRun"`
+	DefaultBranch string   `json:"defaultBranch"`
+	DefaultRemote string   `json:"defaultRemote"`
+	DefaultPrefix string   `json:"defaultPrefix"`
+	OpenPath      string   `json:"openPath"`
+	PrependTask   bool     `json:"prependTask"`
+	Quiet         bool     `json:"quiet"`
+	Debug         bool     `json:"debug"`
+	DryRun        bool     `json:"dryRun"`
+	TaskMatchers  []string `json:"taskMatchers"`
 }
 
 func environmentOverrideConfiguration(configuration *Configuration) {
@@ -41,6 +43,9 @@ func environmentOverrideConfiguration(configuration *Configuration) {
 	}
 	if envValue, envSet := os.LookupEnv("GIT_TASK_PREPEND"); envSet {
 		configuration.PrependTask = envValue == "true"
+	}
+	if envValue, envSet := os.LookupEnv("GIT_TASK_MATCHERS"); envSet {
+		configuration.TaskMatchers = strings.Split(envValue, ":")
 	}
 	if envValue, envSet := os.LookupEnv("QUIET"); envSet {
 		configuration.Quiet = envValue == "true"
@@ -108,7 +113,8 @@ func loadConfiguration() (rv Configuration) {
 }
 
 var defaultConfiguration = Configuration{
-	DefaultBranch: "master", DefaultRemote: "origin", DefaultPrefix: "release-", OpenPath: "/usr/bin/open", PrependTask: false, Quiet: false, Debug: false,
+	DefaultBranch: "master", DefaultRemote: "origin", DefaultPrefix: "release-", OpenPath: "/usr/bin/open",
+	PrependTask: false, TaskMatchers: []string{"(?:(?:[a-z0-9]+-)?\\d+)"}, Quiet: false, Debug: false,
 }
 
 var configuration = loadConfiguration()
