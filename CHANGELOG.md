@@ -1,3 +1,7 @@
+### 2018-10-11 / 6.7.0
+
+* feat: Improved task recognizing and make it configurable.
+
 ### 2018-09-21 / 6.6.0
 
 * feat: Improved Pull Request URL detection and exposed as command.
