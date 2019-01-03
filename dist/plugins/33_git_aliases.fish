@@ -69,7 +69,7 @@ alias gmf='git merge --no-ff'
 # Resetting
 alias grh='git reset HEAD'
 alias grhh='git reset HEAD --hard'
-alias gclean='git reset --hard; and git clean -dfx'
+alias gclean='git reset --hard && git clean -dfx'
 
 # Finding
 alias gf='git ls-files | grep'

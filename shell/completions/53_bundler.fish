@@ -6,7 +6,7 @@
 
 function __bundle_wants_command
   set -l cmd (commandline -opc)
-  [ "$cmd" = "bundle" ]; and return 0
+  [ "$cmd" = "bundle" ] && return 0
   return 1
 end
 
@@ -22,7 +22,7 @@ function __bundle_wants_gem
 end
 
 function __bundle_gems
-  test -f Gemfile; and cat Gemfile | grep -E "^\s+gem" | awk '{ print $2 }' | sed -e 's#[,"]##g'
+  test -f Gemfile && cat Gemfile | grep -E "^\s+gem" | awk '{ print $2 }' | sed -e 's#[,"]##g'
 end
 
 complete -c bundle -n "__bundle_wants_command" -f -a check --description "Checks if the dependencies listed in Gemfile are satisfied"

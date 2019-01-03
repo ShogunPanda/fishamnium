@@ -12,7 +12,7 @@ function __truncated_cwd
   while [ (echo -e $rv | wc -m)  -gt $len ]
     set old_rv $rv
     set rv (echo $rv | sed -E "s#^((…)?[^/]*/)#…/#")
-    [ "$rv" = "$old_rv" ]; and break
+    [ "$rv" = "$old_rv" ] && break
   end
 
   echo $rv
@@ -54,7 +54,7 @@ function fish_prompt -d "Write out the prompt"
   set -l git_summary (~/.fishamnium/helpers/fishamnium git summary)
   if [ "$git_summary" != "" ]
     set git_summary (string split " " $git_summary)
-    string match -r "^true" $git_summary[3] > /dev/null; and set git_status $red "✗"; or set -l git_status $green "✔"
+    string match -r "^true" $git_summary[3] > /dev/null && set git_status $red "✗"; or set -l git_status $green "✔"
     set upper_prompt (printf '%s %s(%s %s%s%s) %s%s' $upper_prompt $branch $git_summary[1] $commit $git_summary[2] $branch $git_status[1] $git_status[2])
   end
 
@@ -75,7 +75,7 @@ function fish_prompt -d "Write out the prompt"
   if [ "$FISHAMNIUM_THEME_SHOW_RUBY" != "" ]
     if contains "51_ruby.fish" $FISHAMNIUM_LOADED_PLUGINS
       set -l current_ruby (cat ~/.rbenv/version ^ /dev/null)
-      [ "$current_ruby" != "" ]; and set lower_prompt (printf '%s %sruby:%s' $lower_prompt $black $current_ruby)
+      [ "$current_ruby" != "" ] && set lower_prompt (printf '%s %sruby:%s' $lower_prompt $black $current_ruby)
     end
   end
 
@@ -83,7 +83,7 @@ function fish_prompt -d "Write out the prompt"
   if [ "$FISHAMNIUM_THEME_SHOW_NODE" != "" ]
     if contains "41_node.fish" $FISHAMNIUM_LOADED_PLUGINS
       set -l current_node (cat $N_PREFIX/n/active ^ /dev/null)
-      [ "$current_node" != "" ]; and set lower_prompt (printf '%s %snode:%s' $lower_prompt $black $current_node)
+      [ "$current_node" != "" ] && set lower_prompt (printf '%s %snode:%s' $lower_prompt $black $current_node)
     end
   end
 

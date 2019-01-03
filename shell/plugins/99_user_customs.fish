@@ -4,4 +4,4 @@
 # Licensed under the MIT license, which can be found at https://choosealicense.com/licenses/mit.
 #
 
-test -x $HOME/.fishamnium_profile; and . $HOME/.fishamnium_profile
+test -x $HOME/.fishamnium_profile && . $HOME/.fishamnium_profile

@@ -8,7 +8,7 @@ set rootdir ~/.fishamnium
 set destdir /tmp/fishamnium-(date +%Y%m%d%H%M%S)
 
 if [ "$FISHAMNIUM_OPERATION" = "uninstall" ]
-  echo "* Removing directory $rootdir ..."; and /bin/rm -rf "$rootdir"
+  echo "* Removing directory $rootdir ..." && /bin/rm -rf "$rootdir"
   echo -e "\n-------\n\nfishamnium has been uninstalled. Enabling it is left to you."
   echo -e "To enable, remove the following line to $HOME/.config/fish/config.fish:\n"
   echo -e "source ~/.fishamnium/loader.fish\n"
@@ -17,7 +17,7 @@ if [ "$FISHAMNIUM_OPERATION" = "uninstall" ]
 end
 
 if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
-  echo "Cloning fishamnium into $destdir"; and git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
+  echo "Cloning fishamnium into $destdir" && git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
   cd $destdir
 else
   mage build
