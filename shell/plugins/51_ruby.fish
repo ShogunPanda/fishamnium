@@ -4,4 +4,4 @@
 # Licensed under the MIT license, which can be found at https://choosealicense.com/licenses/mit.
 #
 
-status --is-interactive; and source (rbenv init -|psub)
+status --is-interactive && source (rbenv init -|psub)
