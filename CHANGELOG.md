@@ -1,3 +1,7 @@
+### 2019-01-03 / 8.0.0
+
+* feat: Updated syntax.
+
 ### 2018-10-11 / 6.7.0
 
 * feat: Improved task recognizing and make it configurable.
