@@ -5,7 +5,7 @@
 #
 
 # Set defaults
-set -x -g FISHAMNIUM_VERSION "7.0.0"
+set -x -g FISHAMNIUM_VERSION "8.1.0"
 
 [ (count $FISHAMNIUM_PLUGINS) -eq 0 ] && set -x FISHAMNIUM_PLUGINS (/bin/ls ~/.fishamnium/plugins/*.fish | xargs -n1 basename)
 [ (count $FISHAMNIUM_COMPLETIONS) -eq 0 ] && set -x FISHAMNIUM_COMPLETIONS (/bin/ls ~/.fishamnium/completions/*.fish | xargs -n1 basename)
