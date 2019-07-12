@@ -20,7 +20,7 @@ type Remote struct {
 
 var remoteTypeGithubMatcher, _ = regexp.Compile("(?i)^.+github\\.com[:/](.+)\\.git$")
 var remoteTypeGitlabMatcher, _ = regexp.Compile("(?i)^.+gitlab\\.com[:/](.+)\\.git$")
-var remoteTypeBitbucketMatcher, _ = regexp.Compile("(?i)^.+:7999/(?:scm/?)(.+)\\.git$")
+var remoteTypeBitbucketMatcher, _ = regexp.Compile("(?i)^.+bitbucket\\.org[:/](.+)\\.git$")
 
 // Update updates the field of a Remote
 func (t *Remote) Update(field, value string) {
@@ -61,6 +61,12 @@ func buildPRURL(base, branch, remote string) string {
 		prURL = fmt.Sprintf(
 			"https://gitlab.com/%s/merge_requests/new?merge_request%%5Btarget_branch%%5D=%s&merge_request%%5Bsource_branch%%5D=%s",
 			repo, base, branch,
+		)
+	} else if strings.HasPrefix(remoteURL, "https://bitbucket.org") || strings.HasPrefix(remoteURL, "git@bitbucket.org") { // BitBucket
+		repo := remoteTypeBitbucketMatcher.FindStringSubmatch(remoteURL)[1]
+		prURL = fmt.Sprintf(
+			"https://bitbucket.org/%s/pull-requests/new?source=%s&dest=%s&t=1",
+			repo, branch, base,
 		)
 	} else if (strings.HasPrefix(parsedRemoteURL.Scheme, "http") && parsedRemoteURL.Port() == "7990") ||
 		(strings.HasPrefix(parsedRemoteURL.Scheme, "ssh") && parsedRemoteURL.Port() == "7999") { // Hosted bitbucket
