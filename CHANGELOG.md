@@ -1,3 +1,8 @@
+### 2019-07-12 / 8.1.0
+
+* feat: Added BitBucket repository to workflow.
+* chore: Updated CHANGELOG.md.
+
 ### 2019-01-03 / 7.0.0
 
 - **BREAKING CHANGE**: Required Fish 3.0.0
