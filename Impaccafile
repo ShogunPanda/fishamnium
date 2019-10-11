@@ -1,4 +1,6 @@
 #!/bin/sh
 
+VERSION=$(impacca version raw)
+echo $VERSION
 mage build
-sed -i "" "s#@@FISHAMNIUM_VERSION@@#$1#" dist/loader.fish
+sed -i "" "s#@@FISHAMNIUM_VERSION@@#${VERSION}#" dist/loader.fish
