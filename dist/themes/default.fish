@@ -89,6 +89,7 @@ function fish_prompt -d "Write out the prompt"
 
   # Shell symbol and end
   set lower_prompt (printf '%s%s] %s> %s' $lower_prompt $yellow $symbol (set_color normal))
+  set short_prompt (printf '%s[%s%s@%s%s] %s%s %s%s> %s' $yellow $user_color $user (hostname -s) $yellow $dir (basename (pwd)) $yellow $symbol (set_color normal))
 
   set -l clean_upper_prompt (__clean_prompt $upper_prompt)
   set -l clean_lower_prompt (__clean_prompt $lower_prompt)
@@ -96,6 +97,6 @@ function fish_prompt -d "Write out the prompt"
   if test (math $COLUMNS-(string length $clean_lower_prompt)) -gt (string length $clean_upper_prompt)
     printf '%s\n%s' $upper_prompt $lower_prompt
   else
-    echo $lower_prompt
+    echo $short_prompt
   end
 end
