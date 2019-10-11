@@ -1,3 +1,8 @@
+### 2019-10-11 / 8.2.0
+
+* chore: Use go modules.
+* feat: Better short prompt.
+
 ### 2019-07-12 / 8.1.0
 
 * feat: Added BitBucket repository to workflow.
