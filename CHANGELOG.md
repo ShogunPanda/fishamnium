@@ -1,3 +1,7 @@
+### 2021-01-09 / 8.5.1
+
+- fix: Fixed installer.
+
 ### 2021-01-09 / 8.5.0
 
 - feat: Track ARM helper.
