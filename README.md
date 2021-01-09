@@ -13,7 +13,7 @@ https://sw.cowtech.it/fishamnium
 
 Type the following inside a fish shell and you're done!
 
-`curl -sL http://sw.cowtech.it/fishamnium/installer | fish`
+`curl -sL https://sw.cowtech.it/fishamnium/installer | fish`
 
 ## Updating to version 4.0.0
 
@@ -25,7 +25,7 @@ To update your local file, please run `~/.fishamnium/helpers/fishamnium bookmark
 
 Just type the following inside a fish shell and you're done!
 
-`set -x FISHAMNIUM_OPERATION uninstall curl -sL http://sw.cowtech.it/fishamnium/installer | fish set -e FISHAMNIUM_OPERATION`
+`set -x FISHAMNIUM_OPERATION uninstall curl -sL https://sw.cowtech.it/fishamnium/installer | fish set -e FISHAMNIUM_OPERATION`
 
 ## Contributing to fishamnium
 
