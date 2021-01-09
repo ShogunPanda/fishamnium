@@ -1,3 +1,7 @@
+### 2021-01-09 / 8.4.0
+
+- feat: Also build for Linux ARMv7.
+
 ### 2021-01-09 / 8.3.1
 
 - fix: Fixed installer.
