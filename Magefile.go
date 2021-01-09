@@ -19,7 +19,13 @@ import (
 
 var cwd, _ = os.Getwd()
 
-var platforms = [][]string{{"darwin", "amd64"}, {"windows", "amd64"}, {"linux", "amd64"}, {"linux", "arm64"}}
+var platforms = [][]string{
+	{"darwin", "amd64"}, 
+	{"windows", "amd64"}, 
+	{"linux", "amd64"}, 
+	{"linux", "arm"}, 
+	{"linux", "arm64"},
+}
 
 var versionMatcher = regexp.MustCompile("^(v(?:-?))")
 
@@ -58,7 +64,7 @@ func Build() error {
 		arch := platform[1]
 
 		executable := fmt.Sprintf("%s/dist/helpers/fishamnium-%s-%s", cwd, os, arch)
-		err = execute(map[string]string{"GOARCH": arch, "GOOS": os}, "go", "build", "-o", executable, "-ldflags=-s -w")
+		err = execute(map[string]string{"GOARCH": arch, "GOOS": os, "GOARM": "7"}, "go", "build", "-o", executable, "-ldflags=-s -w")
 
 		if err != nil {
 			return err
