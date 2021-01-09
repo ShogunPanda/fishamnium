@@ -28,7 +28,7 @@ cp -a dist $rootdir
 
 switch (uname -s)
   case Linux
-    switch (uname -s)
+    switch (uname -m)
       case armv7l
         ln -sf ~/.fishamnium/helpers/fishamnium-linux-arm ~/.fishamnium/helpers/fishamnium
       case arm64
