@@ -26,15 +26,17 @@ end
 rm -rf $rootdir
 cp -a dist $rootdir
 
-set os (uname -s)
-
 switch (uname -s)
     case Linux
-        ln -sf ~/.fishamnium/helpers/fishamnium-linux ~/.fishamnium/helpers/fishamnium
+        if [ "$(uname -m | cut -b 1-3)" = "arm" ]; then
+            ln -sf ~/.fishamnium/helpers/fishamnium-linux ~/.fishamnium/helpers/fishamnium-arm64
+        else
+            ln -sf ~/.fishamnium/helpers/fishamnium-linux ~/.fishamnium/helpers/fishamnium-amd64
+        fi
     case Darwin
-        ln -sf ~/.fishamnium/helpers/fishamnium-darwin ~/.fishamnium/helpers/fishamnium
+        ln -sf ~/.fishamnium/helpers/fishamnium-darwin ~/.fishamnium/helpers/fishamnium-amd64
     case '*'
-        ln -sf ~/.fishamnium/helpers/fishamnium-windows ~/.fishamnium/helpers/fishamnium
+        ln -sf ~/.fishamnium/helpers/fishamnium-windows ~/.fishamnium/helpers/fishamnium-amd64
 end
 
 echo -e "\n-------\n\nfishamnium has been installed. Enabling it is left to you."

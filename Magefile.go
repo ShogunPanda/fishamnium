@@ -18,8 +18,9 @@ import (
 )
 
 var cwd, _ = os.Getwd()
-var arch = "amd64"
-var oses = []string{"darwin", "linux", "windows"}
+
+var platforms = [][]string{{"darwin", "amd64"}, {"windows", "amd64"}, {"linux", "amd64"}, {"linux", "arm64"}}
+
 var versionMatcher = regexp.MustCompile("^(v(?:-?))")
 
 func step(message string, args ...interface{}) {
@@ -52,8 +53,11 @@ func Build() error {
 	}
 
 	// Compile executables
-	for _, os := range oses {
-		executable := fmt.Sprintf("%s/dist/helpers/fishamnium-%s", cwd, os)
+	for _, platform := range platforms {
+		os := platform[0]
+		arch := platform[1]
+
+		executable := fmt.Sprintf("%s/dist/helpers/fishamnium-%s-%s", cwd, os, arch)
 		err = execute(map[string]string{"GOARCH": arch, "GOOS": os}, "go", "build", "-o", executable, "-ldflags=-s -w")
 
 		if err != nil {
