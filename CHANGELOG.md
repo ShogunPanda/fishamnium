@@ -1,3 +1,9 @@
+### 2021-01-09 / 8.3.0
+
+- feat: Also build for Linux ARM64.
+- chore: Updated badges.
+- chore: Fixed installer.
+
 ### 2019-10-11 / 8.2.0
 
 - chore: Use go modules.
