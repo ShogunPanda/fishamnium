@@ -1,3 +1,7 @@
+### 2021-02-10 / 8.6.4
+
+- feat: Fixed typos, again.
+
 ### 2021-02-10 / 8.6.3
 
 - feat: Fixed typos.
