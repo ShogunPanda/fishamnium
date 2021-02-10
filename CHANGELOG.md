@@ -1,3 +1,7 @@
+### 2021-02-10 / 8.6.2
+
+- feat: Added new aliases.
+
 ### 2021-02-10 / 8.6.1
 
 - feat: Added new aliases.
