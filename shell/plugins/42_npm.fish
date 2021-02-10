@@ -5,4 +5,15 @@
 #
 
 set -x -g PATH ./node_modules/.bin $PATH
-set -x -g PATH ~/.yarn/bin $PATH
+
+function ni --description "Install packages"
+  npm install $argv
+end
+
+function nr --description "Runs a script using npm"
+  npm run $argv
+end
+
+function nt --description "Runs tests using npm"
+  npm test
+end

@@ -4,28 +4,46 @@
 # Licensed under the MIT license, which can be found at https://choosealicense.com/licenses/mit.
 #
 
+function fishamnium_conditional_load --description "Conditionally load plugins"
+  which $argv[1] > /dev/null ^ /dev/null && chmod u+x ~/.fishamnium/plugins/$argv[2].fish; or chmod u-x ~/.fishamnium/plugins/$argv[2].fish  
+end
+
 # Set defaults
-set -x -g FISHAMNIUM_VERSION "8.5.0"
+set -x -g FISHAMNIUM_VERSION "8.5.1"
 
 [ (count $FISHAMNIUM_PLUGINS) -eq 0 ] && set -x FISHAMNIUM_PLUGINS (/bin/ls ~/.fishamnium/plugins/*.fish | xargs -n1 basename)
 [ (count $FISHAMNIUM_COMPLETIONS) -eq 0 ] && set -x FISHAMNIUM_COMPLETIONS (/bin/ls ~/.fishamnium/completions/*.fish | xargs -n1 basename)
 test -n $FISHAMNIUM_THEME && set -x FISHAMNIUM_THEME default
 
-# Remove n and rbenv if not available
-which ~/.nodejs/bin/n > /dev/null ^ /dev/null && chmod u+x ~/.fishamnium/plugins/41_node.fish; or chmod u-x ~/.fishamnium/plugins/41_node.fish
-which rbenv > /dev/null ^ /dev/null && chmod u+x ~/.fishamnium/plugins/51_ruby.fish; or chmod u-x ~/.fishamnium/plugins/51_ruby.fish
+# Set path
+for root in /usr/local /opt /var
+  for dir in $root/bin $root/sbin
+    test -d $dir && set -x -g PATH $dir $PATH
+	end
+end
+
+set -x -g PATH $PATH ~/.fishamnium/helpers
+
+# Conditionally load plugins
+fishamnium_conditional_load n 41_node
+fishamnium_conditional_load npm 42_npm
+fishamnium_conditional_load rbenv 51_ruby
+fishamnium_conditional_load bundle 52_bundler
+fishamnium_conditional_load rails 53_rails
 
 # Load plugins files
+set -e -g FISHAMNIUM_LOADED_PLUGINS
 for i in (string split " " "$FISHAMNIUM_PLUGINS")
   set source ~/.fishamnium/plugins/$i
-  test -x $source && set -x FISHAMNIUM_LOADED_PLUGINS $FISHAMNIUM_LOADED_PLUGINS $i
+  test -x $source && set -x -g FISHAMNIUM_LOADED_PLUGINS $FISHAMNIUM_LOADED_PLUGINS $i
   test -x $source && . $source
 end
 
 # Load completions files
+set -e -g FISHAMNIUM_LOADED_COMPLETIONS
 for i in (string split " " "$FISHAMNIUM_COMPLETIONS")
   set source ~/.fishamnium/completions/$i
-  test -x $source && set -x FISHAMNIUM_LOADED_COMPLETIONS $FISHAMNIUM_LOADED_COMPLETIONS $i
+  test -x $source && set -x  -g FISHAMNIUM_LOADED_COMPLETIONS $FISHAMNIUM_LOADED_COMPLETIONS $i
   test -x $source && . $source
 end
 
