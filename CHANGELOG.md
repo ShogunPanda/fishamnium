@@ -1,3 +1,8 @@
+### 2021-02-10 / 8.6.0
+
+- feat: Added NPM aliases.
+- fix: Fixed README.
+
 ### 2021-01-09 / 8.5.1
 
 - fix: Fixed installer.
