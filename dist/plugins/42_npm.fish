@@ -22,18 +22,18 @@ function nrb --description "Builds code using npm run build"
   npm run build $argv
 end
 
-function nrb --description "Formats code using npm run format"
+function nrbf --description "Formats code using npm run format"
   npm run format $argv
 end
 
-function nrb --description "Lints code using npm run lint"
+function nrbl --description "Lints code using npm run lint"
   npm run lint $argv
 end
 
-function nrb --description "Deploys code using npm run deploy"
+function nrbd --description "Deploys code using npm run deploy"
   npm run deploy $argv
 end
 
-function nrb --description "Deploys code using npm run deploy:full"
+function nrbdf --description "Deploys code using npm run deploy:full"
   npm run deploy:full $argv
 end
