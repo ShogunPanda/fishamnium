@@ -10,10 +10,30 @@ function ni --description "Install packages"
   npm install $argv
 end
 
+function nt --description "Runs npm test"
+  npm test
+end
+
 function nr --description "Runs a script using npm"
   npm run $argv
 end
 
-function nt --description "Runs tests using npm"
-  npm test
+function nrb --description "Builds code using npm run build"
+  npm run $argv
+end
+
+function nrl --description "Lints code using npm run lint"
+  npm run $argv
+end
+
+function nrf --description "Formats code using npm run format"
+  npm run $argv
+end
+
+function nrd --description "Deploys code using npm run deploy"
+  npm run $argv
+end
+
+function nrdf --description "Deploys code using npm run deploy:full"
+  npm run $argv
 end
