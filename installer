@@ -32,7 +32,9 @@ switch (uname -s)
       case armv7l
         ln -sf ~/.fishamnium/helpers/fishamnium-linux-arm ~/.fishamnium/helpers/fishamnium
       case arm64
-        ln -sf ~/.fishamnium/helpers/fishamnium-linux-arm ~/.fishamnium/helpers/fishamnium
+        ln -sf ~/.fishamnium/helpers/fishamnium-linux-arm64 ~/.fishamnium/helpers/fishamnium
+      case aarch64
+        ln -sf ~/.fishamnium/helpers/fishamnium-linux-arm64 ~/.fishamnium/helpers/fishamnium
       case '*'
         ln -sf ~/.fishamnium/helpers/fishamnium-linux-amd64 ~/.fishamnium/helpers/fishamnium
     end
