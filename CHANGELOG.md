@@ -1,3 +1,7 @@
+### 2021-04-30 / 8.6.5
+
+- fix: Fixed installer.
+
 ### 2021-02-10 / 8.6.4
 
 - feat: Fixed typos, again.
