@@ -1,3 +1,8 @@
+### 2021-07-04 / 8.7.0
+
+- feat: Changed default theme.
+- fix: Fixed installer.
+
 ### 2021-04-30 / 8.6.5
 
 - fix: Fixed installer.
