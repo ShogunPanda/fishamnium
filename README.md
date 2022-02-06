@@ -26,7 +26,7 @@ Type the following inside a fish shell and you're done!
 
 Type the following inside a fish shell and you're done!
 
-`curl -sL https://sw.cowtech.it/fishamnium/installer | fish -u`
+`~/.config/fish/fishamnium/installer -u`
 
 ## Contributing to fishamnium
 

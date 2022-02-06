@@ -51,7 +51,7 @@ if ! set -q _flag_u
 
   # Copy files
   echo -e "\x1b[33m--> Copying fishamnium in \x1b[0m$target\x1b[33m ...\x1b[0m"
-  command cp -av completions plugins themes "$target" | sort; or exit 1
+  command cp -av completions plugins themes installer "$target" | sort; or exit 1
 
   echo -e "\x1b[33m--> Copying loader file in \x1b[0m$loader\x1b[33m ...\x1b[0m"
   command cp -av loader.fish "$loader"; or exit 1
