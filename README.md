@@ -9,23 +9,22 @@ Some useful shell extension for fish shell.
 
 https://sw.cowtech.it/fishamnium
 
+## Dependencies
+
+TODO: Mention starship and yq here
+
 ## Install
 
 Type the following inside a fish shell and you're done!
 
 `curl -sL https://sw.cowtech.it/fishamnium/installer | fish`
 
-## Updating to version 4.0.0
-
-Starting with version 4.0.0, format of bookmarks file has changed.
-
-To update your local file, please run `~/.fishamnium/helpers/fishamnium bookmarks convert`.
-
 ## Uninstall
 
+TODO: Don't require a scrip
 Just type the following inside a fish shell and you're done!
 
-`set -x FISHAMNIUM_OPERATION uninstall curl -sL https://sw.cowtech.it/fishamnium/installer | fish set -e FISHAMNIUM_OPERATION`
+`curl -sL https://sw.cowtech.it/fishamnium/installer | fish -u`
 
 ## Contributing to fishamnium
 
