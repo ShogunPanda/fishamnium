@@ -68,8 +68,8 @@ if ! set -q _flag_u
   end
 
   # Print a status
-  printf "\n\x1b[32m--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A\x1b[0m\n"
   printf "\n\x1b[32m--> To load fish right now without restarting the terminal, run: \x1b[0msource ~/.config/fish/conf.d/fishamnium.fish\x1b[32m"
+  printf "\n\x1b[32m--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A\x1b[0m\n"
 else
   echo -e "\x1b[33m--> Removing directory \x1b[0m$target\x1b[33m and loader file \x1b[0m$loader\x1b[33m ...\x1b[0m"
   command rm -rf "$target" "$loader"; or exit 1

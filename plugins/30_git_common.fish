@@ -2,7 +2,7 @@ function __g_status
 	if test -n "$dryRun"
 		echo -e "\x1b[34m--> Would execute: \x1b[33m$argv\x1b[0m"
 	else 
-		echo -e "Executing: \x1b[33m--> $argv\x1b[0m"
+		echo -e "\x1b[33m--> $argv\x1b[0m"
 	end
 end
 
