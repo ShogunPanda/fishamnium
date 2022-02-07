@@ -1,0 +1,72 @@
+add_newline = false
+scan_timeout = 30
+command_timeout = 200
+
+# Summary:
+#
+# [2022-01-20 13:38:18] /full/path (branch sha x)
+# [user@host version:number version:number] %>
+format = """
+[\\[](bold fg:#ffdf00)$time[\\]](bold fg:#ffdf00) $directory ([\\(](bold fg:#af5fff)$git_branch$git_commit$git_status[\\)](bold fg:#af5fff))
+[\\[](bold fg:#ffdf00)$username$hostname($nodejs$rust$ruby$golang)[\\]](bold fg:#ffdf00) [>](bold fg:#ffdf00) 
+""" 
+
+[time]
+disabled = false
+format="[$time](bold white)"
+time_format = '%F %T'
+
+[directory]
+format="[$path](bold fg:#5fafff)"
+truncation_length = 3
+truncation_symbol = ""
+truncate_to_repo = false
+
+[git_branch]
+format = "[$branch](bold fg:#af5fff)"
+only_attached = true
+
+[git_commit]
+format = "( [$hash](bold fg:#af5fff))"
+only_detached = false
+
+[git_status]
+format = "($untracked)($conflicted)($modified)"
+modified = "\U0001F538"
+untracked = "\U0001F539"
+conflicted = "\U0001F53A"
+ahead=""
+behind=""
+diverged=""
+
+[username]
+style_user = "bold fg:#00cc00"
+style_root = "black fg:#cc0000"
+format = "[$user]($style)"
+disabled = false
+show_always = true
+
+[hostname]
+format = "[@$hostname](bold fg:#00cc00)"
+ssh_only = false
+
+[nodejs]
+format = "[ node:$version](bold fg:#a0a0a0)"
+version_format = "$raw"
+
+[ruby]
+format = "[ ruby:$version](bold fg:#a0a0a0)"
+version_format = "$raw"
+
+[rust]
+format = "[ rust:$version](bold fg:#a0a0a0)"
+version_format = "$raw"
+
+[golang]
+format = "[ go:$version](bold fg:#a0a0a0)"
+version_format = "$raw"
+
+[status]
+format = " $symbol"
+symbol = "[\u26A0\ufe0f](bold fg:#00cc00) "
+disabled = false

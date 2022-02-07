@@ -1,0 +1,47 @@
+add_newline = false
+scan_timeout = 30
+command_timeout = 200
+
+# Summary:
+#
+# [user@host] path (main x) >
+format = "[\\[](bold fg:#ffdf00)$username$hostname[\\]](bold fg:#ffdf00) $directory( [\\(](bold fg:#af5fff)$git_branch$git_commit[\\)](bold fg:#af5fff))$git_status [>](bold fg:#ffdf00) " 
+
+[username]
+style_user = "bold fg:#00cc00"
+style_root = "black fg:#cc0000"
+format = "[$user]($style)"
+disabled = false
+show_always = true
+
+[hostname]
+format = "[@$hostname](bold fg:#00cc00)"
+ssh_only = false
+
+[directory]
+format="[$path](bold fg:#5fafff)"
+truncate_to_repo = false
+truncation_length = 1
+truncation_symbol = ""
+
+[git_branch]
+format = "([$branch](bold fg:#af5fff))"
+only_attached = true
+
+[git_commit]
+format = "( [$hash](bold fg:#af87af))"
+only_detached = false
+
+[git_status]
+format = "($untracked)($conflicted)($modified)"
+modified = "\U0001F538"
+untracked = "\U0001F539"
+conflicted = "\U0001F53A"
+ahead=""
+behind=""
+diverged=""
+
+[status]
+format = " $symbol"
+symbol = "[\u26A0\ufe0f](bold fg:#00cc00) "
+disabled = false

@@ -1,3 +1,7 @@
+### 2021-02-07 / 9.0.0
+
+- feat: Complete rewrite in fish only.
+
 ### 2021-07-04 / 8.7.0
 
 - feat: Changed default theme.
