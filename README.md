@@ -1,13 +1,20 @@
 # fishamnium
 
 [![Release](https://img.shields.io/github/release/ShogunPanda/fishamnium.svg)](https://github.com/ShogunPanda/fishamnium/releases/latest)
-[![GoDoc](https://godoc.org/github.com/ShogunPanda/fishamnium?status.svg)](https://godoc.org/github.com/ShogunPanda/fishamnium)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ShogunPanda/fishamnium)](https://goreportcard.com/report/github.com/ShogunPanda/fishamnium)
 [![License](https://img.shields.io/github/license/ShogunPanda/fishamnium.svg)](https://github.com/ShogunPanda/fishamnium/blob/master/LICENSE.md)
 
 Some useful shell extension for fish shell.
 
 https://sw.cowtech.it/fishamnium
+
+## Dependencies
+
+Fishamnium requires the following dependencies:
+
+| Name     | Description                                                                  | URL                            | Installation guide                         |
+| -------- | ---------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------ |
+| yq       | Lightweight and portable command-line YAML, JSON and XML processor.          | http://mikefarah.github.io/yq/ | http://mikefarah.github.io/yq/#install     |
+| starship | The minimal, blazing-fast, and infinitely customizable prompt for any shell! | https://starship.rs/guide/     | https://starship.rs/guide/#🚀-installation |
 
 ## Install
 
@@ -15,17 +22,11 @@ Type the following inside a fish shell and you're done!
 
 `curl -sL https://sw.cowtech.it/fishamnium/installer | fish`
 
-## Updating to version 4.0.0
-
-Starting with version 4.0.0, format of bookmarks file has changed.
-
-To update your local file, please run `~/.fishamnium/helpers/fishamnium bookmarks convert`.
-
 ## Uninstall
 
-Just type the following inside a fish shell and you're done!
+Type the following inside a fish shell and you're done!
 
-`set -x FISHAMNIUM_OPERATION uninstall curl -sL https://sw.cowtech.it/fishamnium/installer | fish set -e FISHAMNIUM_OPERATION`
+`~/.config/fish/fishamnium/installer -u`
 
 ## Contributing to fishamnium
 

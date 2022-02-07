@@ -1,0 +1,1 @@
+test -x $HOME/.fishamnium_profile; and . $HOME/.fishamnium_profile

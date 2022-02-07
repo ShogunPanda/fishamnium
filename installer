@@ -1,55 +1,81 @@
 #!/usr/bin/env fish
-#
-# This file is part of fishamnium. Copyright (C) 2013 and above Shogun <shogun@cowtech.it>.
-# Licensed under the MIT license, which can be found at https://choosealicense.com/licenses/mit.
-#
 
-set rootdir ~/.fishamnium
-set destdir /tmp/fishamnium-(date +%Y%m%d%H%M%S)
+# Check fish version and other dependencies
+set version_tokens (string split -- "." "$version")
 
-if [ "$FISHAMNIUM_OPERATION" = "uninstall" ]
-  echo "* Removing directory $rootdir ..." && /bin/rm -rf "$rootdir"
-  echo -e "\n-------\n\nfishamnium has been uninstalled. Enabling it is left to you."
-  echo -e "To enable, remove the following line to $HOME/.config/fish/config.fish:\n"
-  echo -e "source ~/.fishamnium/loader.fish\n"
-  echo -e "Hope you liked it. Farewell! ;)"
-  exit 0
+if test $version_tokens[1] -lt 3 -o $version_tokens[1] -lt 3
+  echo -e "\x1b[31mFishamnium requires Fish \x1b[0m3.3.0\x1b[31m or greater, while you are on \x1b[0m$version\x1b[31m.\x1b[0m"
+  exit 1
 end
 
-if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
-  echo "Cloning fishamnium into $destdir" && git clone https://github.com/ShogunPanda/fishamnium -q -- "$destdir"
-  cd $destdir
+if ! which yq >/dev/null 2>/dev/null
+  echo -e "\x1b[31mFishamnium requires yq \x1b[0m4.18.1\x1b[31m or greater. Please check \x1b[0mhttp://mikefarah.github.io/yq/#install\x1b[31m.\x1b[0m"
+  exit 1
+end
+
+if ! which starship >/dev/null 2>/dev/null
+  echo -e "\x1b[31mFishamnium requires starship \x1b[0m1.2.1\x1b[31m or greater. Please check \x1b[0mhttps://starship.rs/guide/#🚀-installation\x1b[31m.\x1b[0m"
+  exit 1
+end
+
+# Set global parameters
+argparse "l/local" "u/ininstall" -- $argv
+
+set origPwd $PWD
+set repo ShogunPanda/fishamnium
+set target ~/.config/fish/fishamnium
+set loaderDirectory ~/.config/fish/conf.d
+set loader "$loaderDirectory/fishamnium.fish"
+set source /tmp/fishamnium-(date +%Y%m%d%H%M%S)
+
+# Check main operation
+if ! set -q _flag_u
+  # Clone locally if asked to
+  if ! set -q _flag_l
+    set fishamniumVersion (curl -s https://api.github.com/repos/$repo/releases | yq ".[0].tag_name | sub(\"v\", \"\")")
+    echo -e "\x1b[33m--> Downloading Fishamnium $fishamniumVersion into \x1b[0m$source\x1b[33m ...\x1b[0m"
+    
+    mkdir -p $source; or exit 1
+    curl -sSL -o $source/fishamnium.tar.gz https://github.com/$repo/archive/refs/tags/v$fishamniumVersion.tar.gz; or exit 1
+    tar -zxf $source/fishamnium.tar.gz -C $source --strip-components=2; or exit 1
+    cd "$source"
+  end
+
+  # Remove previous installations
+  echo -e "\x1b[33m--> Removing any previous fishamnium installations in \x1b[0m$target\x1b[33m ...\x1b[0m"
+  command rm -rf "$target" "$loader"; or exit 1
+
+  # Create required directories
+  echo -e "\x1b[33m--> Creating required directories ...\x1b[0m"  
+  command mkdir -vp "$target" "$loaderDirectory"; or exit 1
+
+  # Copy files
+  echo -e "\x1b[33m--> Copying fishamnium in \x1b[0m$target\x1b[33m ...\x1b[0m"
+  command cp -av completions plugins themes installer "$target" | sort; or exit 1
+
+  echo -e "\x1b[33m--> Copying loader file in \x1b[0m$loader\x1b[33m ...\x1b[0m"
+  command cp -av loader.fish "$loader"; or exit 1
+
+  # Ensure permissions
+  echo -e "\x1b[33m--> Fixing file permissions ...\x1b[0m"
+  command chmod -R a+x "$target" "$loader"; or exit 1
+
+  # Remove temporary directory if needed
+  if ! set -q _flag_l
+    echo -e "\x1b[33m--> Removing temporary installation files in \x1b[0m$source\x1b[33m ...\x1b[0m"
+    cd "$origPwd"
+    command rm -rf "$source"; or exit 1
+  end
+
+  # Print a status
+  printf "\n\x1b[32m--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A\x1b[0m\n"
+  printf "\n\x1b[32m--> To load fish right now without restarting the terminal, run: \x1b[0msource ~/.config/fish/conf.d/fishamnium.fish\x1b[32m"
 else
-  sh Impaccafile
-end
+  echo -e "\x1b[33m--> Removing directory \x1b[0m$target\x1b[33m and loader file \x1b[0m$loader\x1b[33m ...\x1b[0m"
+  command rm -rf "$target" "$loader"; or exit 1
 
-rm -rf $rootdir
-cp -a dist $rootdir
+  echo -e "\x1b[33m--> Removing loader file \x1b[0m$loader\x1b[33m ...\x1b[0m"
+  command rm -rf "$loader"; or exit 1
 
-switch (uname -s)
-  case Linux
-    switch (uname -m)
-      case armv7l
-        ln -sf ~/.fishamnium/helpers/fishamnium-linux-arm ~/.fishamnium/helpers/fishamnium
-      case arm64
-        ln -sf ~/.fishamnium/helpers/fishamnium-linux-arm64 ~/.fishamnium/helpers/fishamnium
-      case aarch64
-        ln -sf ~/.fishamnium/helpers/fishamnium-linux-arm64 ~/.fishamnium/helpers/fishamnium
-      case '*'
-        ln -sf ~/.fishamnium/helpers/fishamnium-linux-amd64 ~/.fishamnium/helpers/fishamnium
-    end
-  case Darwin
-    ln -sf ~/.fishamnium/helpers/fishamnium-darwin-amd64 ~/.fishamnium/helpers/fishamnium
-  case '*'
-    ln -sf ~/.fishamnium/helpers/fishamnium-windows-amd64 ~/.fishamnium/helpers/fishamnium
-end
-
-echo -e "\n-------\n\nfishamnium has been installed. Enabling it is left to you."
-echo -e "To enable, add the following line to $HOME/.config/fish/config.fish:\n"
-echo -e "source ~/.fishamnium/loader.fish\n"
-echo -e "Hope you will like it. Enjoy! ;)"
-
-if [ "$FISHAMNIUM_LOCAL_INSTALL" = "" ]
-  cd $HOME
-  and /bin/rm -rf "$destdir"
+  printf "\n\x1b[32m--> Fishamnium has been uninstalled. Hope you liked it. Farewell! \U0001F37A\x1b[0m\n"
 end
