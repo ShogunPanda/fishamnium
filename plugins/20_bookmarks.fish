@@ -2,16 +2,20 @@ function bookmarks_list -d "Lists all bookmarks"
   set query ".+"
 
   if test -n "$argv[1]"
-    set query "^(?:$argv[1])"
+    set query "(?:$argv[1])"
   end
 
   # Gather bookmarks
-  for raw in (yq -o=csv -eMP "to_entries | map([.value.bookmark, .value.rootPath | sub(\"\\\$home\", \"\$\$HOME\"), .value.name])" ~/.fishamnium_bookmarks.json | string split -- "\n")
+  for raw in (yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name])" ~/.fishamnium.yml | string split -- "\n")
     set bookmark (string split -- "," "$raw")
 
     if string match -qre "$query" "$bookmark[1]"
       set bookmarks $bookmarks $bookmark
     end
+  end
+
+  if test (count $bookmarks) -eq 0
+    return
   end
 
   set indexes (seq 1 3 (math (count $bookmarks) - 1))
@@ -27,19 +31,19 @@ function bookmarks_list -d "Lists all bookmarks"
     set namePadding (math max \($namePadding, (string length $bookmarks[(math $i + 2)])\))    
   end
 
-  # Prepare the row
-  set row (printf "+%s+%s+%s+" (string repeat -n (math $idPadding + 2) '-') (string repeat -n (math $destinationPadding + 2) '-') (string repeat -n (math $namePadding + 2) '-'))
+  # Prepare the row - In the destination we use 6 as ~ will be replaced with ~
+  set row (printf "+%s+%s+%s+" (string repeat -n (math $idPadding + 2) '-') (string repeat -n (math $destinationPadding + 6) '-') (string repeat -n (math $namePadding + 2) '-'))
 
-  # Print the header
+  # Print the header - In the destination we use 6 as ~ will be replaced with ~
   echo $row
-  printf "| %s | %s | %s |\n" (string pad -r -w $idPadding "ID") (string pad -r -w $destinationPadding "Destination") (string pad -r -w $namePadding "Name")
+  printf "| %s | %s | %s |\n" (string pad -r -w $idPadding "ID") (string pad -r -w (math $destinationPadding + 4) "Destination") (string pad -r -w $namePadding "Name")
   echo $row
 
   # Print the bookmarks
   for i in $indexes
     set bookmark (string pad -r -w $idPadding $bookmarks[$i])
     set destination (string pad -r -w $destinationPadding $bookmarks[(math $i + 1)])
-    set destination (string replace "\$HOME" "\\x1b[33m\$HOME\x1b[0m" "$destination")
+    set destination (string replace "~" "\\x1b[33m\$HOME\x1b[0m" "$destination")
     set name (string pad -r -w $namePadding $bookmarks[(math $i + 2)])
 
     printf "| \x1b[32m\x1b[1m%s\x1b[0m | %b | \x1b[34m%s\x1b[0m |\n" "$bookmark" "$destination" "$name"
@@ -49,11 +53,11 @@ function bookmarks_list -d "Lists all bookmarks"
 end
 
 function bookmarks_autocomplete -d "Autocomplete bookmarks"
-  yq -o=tsv -eMP "to_entries | map([.value.bookmark, .value.rootPath | sub(\"\\\$home\", \"\$\$HOME\")])" ~/.fishamnium_bookmarks.json
+  yq -o=tsv -eMP ".bookmarks | to_entries | map([.key, .value.path | sub(\"~\", \"\$\$HOME\")])" ~/.fishamnium.yml
 end
 
 function bookmarks_names -d "Lists all bookmarks names"
-  yq -eMP ".[].bookmark"  ~/.fishamnium_bookmarks.json 2>/dev/null
+  yq -eMP ".bookmarks | keys | .[]" ~/.fishamnium.yml 2>/dev/null
 end
 
 function bookmark_show -d "Reads a bookmark"
@@ -66,7 +70,7 @@ function bookmark_show -d "Reads a bookmark"
   end
 
   # Search the bookmark
-  if ! yq -eMP ".[] | select(.bookmark == \"$bookmark\") | .rootPath | . |= sub(\"\\\$home\", \"$HOME\")" ~/.fishamnium_bookmarks.json 2>/dev/null
+  if ! yq -eMP ".bookmarks[\"$bookmark\"] | .path | sub(\"~\", \"$HOME\")" ~/.fishamnium.yml 2>/dev/null
     __fishamnium_print_error "The bookmark \x1b[0m\x1b[1m$bookmark\x1b[31m\x1b[22m does not exists."
     return 1
   end
@@ -85,7 +89,7 @@ function bookmark_save -d "Writes a bookmark"
 
   # Normalize arguments
   test -z "$name"; and set name $bookmark
-  set destination (string replace "$HOME" "\$home" "$destination")
+  set destination (string replace "$HOME" "~" "$destination")
 
   # Validate the bookmark name and that is not already existing
   if ! string match -qre "^(?:[a-z0-9-_.:@]+)\$" "$bookmark"
@@ -101,7 +105,7 @@ function bookmark_save -d "Writes a bookmark"
   # Save the element
   set newElement (printf '[{"name": "%s", "bookmark": "%s", "rootPath": "%s", "paths": [], "group": ""}]' "$name" "$bookmark" "$destination")
   
-  if ! yq --inplace -o json ". + $newElement" ~/.fishamnium_bookmarks.json 2>/dev/null
+  if ! yq -i -o yaml ".bookmarks[\"$bookmark\"] |= {\"path\": \"$destination\", \"name\": \"$name\"}" ~/.fishamnium.yml 2>/dev/null
     __fishamnium_print_error "Cannot save the bookmark."
     return 1
   end
@@ -123,7 +127,7 @@ function bookmark_delete -d "Deletes a bookmark"
   end
 
   # Remove the bookmark from the file
-  if ! yq --inplace -o json "del(.[] | select(.bookmark == \"$bookmark\"))" ~/.fishamnium_bookmarks.json 2>/dev/null
+  if ! yq -i -o yaml "del(.bookmarks[\"$bookmark\"])" ~/.fishamnium.yml 2>/dev/null
     __fishamnium_print_error "Cannot delete the bookmark."
     return 1
   end

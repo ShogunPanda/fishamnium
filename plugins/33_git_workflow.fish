@@ -139,7 +139,7 @@ function g_fast_commit -d "Creates a local branch, commit changes and then merge
   dryRun=$_flag_N __g_status g_start
   _flag_N=$_flag_N g_start -r $remote $branch $base; or return
   dryRun=$_flag_N __g_status g_commit_with_task
-  _flag_N=$_flag_N g_commit_with_task $message; or return
+  _flag_N=$_flag_N g_commit_with_task -a $message; or return
   dryRun=$_flag_N __g_status g_finish
   dryRun=$_flag_N __g_finish $remote $base $branch; or return
   dryRun=$_flag_N __g_status g_restore
@@ -183,7 +183,7 @@ function g_fast_pull_request -d "Creates a local branch, commit changes and then
   dryRun=$_flag_N __g_status g_start
   _flag_N=$_flag_N g_start -r $remote $branch $base; or return
   dryRun=$_flag_N __g_status g_commit_with_task
-  _flag_N=$_flag_N g_commit_with_task $message; or return
+  _flag_N=$_flag_N g_commit_with_task -a $message; or return
   dryRun=$_flag_N __g_status g_refresh
   dryRun=$_flag_N __g_refresh $remote $base $branch
   dryRun=$_flag_N __g_status g_pull_request
