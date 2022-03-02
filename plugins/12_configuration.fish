@@ -1,7 +1,7 @@
 function __fishamnium_find_configuration_file
 	# Parse arguments
 	set fileName $argv[1]
-	set -q fileName; or set fileName .fishamnium.yml
+	test -z fileName; or set fileName .fishamnium.yml
 	
 	# Traverse up to the root to find a matching file
 	set origPwd $PWD
