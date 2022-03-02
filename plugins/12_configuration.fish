@@ -1,7 +1,7 @@
 function __fishamnium_find_configuration_file
 	# Parse arguments
 	set fileName $argv[1]
-	test -z fileName; or set fileName .fishamnium.yml
+	test -n "$fileName"; or set fileName .fishamnium.yml
 	
 	# Traverse up to the root to find a matching file
 	set origPwd $PWD
@@ -28,9 +28,9 @@ function __fishamnium_get_configuration
 	set fallback $argv[2]
 	# Read the value from a configuration file, if any
 	if set configurationPath (__fishamnium_find_configuration_file)
-		set value (yq "$selector" $configurationPath 2>/dev/null)
+		set value (yq -e "$selector" $configurationPath 2>/dev/null)
 	end
 
 	# Return the value or the fallback
-	test -n "$value"; and echo $value; or echo "$fallback"
+	test $status -eq 0 -a -n "$value"; and echo $value; or echo "$fallback"
 end

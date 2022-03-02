@@ -1,3 +1,7 @@
+### 2021-02-07 / 9.2.0
+
+- fix: Fixed configuration file detection and parsing.
+
 ### 2021-02-07 / 9.0.0
 
 - feat: Complete rewrite in fish only.
