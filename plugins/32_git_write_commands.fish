@@ -113,3 +113,20 @@ function g_cleanup -d "Deletes all non default branches"
     dryRun=$_flag_N __git branch -D $branches
   end
 end
+
+function g_switch -d "Interactively switch between local branch"
+  g_is_repository; or return
+
+  set branches (git branch --no-color --format "%(refname:lstrip=2)")
+  set current (g_branch_name)
+  set prompt "--> Which branch you want to checkout? "
+  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set height (math (count $branches) + 1)
+
+  set choice (string join0 $branches | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  
+  if test $status -eq 0
+    __g_status "git checkout $choice"
+    git checkout $choice
+  end
+end

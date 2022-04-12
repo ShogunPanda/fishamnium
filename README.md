@@ -11,10 +11,11 @@ https://sw.cowtech.it/fishamnium
 
 Fishamnium requires the following dependencies:
 
-| Name     | Description                                                                  | URL                            | Installation guide                         |
-| -------- | ---------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------ |
-| yq       | Lightweight and portable command-line YAML, JSON and XML processor.          | http://mikefarah.github.io/yq/ | http://mikefarah.github.io/yq/#install     |
-| starship | The minimal, blazing-fast, and infinitely customizable prompt for any shell! | https://starship.rs/guide/     | https://starship.rs/guide/#🚀-installation |
+| Name     | Description                                                                  | URL                             | Installation guide                           |
+| -------- | ---------------------------------------------------------------------------- | ------------------------------- | -------------------------------------------- |
+| yq       | Lightweight and portable command-line YAML, JSON and XML processor.          | http://mikefarah.github.io/yq/  | http://mikefarah.github.io/yq/#install       |
+| starship | The minimal, blazing-fast, and infinitely customizable prompt for any shell! | https://starship.rs/guide/      | https://starship.rs/guide/#🚀-installation   |
+| fzf      | A command-line fuzzy finder                                                  | https://github.com/junegunn/fzf | https://github.com/junegunn/fzf#installation |
 
 ## Install
 
