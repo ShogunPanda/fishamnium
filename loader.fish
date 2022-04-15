@@ -4,16 +4,14 @@ function __fishamnium_conditional_load
 end
 
 # Set defaults
-set -x -g FISHAMNIUM_VERSION "9.7.1"
+set -x -g FISHAMNIUM_VERSION "9.8.0"
 
 test (count $FISHAMNIUM_PLUGINS) -eq 0; and set -x FISHAMNIUM_PLUGINS (command ls ~/.config/fish/fishamnium/plugins/*.fish | xargs -n1 basename)
 test (count $FISHAMNIUM_COMPLETIONS) -eq 0; and set -x FISHAMNIUM_COMPLETIONS (command ls ~/.config/fish/fishamnium/completions/*.fish | xargs -n1 basename)
 test -n $FISHAMNIUM_THEME; and set -x FISHAMNIUM_THEME default
 
 # Conditionally load plugins
-__fishamnium_conditional_load n 41_node_n
 __fishamnium_conditional_load npm 42_npm
-__fishamnium_conditional_load rbenv 51_ruby
 __fishamnium_conditional_load bundle 52_bundler
 __fishamnium_conditional_load rails 53_rails
 
