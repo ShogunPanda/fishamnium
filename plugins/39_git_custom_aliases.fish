@@ -13,6 +13,7 @@ alias gpru=g_pull_request_url
 
 # Write commands
 alias gbs=g_switch
+alias gbds=g_branch_delete_select
 alias gct=g_commit_with_task
 alias gcat=g_commit_all_with_task
 alias gp=g_push
