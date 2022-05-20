@@ -4,30 +4,30 @@ command_timeout = 200
 
 # Summary:
 #
-# [2022-01-20 13:38:18] /full/path (branch sha x)
-# [user@host version:number version:number] %>
+# 2022-01-20 13:38:18 /full/path branch sha x
+# user @host version:number version:number >
 format = """
-[\\[](bold fg:#ffdf00)$time[\\]](bold fg:#ffdf00) $directory ([\\(](bold fg:#af5fff)$git_branch$git_commit$git_status[\\)](bold fg:#af5fff))
-[\\[](bold fg:#ffdf00)$username$hostname($nodejs$rust$ruby$golang)[\\]](bold fg:#ffdf00) [>](bold fg:#ffdf00) 
+$time$directory$git_branch$git_commit[\ue0b4](fg:#005be4) $git_status
+$username$hostname($nodejs$rust$ruby$golang)[ ](fg:#000000 bg:#ffdf00)[\ue0b0 ](bold fg:#ffdf00)
 """ 
 
 [time]
-disabled = false
-format="[$time](bold white)"
+format="[\ue0b6](bold fg:#013482)[ $time ](bold fg:#ffffff bg:#013482)"
 time_format = '%F %T'
+disabled = false
 
 [directory]
-format="[$path](bold fg:#5fafff)"
+format="[\ue0c0](fg:#013482 bg:#005be4)[ $path ](bold fg:#ffffff bg:#005be4)"
 truncation_length = 3
 truncation_symbol = ""
 truncate_to_repo = false
 
 [git_branch]
-format = "[$branch](bold fg:#af5fff)"
+format = "[\ue0a0 $branch ](bold fg:#ffffff bg:#005be4)"
 only_attached = true
 
 [git_commit]
-format = "( [$hash](bold fg:#af5fff))"
+format = "[$hash ](bold fg:#ffffff bg:#005be4)"
 only_detached = false
 
 [git_status]
@@ -40,33 +40,28 @@ behind=""
 diverged=""
 
 [username]
-style_user = "bold fg:#00cc00"
-style_root = "black fg:#cc0000"
-format = "[$user]($style)"
+style_user = "#00cc00"
+style_root = "#cc0000"
+format = "[\ue0b6](bold fg:$style)[ $user ](bold fg:#ffffff bg:$style)[\ue0b0](fg:$style bg:#ffdf00)"
 disabled = false
 show_always = true
 
 [hostname]
-format = "[@$hostname](bold fg:#00cc00)"
+format = "[ @$hostname ](bold fg:#000000 bg:#ffdf00)"
 ssh_only = false
 
 [nodejs]
-format = "[ node:$version](bold fg:#a0a0a0)"
+format = "[ node:$version](fg:#000000 bg:#ffdf00)"
 version_format = "$raw"
 
 [ruby]
-format = "[ ruby:$version](bold fg:#a0a0a0)"
+format = "[ ruby:$version](fg:#000000 bg:#ffdf00)"
 version_format = "$raw"
 
 [rust]
-format = "[ rust:$version](bold fg:#a0a0a0)"
+format = "[ rust:$version](fg:#000000 bg:#ffdf00)"
 version_format = "$raw"
 
 [golang]
-format = "[ go:$version](bold fg:#a0a0a0)"
+format = "[ go:$version](fg:#000000 bg:#ffdf00)"
 version_format = "$raw"
-
-[status]
-format = " $symbol"
-symbol = "[\u26A0\ufe0f](bold fg:#00cc00) "
-disabled = false
