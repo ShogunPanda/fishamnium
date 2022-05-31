@@ -4,7 +4,7 @@ function __fishamnium_conditional_load
 end
 
 # Set defaults
-set -x -g FISHAMNIUM_VERSION "9.11.0"
+set -x -g FISHAMNIUM_VERSION "9.12.0"
 
 test (count $FISHAMNIUM_PLUGINS) -eq 0; and set -x FISHAMNIUM_PLUGINS (command ls ~/.config/fish/fishamnium/plugins/*.fish | xargs -n1 basename)
 test (count $FISHAMNIUM_COMPLETIONS) -eq 0; and set -x FISHAMNIUM_COMPLETIONS (command ls ~/.config/fish/fishamnium/completions/*.fish | xargs -n1 basename)
