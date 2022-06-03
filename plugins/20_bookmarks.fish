@@ -160,6 +160,45 @@ function bookmark_edit -d "Edits a bookmark using the current terminal editor"
   $EDITOR "$destination"
 end
 
+function bookmark_delete_select -d "Interactively deletes a bookmark"
+  set bookmarks (bookmarks_names)
+  set prompt "--> Which bookmark you want to delete?"
+  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set height (math (count $bookmarks) + 1)
+
+  set choice (string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  
+  if test $status -eq 0
+    bookmarks $choice
+  end
+end
+
+function bookmark_cd_select -d "Interactively deletes a bookmark"
+  set bookmarks (bookmarks_names)
+  set prompt "--> Which bookmark you want to move to?"
+  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set height (math (count $bookmarks) + 1)
+
+  set choice (string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  
+  if test $status -eq 0
+    bookmark_cd $choice
+  end
+end
+
+function bookmark_open_select -d "Interactively edits a bookmark using the current editor"
+  set bookmarks (bookmarks_names)
+  set prompt "--> Which bookmark you want to open?"
+  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set height (math (count $bookmarks) + 1)
+
+  set choice (string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  
+  if test $status -eq 0
+    bookmark_cd $choice
+  end
+end
+
 alias l=bookmarks_list
 alias b=bookmark_show
 alias s=bookmark_save
@@ -167,4 +206,7 @@ alias d=bookmark_delete
 alias c=bookmark_cd
 alias o=bookmark_open
 alias e=bookmark_edit
+alias ds=bookmark_delete_select
+alias cs=bookmark_cd_select
+alias os=bookmark_open_select
 
