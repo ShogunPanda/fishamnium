@@ -1,4 +1,4 @@
 function export
-  set command (echo $argv | tr '=' ' ')
+  set command $(echo $argv | tr '=' ' ')
   eval "set -x -g $command"
 end

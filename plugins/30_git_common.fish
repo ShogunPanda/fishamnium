@@ -15,7 +15,7 @@ function __git
 end
 
 function __g_open
-	set cmd (g_open_path)
+	set cmd $(g_open_path)
 	__g_status $cmd $argv
 
 	if test -z "$dryRun"

@@ -4,10 +4,10 @@ function __fishamnium_conditional_load
 end
 
 # Set defaults
-set -x -g FISHAMNIUM_VERSION "9.13.0"
+set -x -g FISHAMNIUM_VERSION $(cat ~/.config/fish/fishamnium/version)
 
-test (count $FISHAMNIUM_PLUGINS) -eq 0; and set -x FISHAMNIUM_PLUGINS (command ls ~/.config/fish/fishamnium/plugins/*.fish | xargs -n1 basename)
-test (count $FISHAMNIUM_COMPLETIONS) -eq 0; and set -x FISHAMNIUM_COMPLETIONS (command ls ~/.config/fish/fishamnium/completions/*.fish | xargs -n1 basename)
+test $(count $FISHAMNIUM_PLUGINS) -eq 0; and set -x FISHAMNIUM_PLUGINS $(command ls ~/.config/fish/fishamnium/plugins/*.fish | xargs -n1 basename)
+test $(count $FISHAMNIUM_COMPLETIONS) -eq 0; and set -x FISHAMNIUM_COMPLETIONS $(command ls ~/.config/fish/fishamnium/completions/*.fish | xargs -n1 basename)
 test -n $FISHAMNIUM_THEME; and set -x FISHAMNIUM_THEME default
 
 # Conditionally load plugins
@@ -17,7 +17,7 @@ __fishamnium_conditional_load rails 53_rails
 
 # Load plugins files
 set -e -g FISHAMNIUM_LOADED_PLUGINS
-for i in (string split " " "$FISHAMNIUM_PLUGINS")
+for i in $(string split " " "$FISHAMNIUM_PLUGINS")
   set source ~/.config/fish/fishamnium/plugins/$i
   
   if test -x $source
@@ -28,7 +28,7 @@ end
 
 # Load completions files
 set -e -g FISHAMNIUM_LOADED_COMPLETIONS
-for i in (string split " " "$FISHAMNIUM_COMPLETIONS")
+for i in $(string split " " "$FISHAMNIUM_COMPLETIONS")
   set source ~/.config/fish/fishamnium/completions/$i
   
   if test -x $source

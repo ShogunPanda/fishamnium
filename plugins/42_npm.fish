@@ -26,7 +26,7 @@ alias pno="pnpm outdated"
 alias pnu="pnpm update"
 
 function nrs -d "Interactively run a script using npm"
-  set scripts (yq -o tsv -eMP ".scripts | to_entries | map([.key])" package.json 2>/dev/null)
+  set scripts $(yq -o tsv -eMP ".scripts | to_entries | map([.key])" package.json 2>/dev/null)
   test ! $status -eq 0; and return
 
   set runner $RUNNER
@@ -34,9 +34,9 @@ function nrs -d "Interactively run a script using npm"
 
   set prompt "--> Which script do you want to run? "
   set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
-  set height (math (count $scripts) + 1)
+  set height $(math $(count $scripts) + 1)
 
-  set choice (string join0 $scripts | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $scripts | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
   
   if test $status -eq 0
     echo -e "\x1b[33m--> $runner run $choice\x1b[0m"

@@ -40,7 +40,7 @@ behind=""
 diverged=""
 
 [username]
-style_user = "#00cc00"
+style_user = "#008800"
 style_root = "#cc0000"
 format = "[\ue0b6](bold fg:$style)[ $user ](bold fg:#ffffff bg:$style)[\ue0b0](fg:$style bg:#ffdf00)"
 disabled = false

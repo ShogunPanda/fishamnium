@@ -6,19 +6,19 @@ function bookmarks_list -d "Lists all bookmarks"
   end
 
   # Gather bookmarks
-  for raw in (yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name])" ~/.fishamnium.yml | string split -- "\n")
-    set bookmark (string split -- "," "$raw")
+  for raw in $(yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name])" ~/.fishamnium.yml | string split -- "\n")
+    set bookmark $(string split -- "," "$raw")
 
     if string match -qre "$query" "$bookmark[1]"
       set bookmarks $bookmarks $bookmark
     end
   end
 
-  if test (count $bookmarks) -eq 0
+  if test $(count $bookmarks) -eq 0
     return
   end
 
-  set indexes (seq 1 3 (math (count $bookmarks) - 1))
+  set indexes $(seq 1 3 $(math $(count $bookmarks) - 1))
 
   # Calculate paddings
   set idPadding 0
@@ -26,25 +26,25 @@ function bookmarks_list -d "Lists all bookmarks"
   set namePadding 0
 
   for i in $indexes
-    set idPadding (math max \($idPadding, (string length $bookmarks[$i])\))    
-    set destinationPadding (math max \($destinationPadding, (string length $bookmarks[(math $i + 1)])\))    
-    set namePadding (math max \($namePadding, (string length $bookmarks[(math $i + 2)])\))    
+    set idPadding $(math max \($idPadding, $(string length $bookmarks[$i])\))    
+    set destinationPadding $(math max \($destinationPadding, $(string length $bookmarks[(math $i + 1)])\))    
+    set namePadding $(math max \($namePadding, $(string length $bookmarks[(math $i + 2)])\))    
   end
 
   # Prepare the row - In the destination we use 6 as ~ will be replaced with ~
-  set row (printf "+%s+%s+%s+" (string repeat -n (math $idPadding + 2) '-') (string repeat -n (math $destinationPadding + 6) '-') (string repeat -n (math $namePadding + 2) '-'))
+  set row $(printf "+%s+%s+%s+" $(string repeat -n $(math $idPadding + 2) '-') $(string repeat -n $(math $destinationPadding + 6) '-') $(string repeat -n $(math $namePadding + 2) '-'))
 
   # Print the header - In the destination we use 6 as ~ will be replaced with ~
   echo $row
-  printf "| %s | %s | %s |\n" (string pad -r -w $idPadding "ID") (string pad -r -w (math $destinationPadding + 4) "Destination") (string pad -r -w $namePadding "Name")
+  printf "| %s | %s | %s |\n" $(string pad -r -w $idPadding "ID") $(string pad -r -w $(math $destinationPadding + 4) "Destination") $(string pad -r -w $namePadding "Name")
   echo $row
 
   # Print the bookmarks
   for i in $indexes
-    set bookmark (string pad -r -w $idPadding $bookmarks[$i])
-    set destination (string pad -r -w $destinationPadding $bookmarks[(math $i + 1)])
-    set destination (string replace "~" "\\x1b[33m\$HOME\x1b[0m" "$destination")
-    set name (string pad -r -w $namePadding $bookmarks[(math $i + 2)])
+    set bookmark $(string pad -r -w $idPadding $bookmarks[$i])
+    set destination $(string pad -r -w $destinationPadding $bookmarks[(math $i + 1)])
+    set destination $(string replace "~" "\\x1b[33m\$HOME\x1b[0m" "$destination")
+    set name $(string pad -r -w $namePadding $bookmarks[(math $i + 2)])
 
     printf "| \x1b[32m\x1b[1m%s\x1b[0m | %b | \x1b[34m%s\x1b[0m |\n" "$bookmark" "$destination" "$name"
   end
@@ -89,7 +89,7 @@ function bookmark_save -d "Writes a bookmark"
 
   # Normalize arguments
   test -z "$name"; and set name $bookmark
-  set destination (string replace "$HOME" "~" "$destination")
+  set destination $(string replace "$HOME" "~" "$destination")
 
   # Validate the bookmark name and that is not already existing
   if ! string match -qre "^(?:[a-z0-9-_.:@]+)\$" "$bookmark"
@@ -97,13 +97,13 @@ function bookmark_save -d "Writes a bookmark"
     return 
   end
 
-  if set existing (bookmark_show $bookmark 2>/dev/null)
+  if set existing $(bookmark_show $bookmark 2>/dev/null)
     __fishamnium_print_error "The bookmark \x1b[0m\x1b[1m$bookmark\x1b[31m\x1b[22m already exists and points to \x1b[0m\x1b[1m$existing\x1b[31m\x1b[22m."
     return 1
   end
 
   # Save the element
-  set newElement (printf '[{"name": "%s", "bookmark": "%s", "rootPath": "%s", "paths": [], "group": ""}]' "$name" "$bookmark" "$destination")
+  set newElement $(printf '[{"name": "%s", "bookmark": "%s", "rootPath": "%s", "paths": [], "group": ""}]' "$name" "$bookmark" "$destination")
   
   if ! yq -i -o yaml ".bookmarks[\"$bookmark\"] |= {\"path\": \"$destination\", \"name\": \"$name\"}" ~/.fishamnium.yml 2>/dev/null
     __fishamnium_print_error "Cannot save the bookmark."
@@ -134,7 +134,7 @@ function bookmark_delete -d "Deletes a bookmark"
 end
 
 function bookmark_cd -d "Changes current directory to a saved bookmark"
-  if ! set destination (bookmark_show $argv 2>/dev/null)
+  if ! set destination $(bookmark_show $argv 2>/dev/null)
     echo $destination
     return 1
   end
@@ -143,7 +143,7 @@ function bookmark_cd -d "Changes current directory to a saved bookmark"
 end
 
 function bookmark_open -d "Edits a bookmark using the current editor"
-  if ! set destination (bookmark_show $argv 2>/dev/null)
+  if ! set destination $(bookmark_show $argv 2>/dev/null)
     echo $destination
     return 1
   end
@@ -152,7 +152,7 @@ function bookmark_open -d "Edits a bookmark using the current editor"
 end
 
 function bookmark_edit -d "Edits a bookmark using the current terminal editor"
-  if ! set destination (bookmark_show $argv 2>/dev/null)
+  if ! set destination $(bookmark_show $argv 2>/dev/null)
     echo $destination
     return 1
   end
@@ -161,12 +161,12 @@ function bookmark_edit -d "Edits a bookmark using the current terminal editor"
 end
 
 function bookmark_delete_select -d "Interactively deletes a bookmark"
-  set bookmarks (bookmarks_names)
+  set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to delete?"
   set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
-  set height (math (count $bookmarks) + 1)
+  set height $(math $(count $bookmarks) + 1)
 
-  set choice (string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
   
   if test $status -eq 0
     bookmarks $choice
@@ -174,12 +174,12 @@ function bookmark_delete_select -d "Interactively deletes a bookmark"
 end
 
 function bookmark_cd_select -d "Interactively deletes a bookmark"
-  set bookmarks (bookmarks_names)
+  set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to move to?"
   set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
-  set height (math (count $bookmarks) + 1)
+  set height $(math $(count $bookmarks) + 1)
 
-  set choice (string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
   
   if test $status -eq 0
     bookmark_cd $choice
@@ -187,12 +187,12 @@ function bookmark_cd_select -d "Interactively deletes a bookmark"
 end
 
 function bookmark_open_select -d "Interactively edits a bookmark using the current editor"
-  set bookmarks (bookmarks_names)
+  set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to open?"
   set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
-  set height (math (count $bookmarks) + 1)
+  set height $(math $(count $bookmarks) + 1)
 
-  set choice (string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
   
   if test $status -eq 0
     bookmark_cd $choice

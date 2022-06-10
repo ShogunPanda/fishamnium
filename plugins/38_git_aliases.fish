@@ -17,7 +17,7 @@ alias gcan='git commit -a -m'
 
 # Checkout
 alias gco='git checkout'
-alias gcm='git checkout (g_default_branch)'
+alias gcm='git checkout $(g_default_branch)'
 alias gcb='git checkout -b'
 
 # Remote

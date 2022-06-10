@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 
 # Check fish version and other dependencies
-set version_tokens (string split -- "." "$version")
+set version_tokens $(string split -- "." "$version")
 
 if test $version_tokens[1] -lt 3 -o $version_tokens[1] -lt 3
   echo -e "\x1b[31mFishamnium requires Fish \x1b[0m3.3.0\x1b[31m or greater, while you are on \x1b[0m$version\x1b[31m.\x1b[0m"
@@ -32,7 +32,7 @@ set source /tmp/fishamnium-(date +%Y%m%d%H%M%S)
 if ! set -q _flag_u
   # Clone locally if asked to
   if ! set -q _flag_l
-    set fishamniumVersion (curl -s https://api.github.com/repos/$repo/releases | yq ".[0].tag_name | sub(\"v\", \"\")")
+    set fishamniumVersion $(curl -s https://api.github.com/repos/$repo/releases | yq ".[0].tag_name | sub(\"v\", \"\")")
     echo -e "\x1b[33m--> Downloading Fishamnium $fishamniumVersion into \x1b[0m$source\x1b[33m ...\x1b[0m"
     
     mkdir -p $source; or exit 1
@@ -51,7 +51,7 @@ if ! set -q _flag_u
 
   # Copy files
   echo -e "\x1b[33m--> Copying fishamnium in \x1b[0m$target\x1b[33m ...\x1b[0m"
-  command cp -av completions plugins themes installer "$target" | sort; or exit 1
+  command cp -av completions plugins themes installer version "$target" | sort; or exit 1
 
   echo -e "\x1b[33m--> Copying loader file in \x1b[0m$loader\x1b[33m ...\x1b[0m"
   command cp -av loader.fish "$loader"; or exit 1

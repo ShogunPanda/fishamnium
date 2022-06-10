@@ -1,10 +1,12 @@
 function __fishamnium_is_git_argument
+  status --is-interactive; or exit 1
+
   set index $argv[1]
-  set cmd (commandline -opc)
+  set cmd $(commandline -opc)
   set -e cmd[1]
 
   argparse -i "N/dry-run" "r/remote=" "f/force" "s/no-verify" "a/all" -- $cmd >/dev/null 2>/dev/null
-  test (count $argv) -eq $index
+  test $(count $argv) -eq $index
 end
 
 function __fishamnium_git_branches
