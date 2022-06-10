@@ -24,4 +24,5 @@ release:
 			and exit 1;\
 		end;
 
+	git push origin main
 	gh release create v$$(cat ./version) --generate-notes
