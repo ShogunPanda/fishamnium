@@ -18,7 +18,7 @@ version:
 	cambi change $$(cat ./version) $(type) > .version
 
 release:
-	@test -n "$(git status -s 2>/dev/null)";\
+	@test -z "$(git status -s 2>/dev/null)";\
 		or begin;\
 			echo -e "\x1b[31m------- Before triggering the workflow, make sure that the GIT branch is clean and pushed. -------\x1b[0m";\
 			and exit 1;\
