@@ -5,27 +5,27 @@ command_timeout = 500
 # Summary:
 #
 # user @host path main x
-format = "$username$hostname$directory$git_branch[\ue0cc](fg:#005be4 bg:#ffdf00)$git_status[ ](fg:#000000 bg:#ffdf00)[\ue0b0 ](bold fg:#ffdf00)"
+format = "$username$hostname$directory$git_branch$git_status[ ](fg:#000000 bg:#ffdf00)[\ue0b0 ](bold fg:#ffdf00)"
 
 [username]
 style_user = "#008800"
 style_root = "#cc0000"
-format = "[\ue0b6](bold fg:$style)[ $user ](bold fg:#ffffff bg:$style)[\ue0b0](fg:$style bg:#ffdf00)"
+format = "[\ue0b6](bold fg:$style)[ \uf007 $user ](bold fg:#ffffff bg:$style)[\ue0b4](bold fg:$style bg:#ffdf00)"
 disabled = false
 show_always = true
 
 [hostname]
-format = "[ @$hostname ](bold fg:#000000 bg:#ffdf00)"
+format = "[ \uf502 $hostname ](bold fg:#000000 bg:#ffdf00)"
 ssh_only = false
 
 [directory]
-format="[\ue0cc](fg:#ffdf00 bg:#005be4)[ $path ](bold fg:#ffffff bg:#005be4)"
+format="[ \uf114 $path ](bold fg:#000000 bg:#ffdf00)"
 truncate_to_repo = false
 truncation_length = 1
 truncation_symbol = ""
 
 [git_branch]
-format = "[\ue0a0 $branch ](bold fg:#ffffff bg:#005be4)"
+format = "[\ue0a0 $branch ](bold fg:#000000 bg:#ffdf00)"
 only_attached = true
 
 [git_status]

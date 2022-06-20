@@ -12,12 +12,12 @@ $username$hostname($nodejs$rust$ruby$golang)[ ](fg:#000000 bg:#ffdf00)[\ue0b0 ](
 """ 
 
 [time]
-format="[\ue0b6](bold fg:#013482)[ $time ](bold fg:#ffffff bg:#013482)"
+format="[\ue0b6](bold fg:#013482)[ \uf64f $time ](bold fg:#ffffff bg:#013482)"
 time_format = '%F %T'
 disabled = false
 
 [directory]
-format="[\ue0c0](fg:#013482 bg:#005be4)[ $path ](bold fg:#ffffff bg:#005be4)"
+format="[\ue0c0](fg:#013482 bg:#005be4)[ \uf114 $path ](bold fg:#ffffff bg:#005be4)"
 truncation_length = 3
 truncation_symbol = ""
 truncate_to_repo = false
@@ -42,12 +42,12 @@ diverged=""
 [username]
 style_user = "#008800"
 style_root = "#cc0000"
-format = "[\ue0b6](bold fg:$style)[ $user ](bold fg:#ffffff bg:$style)[\ue0b0](fg:$style bg:#ffdf00)"
+format = "[\ue0b6](bold fg:$style)[ \uf007 $user ](bold fg:#ffffff bg:$style)[\ue0b4](fg:$style bg:#ffdf00)"
 disabled = false
 show_always = true
 
 [hostname]
-format = "[ @$hostname ](bold fg:#000000 bg:#ffdf00)"
+format = "[ \uf502 $hostname ](bold fg:#000000 bg:#ffdf00)"
 ssh_only = false
 
 [nodejs]
