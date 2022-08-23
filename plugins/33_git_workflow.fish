@@ -155,6 +155,11 @@ function g_pull_request -d "Sends a Pull Request and deletes the local branch"
   set base $(__g_ensure_branch $argv[1])
   set remote $(__g_ensure_remote $_flag_r)
 
+  if test $base = $branch
+    __fishamnium_print_error "You are already on the base branch."
+    return 1
+  end
+
   # Execute command(s)
   dryRun=$_flag_N __g_status g_refresh
   dryRun=$_flag_N __g_refresh $remote $base $branch
