@@ -11,9 +11,13 @@ alias glr='git pull --rebase'
 
 # Committing
 alias gc='git commit -m'
+alias gce='git commit'
 alias gcn='git commit -n -m'
+alias gcen='git commit -n'
 alias gca='git commit -a -m'
-alias gcan='git commit -a -m'
+alias gcan='git commit -n -a -m'
+alias gcae='git commit -a -e'
+alias gcaen='git commit -a -e -n'
 
 # Checkout
 alias gco='git checkout'
