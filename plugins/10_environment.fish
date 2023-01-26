@@ -11,3 +11,7 @@ function fishamnium_forced_reload -d "Reloads Fishamnium (forced)"
   set -x FISHAMNIUM_PLUGINS FISHAMNIUM_COMPLETIONS FISHAMNIUM_LOADED_PLUGINS FISHAMNIUM_LOADED_COMPLETIONS
   fishamnium_reload
 end
+
+which direnv > /dev/null
+test $status -eq 0; and direnv hook fish | source
+
