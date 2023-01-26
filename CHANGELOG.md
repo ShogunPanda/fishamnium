@@ -1,3 +1,7 @@
+### 2023-01-26 / 9.19.0
+
+- feat: Added direnv.
+
 ### 2021-02-07 / 9.2.0
 
 - fix: Fixed configuration file detection and parsing.
