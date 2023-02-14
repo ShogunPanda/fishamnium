@@ -7,5 +7,5 @@ end
 function gh_pr_branch -d "Shows the branch of a PR"
   g_is_repository; or return
   
-  gh pr view 46523 --json headRefName | yq .headRefName
+  gh pr view $1 --json headRefName | yq .headRefName
 end 
