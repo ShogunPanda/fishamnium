@@ -15,7 +15,7 @@ version:
 			and exit 1;\
 		end;
 
-	cambi change $$(cat ./version) $(type) > .version
+	cambi change $$(cat ./version) $(type) > ./version
 
 release:
 	@test -z "$(git status -s 2>/dev/null)";\
