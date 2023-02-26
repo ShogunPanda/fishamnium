@@ -1,5 +1,5 @@
 # Set some common directories
-for root in /usr/local /opt /var
+for root in /usr/local /opt /opt/homebrew /var
   for dir in $root/bin $root/sbin
     test -d $dir; and set -x -g PATH $dir $PATH
 	end
