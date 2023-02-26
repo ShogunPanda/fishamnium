@@ -1,7 +1,7 @@
 .PHONY: default install version release
 .MAIN: default
 
-SHELL := /usr/local/bin/fish
+SHELL := fish
 
 default:
 
