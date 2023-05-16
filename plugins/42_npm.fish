@@ -6,6 +6,8 @@ alias nr="npm run"
 alias nt="npm test"
 alias nrb="npm run build"
 alias nre="npm run dev"
+alias nrs="npm run start"
+alias nrv="npm run server"
 alias nrf="npm run format"
 alias nrl="npm run lint"
 alias nrd="npm run deploy"
@@ -19,6 +21,7 @@ alias pnr="pnpm run"
 alias pnt="pnpm test"
 alias pnrb="pnpm run build"
 alias pnre="pnpm run dev"
+alias pnrs="pnpm run start"
 alias pnrv="pnpm run server"
 alias pnrf="pnpm run format"
 alias pnrl="pnpm run lint"
@@ -26,7 +29,7 @@ alias pnrd="pnpm run deploy"
 alias pno="pnpm outdated"
 alias pnu="pnpm update"
 
-function nrs -d "Interactively run a script using npm"
+function nrc -d "Interactively run a script using npm"
   set scripts $(yq -o tsv -eMP ".scripts | to_entries | map([.key])" package.json 2>/dev/null)
   test ! $status -eq 0; and return
 
@@ -45,6 +48,6 @@ function nrs -d "Interactively run a script using npm"
   end
 end
 
-function pnrs -d "Interactively run a script using pnpm"
-  RUNNER=pnpm nrs
+function pnrc -d "Interactively run a script using pnpm"
+  RUNNER=pnpm nrc
 end
