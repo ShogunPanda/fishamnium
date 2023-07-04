@@ -369,3 +369,23 @@ function g_delete_release -d "Deletes a release branch locally and remotely"
   dryRun=$_flag_N __git branch -D $localBranches; or return
   dryRun=$_flag_N __git push $remote $remoteBranches; or return
 end
+
+function g_sync -d "Syncs two remotes"
+  g_is_repository; or return
+
+  # Parse arguments
+  argparse -i --name=g_sync "r/remote=" "u/upstream=" "N/dry-run" -- $argv
+  
+  set remote $(__g_ensure_remote $_flag_r)
+  set branch $(__g_ensure_branch $argv[1])
+
+  if test -z "$_flag_u"
+    set upstream "upstream"
+  else
+    set upstream $_flag_u
+  end
+
+  dryRun=$_flag_N __git fetch $upstream; or return
+  dryRun=$_flag_N __git pull $upstream $branch; or return
+  dryRun=$_flag_N __git push -f $remote $branch; or return
+end

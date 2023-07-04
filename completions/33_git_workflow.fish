@@ -1,5 +1,5 @@
 # Remove existing completions
-for i in g_start g_refresh g_finish g_full_finish g_fast_commit g_pull_request g_fast_pull_request g_release g_import g_start_release g_refresh_release g_finish_release g_full_finish_release g_import_release g_delete_release
+for i in g_start g_refresh g_finish g_full_finish g_fast_commit g_pull_request g_fast_pull_request g_release g_import g_start_release g_refresh_release g_finish_release g_full_finish_release g_import_release g_delete_release g_sync
   complete -c $i -e
 end
 
@@ -8,7 +8,7 @@ for i in g_start g_refresh g_finish g_full_finish g_fast_commit g_pull_request g
   complete -c $i -x -a ""
 end
 
-for i in g_start g_refresh g_finish g_full_finish g_fast_commit g_pull_request g_fast_pull_request g_release g_import g_start_release g_refresh_release g_finish_release g_full_finish_release g_import_release g_delete_release
+for i in g_start g_refresh g_finish g_full_finish g_fast_commit g_pull_request g_fast_pull_request g_release g_import g_start_release g_refresh_release g_finish_release g_full_finish_release g_import_release g_delete_release g_sync
   complete -c $i -s N -l dry-run -d "Do not execute operation, only print the commands"
   complete -c $i -s r -l remote -x -a "(__fishamnium_git_remotes)" -d "The remote to use"
 end
@@ -39,3 +39,6 @@ complete -c g_import -x -n "__fishamnium_is_git_argument 0" -a "(__fishamnium_gi
 complete -c g_import_release -x -n "__fishamnium_is_git_argument 0" -a "(__fishamnium_git_branches)"
 
 complete -c g_delete_release -x -a "(__fishamnium_git_branches)"
+
+complete -c g_sync -s u -l upstrem -x -a "(__fishamnium_git_remotes)" -d "The upstream to use"
+complete -c g_sync -x -a "(__fishamnium_git_branches)"

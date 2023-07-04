@@ -138,7 +138,7 @@ function g_branch_delete_select -d "Interactively delete local branches"
   set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
   set height $(math $(count $branches) + 1)
 
-  set choice $(string join0 $branches | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $branches | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors -m)
   
   if test $status -eq 0
     __git branch -D $choice
