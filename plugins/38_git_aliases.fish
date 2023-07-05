@@ -21,7 +21,7 @@ alias gcaen='git commit -a -e -n'
 
 # Checkout
 alias gco='git checkout'
-alias gcot='git checkout -t'
+alias gcot='git checkout --track'
 alias gcom='git checkout $(g_default_branch)'
 alias gcob='git checkout -b'
 
