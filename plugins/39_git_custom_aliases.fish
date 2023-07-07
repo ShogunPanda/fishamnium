@@ -38,6 +38,7 @@ alias gwrf=g_finish_release
 alias gwrff=g_full_finish_release
 alias gwri=g_import_release
 alias gwrd=g_delete_release
+alias gwy=g_sync
 
 # Github
 alias ghprb=gh_pr_branch
