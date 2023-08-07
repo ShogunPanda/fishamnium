@@ -1,3 +1,7 @@
+### 2023-08-07 / 9.25.1
+
+- fix: Sort bookmarks when listing.
+
 ### 2023-01-26 / 9.19.0
 
 - feat: Added direnv.
