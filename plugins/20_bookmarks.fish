@@ -6,7 +6,7 @@ function bookmarks_list -d "Lists all bookmarks"
   end
 
   # Gather bookmarks
-  for raw in $(yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name])" ~/.fishamnium.yml | string split -- "\n")
+  for raw in $(yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name])" ~/.fishamnium.yml | sort | string split -- "\n")
     set bookmark $(string split -- "," "$raw")
 
     if string match -qre "$query" "$bookmark[1]"
