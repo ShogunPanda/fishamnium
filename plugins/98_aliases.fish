@@ -1,4 +1,5 @@
 alias clcd="clear; cd"
+alias cdr="cd_project_root"
 alias cp="cp -R -v -i"
 alias mv="mv -v -i"
 alias rm="rm -R"
