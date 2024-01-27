@@ -1,3 +1,7 @@
+### 2024-01-27 / 9.27.0
+
+- feat: Make list file executable.
+
 ### 2023-08-07 / 9.25.1
 
 - fix: Sort bookmarks when listing.
