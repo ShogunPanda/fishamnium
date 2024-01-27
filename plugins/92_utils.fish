@@ -11,11 +11,20 @@ function execute_on_list
   for item in $list
     string match -qr -- "^#" "$item"; and continue;
 
-    echo "--- $item ---"
+    echo -e "\x1b[33m--> Executing on directory \x1b[1m$item\x1b[22m ...\x1b[0m"
     cd $item
     eval $argv[2..]
+
+    if test $status -ne 0;
+      cd $orig_pwd
+      echo -e "\x1b[31m--> Aborting due to non zero exit code.\x1b[0m"
+      return 1
+    end
+
     cd $orig_pwd
   end
+
+  echo -e "\x1b[32m--> All operations completed successfully.\x1b[0m"
 end
 
 function cd_project_root
