@@ -1,3 +1,8 @@
+### 2024-01-27 / 9.28.0
+
+- fix: Fixed version.
+- fix: Minor style fix.
+
 ### 2024-01-27 / 9.27.0
 
 - feat: Make list file executable.
