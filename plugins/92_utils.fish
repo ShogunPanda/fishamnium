@@ -1,7 +1,14 @@
 function execute_on_list
   set orig_pwd $PWD
+  argparse -i --name=execute_on_list "x/execute" -- $argv
 
-  for item in $(cat $argv[1])
+  if test -z $_flag_x
+    set list $(cat $argv[1])
+  else
+    set list (eval $argv[1])
+  end
+
+  for item in $list
     string match -qr -- "^#" "$item"; and continue;
 
     echo "--- $item ---"
