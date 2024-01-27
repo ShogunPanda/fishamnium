@@ -1,3 +1,7 @@
+### 2024-01-27 / 9.29.0
+
+- fix: Do not continue execution on failures.
+
 ### 2024-01-27 / 9.28.0
 
 - fix: Fixed version.
