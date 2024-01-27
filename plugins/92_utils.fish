@@ -5,7 +5,7 @@ function execute_on_list
   if test -z $_flag_x
     set list $(cat $argv[1])
   else
-    set list (eval $argv[1])
+    set list $(eval $argv[1])
   end
 
   for item in $list
