@@ -40,6 +40,3 @@ alias gwri=g_import_release
 alias gwrd=g_delete_release
 alias gwy=g_sync
 
-# Github
-alias ghprb=gh_pr_branch
-alias gho='gh repo view --web'
