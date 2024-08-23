@@ -1,0 +1,50 @@
+[config]
+  skip_core_tasks = true
+
+[tasks.default]
+  dependencies = ["install"]
+
+[tasks.install]
+  command = "./installer"
+  args    = ["-l"]
+
+[tasks.version]
+  dependencies = ["bump-version", "save-version"]
+
+[tasks.release]
+  script_runner = "@duckscript"
+  script = """
+    status = exec git status -s
+
+    if not is_empty status
+      trigger_error "Before triggering the workflow, make sure that the GIT branch is clean and pushed."
+    end
+
+    version = readfile ./version
+    version = trim ${version}
+
+    git push origin main
+	  gh release create v${version} --generate-notes
+  """
+
+[tasks.save-version]
+  script = ["git add version", "git commit -m 'chore: Version bump.'"]
+
+[tasks.bump-version]
+  script_runner = "@duckscript"
+  script = """
+    valid_tags = array major minor patch auto
+    valid = array_contains ${valid_tags} ${1}
+    if not ${valid}
+      trigger_error "Usage: make version type=(major|minor|patch|auto)"
+    end
+    release valid_tags
+
+    current = readfile ./version
+    current = trim ${current}
+
+    version = exec cambi change ${current} ${1}
+    version = trim ${version.stdout}
+    writefile ./version ${version}
+  """
+
