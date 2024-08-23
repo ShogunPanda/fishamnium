@@ -23,8 +23,8 @@
     version = readfile ./version
     version = trim ${version}
 
-    git push origin main
-	  gh release create v${version} --generate-notes
+    exec git push origin main
+	  exec gh release create v${version} --generate-notes
   """
 
 [tasks.save-version]
