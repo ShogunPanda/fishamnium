@@ -16,7 +16,7 @@
   script = """
     status = exec git status -s
 
-    if not is_empty status
+    if not is_empty ${status.stdout}
       trigger_error "Before triggering the workflow, make sure that the GIT branch is clean and pushed."
     end
 
