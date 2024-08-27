@@ -5,6 +5,8 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
     set -f profile $(python3 ~/.config/fish/fishamnium/data/iterm2/get_default_profile.py)
   end
 
+  set profile $(string lower "$profile")
+
   set -f WHITE FFFFFF
   set -f BLACK 000000
   set -f RED CC0000
@@ -15,7 +17,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
   set -f BLUE 005be4
   set -f GRAY 808080
 
-  if test "$profile" = "Light"
+  if test "$profile" = "light"
     set -f RED CC0000
     set -f CYAN 0088E2
     set -f FOREGROUND $BLACK
