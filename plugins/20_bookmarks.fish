@@ -43,10 +43,10 @@ function bookmarks_list -d "Lists all bookmarks"
   for i in $indexes
     set bookmark $(string pad -r -w $idPadding $bookmarks[$i])
     set destination $(string pad -r -w $destinationPadding $bookmarks[(math $i + 1)])
-    set destination $(string replace "~" "\\x1b[33m\$HOME\x1b[0m" "$destination")
+    set destination $(string replace "~" "$FISHAMNIUM_COLOR_PRIMARY\$HOME$FISHAMNIUM_COLOR_RESET" "$destination")
     set name $(string pad -r -w $namePadding $bookmarks[(math $i + 2)])
 
-    printf "| \x1b[32m\x1b[1m%s\x1b[0m | %b | \x1b[34m%s\x1b[0m |\n" "$bookmark" "$destination" "$name"
+    printf "| $FISHAMNIUM_COLOR_SUCCESS$FISHAMNIUM_COLOR_BOLD%s$FISHAMNIUM_COLOR_RESET | %b | $FISHAMNIUM_COLOR_SECONDARY%s$FISHAMNIUM_COLOR_RESET |\n" "$bookmark" "$destination" "$name"
   end
 
   echo $row
@@ -71,7 +71,7 @@ function bookmark_show -d "Reads a bookmark"
 
   # Search the bookmark
   if ! yq -eMP ".bookmarks[\"$bookmark\"] | .path | sub(\"~\", \"$HOME\")" ~/.fishamnium.yml 2>/dev/null
-    __fishamnium_print_error "The bookmark \x1b[0m\x1b[1m$bookmark\x1b[31m\x1b[22m does not exists."
+    __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
     return 1
   end
 end
@@ -98,7 +98,7 @@ function bookmark_save -d "Writes a bookmark"
   end
 
   if set existing $(bookmark_show $bookmark 2>/dev/null)
-    __fishamnium_print_error "The bookmark \x1b[0m\x1b[1m$bookmark\x1b[31m\x1b[22m already exists and points to \x1b[0m\x1b[1m$existing\x1b[31m\x1b[22m."
+    __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL already exists and points to $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$existing$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL."
     return 1
   end
 
@@ -122,7 +122,7 @@ function bookmark_delete -d "Deletes a bookmark"
 
   # Validate the bookmark
   if ! bookmark_show $bookmark >/dev/null
-    __fishamnium_print_error "The bookmark \x1b[0m\x1b[1m$bookmark\x1b[31m\x1b[22m does not exists."
+    __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
     return 1
   end
 
@@ -163,7 +163,7 @@ end
 function bookmark_delete_select -d "Interactively deletes a bookmark"
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to delete?"
-  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
@@ -176,7 +176,7 @@ end
 function bookmark_cd_select -d "Interactively deletes a bookmark"
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to move to?"
-  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
@@ -189,7 +189,7 @@ end
 function bookmark_open_select -d "Interactively edits a bookmark using the current editor"
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to open?"
-  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)

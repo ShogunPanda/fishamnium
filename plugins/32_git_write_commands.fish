@@ -119,7 +119,7 @@ function g_switch -d "Interactively switch between local branch"
 
   set branches $(git branch --no-color | cut -c 3-)
   set prompt "--> Which branch you want to checkout? "
-  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $branches) + 1)
 
   set choice $(string join0 $branches | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
@@ -135,7 +135,7 @@ function g_branch_delete_select -d "Interactively delete local branches"
 
   set branches $(git branch --no-color | grep -v "^\*" | cut -c 3-)
   set prompt "--> Which branch you want to checkout? (current branch is filtered out)"
-  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $branches) + 1)
 
   set choice $(string join0 $branches | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors -m)

@@ -37,13 +37,14 @@ function nrc -d "Interactively run a script using npm"
   test -z "$runner"; and set runner "npm"
 
   set prompt "--> Which script do you want to run? "
-  set colors "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  # TODO@PI: See bookmarks
+  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $scripts) + 1)
 
   set choice $(string join0 $scripts | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
   
   if test $status -eq 0
-    echo -e "\x1b[33m--> $runner run $choice\x1b[0m"
+    echo -e "$FISHAMNIUM_COLOR_PRIMARY--> $runner run $choice$FISHAMNIUM_COLOR_RESET"
     $runner run $choice
   end
 end

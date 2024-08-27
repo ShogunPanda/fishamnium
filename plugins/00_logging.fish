@@ -1,4 +1,4 @@
 function __fishamnium_print_error
-  echo -e "\x1b[31m$argv\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_ERROR$argv$FISHAMNIUM_COLOR_RESET"
   return 1
 end

@@ -11,20 +11,20 @@ function execute_on_list
   for item in $list
     string match -qr -- "^#" "$item"; and continue;
 
-    echo -e "\x1b[33m--> Executing on directory \x1b[1m$item\x1b[22m ...\x1b[0m"
+    echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Executing on directory $FISHAMNIUM_COLOR_BOLD$item$FISHAMNIUM_COLOR_NORMAL ...$FISHAMNIUM_COLOR_RESET"
     cd $item
     eval $argv[2..]
 
     if test $status -ne 0;
       cd $orig_pwd
-      echo -e "\x1b[31m--> Aborting due to non zero exit code.\x1b[0m"
+      echo -e "$FISHAMNIUM_COLOR_ERROR--> Aborting due to non zero exit code.$FISHAMNIUM_COLOR_RESET"
       return 1
     end
 
     cd $orig_pwd
   end
 
-  echo -e "\x1b[32m--> All operations completed successfully.\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_SUCCESS--> All operations completed successfully.$FISHAMNIUM_COLOR_RESET"
 end
 
 function cd_project_root
@@ -49,14 +49,14 @@ function cd_project_root
   end
 
   if test $destination = "/";
-    echo -e "\x1b[31m--> No projects found.\x1b[0m"
+    echo -e "$FISHAMNIUM_COLOR_ERROR--> No projects found.$FISHAMNIUM_COLOR_RESET"
     return 0
   end
 
   if test -z $_flag_N
-		echo -e "\x1b[33m--> Moving to \x1b[0m$destination\x1b[33m ...\x1b[0m"
+		echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Moving to $FISHAMNIUM_COLOR_RESET$destination$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
     cd $destination
 	else 
-		echo -e "\x1b[34m--> Would move to \x1b[0m$destination\x1b[34m.\x1b[0m"
+		echo -e "$FISHAMNIUM_COLOR_SECONDARY--> Would move to $FISHAMNIUM_COLOR_RESET$destination$FISHAMNIUM_COLOR_SECONDARY.$FISHAMNIUM_COLOR_RESET"
   end
 end

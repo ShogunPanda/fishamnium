@@ -1,20 +1,29 @@
 #!/usr/bin/env fish
 
+# TODO@PI: Light / Dark
+set -x -g FISHAMNIUM_COLOR_RESET "\x1b[0m"
+set -x -g FISHAMNIUM_COLOR_BOLD "\x1b[1m"
+set -x -g FISHAMNIUM_COLOR_NORMAL "\x1b[22m"
+set -x -g FISHAMNIUM_COLOR_ERROR "\x1b[31m\x1b[1m"
+set -x -g FISHAMNIUM_COLOR_SUCCESS "\x1b[32m\x1b[1m"
+set -x -g FISHAMNIUM_COLOR_PRIMARY "\x1b[35m\x1b[1m"
+set -x -g FISHAMNIUM_COLOR_SECONDARY "\x1b[34m\x1b[1m"
+
 # Check fish version and other dependencies
 set version_tokens $(string split -- "." "$version")
 
 if test $version_tokens[1] -lt 3 -o $version_tokens[1] -lt 3
-  echo -e "\x1b[31mFishamnium requires Fish \x1b[0m3.3.0\x1b[31m or greater, while you are on \x1b[0m$version\x1b[31m.\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_ERRORFishamnium requires Fish $FISHAMNIUM_COLOR_RESET3.3.0$FISHAMNIUM_COLOR_ERROR or greater, while you are on $FISHAMNIUM_COLOR_RESET$version$FISHAMNIUM_COLOR_ERROR.$FISHAMNIUM_COLOR_RESET"
   exit 1
 end
 
 if ! which yq >/dev/null 2>/dev/null
-  echo -e "\x1b[31mFishamnium requires yq \x1b[0m4.18.1\x1b[31m or greater. Please check \x1b[0mhttp://mikefarah.github.io/yq/#install\x1b[31m.\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_ERRORFishamnium requires yq $FISHAMNIUM_COLOR_RESET4.18.1$FISHAMNIUM_COLOR_ERROR or greater. Please check $FISHAMNIUM_COLOR_RESEThttp://mikefarah.github.io/yq/#install$FISHAMNIUM_COLOR_ERROR.$FISHAMNIUM_COLOR_RESET"
   exit 1
 end
 
 if ! which starship >/dev/null 2>/dev/null
-  echo -e "\x1b[31mFishamnium requires starship \x1b[0m1.2.1\x1b[31m or greater. Please check \x1b[0mhttps://starship.rs/guide/#🚀-installation\x1b[31m.\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_ERRORFishamnium requires starship $FISHAMNIUM_COLOR_RESET1.2.1$FISHAMNIUM_COLOR_ERROR or greater. Please check $FISHAMNIUM_COLOR_RESEThttps://starship.rs/guide/#🚀-installation$FISHAMNIUM_COLOR_ERROR.$FISHAMNIUM_COLOR_RESET"
   exit 1
 end
 
@@ -33,7 +42,7 @@ if ! set -q _flag_u
   # Clone locally if asked to
   if ! set -q _flag_l
     set fishamniumVersion $(curl -s https://api.github.com/repos/$repo/releases | yq ".[0].tag_name | sub(\"v\", \"\")")
-    echo -e "\x1b[33m--> Downloading Fishamnium $fishamniumVersion into \x1b[0m$source\x1b[33m ...\x1b[0m"
+    echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Downloading Fishamnium $fishamniumVersion into $FISHAMNIUM_COLOR_RESET$source$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
     
     mkdir -p $source; or exit 1
     curl -sSL -o $source/fishamnium.tar.gz https://github.com/$repo/archive/refs/tags/v$fishamniumVersion.tar.gz; or exit 1
@@ -42,40 +51,40 @@ if ! set -q _flag_u
   end
 
   # Remove previous installations
-  echo -e "\x1b[33m--> Removing any previous fishamnium installations in \x1b[0m$target\x1b[33m ...\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Removing any previous fishamnium installations in $FISHAMNIUM_COLOR_RESET$target$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
   command rm -rf "$target" "$loader"; or exit 1
 
   # Create required directories
-  echo -e "\x1b[33m--> Creating required directories ...\x1b[0m"  
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Creating required directories ...$FISHAMNIUM_COLOR_RESET"  
   command mkdir -vp "$target" "$loaderDirectory"; or exit 1
 
   # Copy files
-  echo -e "\x1b[33m--> Copying fishamnium in \x1b[0m$target\x1b[33m ...\x1b[0m"
-  command cp -av completions plugins themes installer version "$target" | sort; or exit 1
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Copying fishamnium in $FISHAMNIUM_COLOR_RESET$target$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
+  command cp -av data completions plugins themes installer version "$target" | sort; or exit 1
 
-  echo -e "\x1b[33m--> Copying loader file in \x1b[0m$loader\x1b[33m ...\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Copying loader file in $FISHAMNIUM_COLOR_RESET$loader$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
   command cp -av loader.fish "$loader"; or exit 1
 
   # Ensure permissions
-  echo -e "\x1b[33m--> Fixing file permissions ...\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Fixing file permissions ...$FISHAMNIUM_COLOR_RESET"
   command chmod -R a+x "$target" "$loader"; or exit 1
 
   # Remove temporary directory if needed
   if ! set -q _flag_l
-    echo -e "\x1b[33m--> Removing temporary installation files in \x1b[0m$source\x1b[33m ...\x1b[0m"
+    echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Removing temporary installation files in $FISHAMNIUM_COLOR_RESET$source$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
     cd "$origPwd"
     command rm -rf "$source"; or exit 1
   end
 
   # Print a status
-  printf "\n\x1b[32m--> To load fish right now without restarting the terminal, run: \x1b[0msource ~/.config/fish/conf.d/fishamnium.fish\x1b[32m"
-  printf "\n\x1b[32m--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A\x1b[0m\n"
+  printf "\n$FISHAMNIUM_COLOR_SUCCESS--> To load fish right now without restarting the terminal, run: $FISHAMNIUM_COLOR_RESETsource ~/.config/fish/conf.d/fishamnium.fish$FISHAMNIUM_COLOR_SUCCESS"
+  printf "\n$FISHAMNIUM_COLOR_SUCCESS--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A$FISHAMNIUM_COLOR_RESET\n"
 else
-  echo -e "\x1b[33m--> Removing directory \x1b[0m$target\x1b[33m and loader file \x1b[0m$loader\x1b[33m ...\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Removing directory $FISHAMNIUM_COLOR_RESET$target$FISHAMNIUM_COLOR_PRIMARY and loader file $FISHAMNIUM_COLOR_RESET$loader$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
   command rm -rf "$target" "$loader"; or exit 1
 
-  echo -e "\x1b[33m--> Removing loader file \x1b[0m$loader\x1b[33m ...\x1b[0m"
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Removing loader file $FISHAMNIUM_COLOR_RESET$loader$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
   command rm -rf "$loader"; or exit 1
 
-  printf "\n\x1b[32m--> Fishamnium has been uninstalled. Hope you liked it. Farewell! \U0001F37A\x1b[0m\n"
+  printf "\n$FISHAMNIUM_COLOR_SUCCESS--> Fishamnium has been uninstalled. Hope you liked it. Farewell! \U0001F37A$FISHAMNIUM_COLOR_RESET\n"
 end
