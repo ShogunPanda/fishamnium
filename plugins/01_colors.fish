@@ -1,7 +1,7 @@
 function fishamnium_update_colors -d "Updates fishamnium color settings"
   set -f profile $argv[1]
 
-  if test -z "$profile"
+  if test -z "$profile" -a "$(uname)" = "Darwin"
     set -f profile $(python3 ~/.config/fish/fishamnium/data/iterm2/get_default_profile.py)
   end
 
@@ -33,6 +33,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
 
   fish_config theme choose None
 
+  set -x -g FISHAMNIUM_COLOR_PROFILE $profile
   set -x -g FISHAMNIUM_COLOR_RESET $(set_color normal)
   set -x -g FISHAMNIUM_COLOR_BOLD $(set_color -o)
   set -x -g FISHAMNIUM_COLOR_NORMAL "\x1b[22m"
@@ -68,4 +69,5 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
   set fish_pager_color_selected_description $LIGHTGREEN
 end
 
-fishamnium_update_colors
+# The environment variable is sent to inherit in SSH
+fishamnium_update_colors $FISHAMNIUM_COLOR_PROFILE
