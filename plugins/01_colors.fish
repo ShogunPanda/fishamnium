@@ -29,7 +29,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
     set -f SECONDARY $CYAN
   end
 
-  fish_config theme choose none
+  fish_config theme choose None
 
   set -x -g FISHAMNIUM_COLOR_RESET $(set_color normal)
   set -x -g FISHAMNIUM_COLOR_BOLD $(set_color -o)
