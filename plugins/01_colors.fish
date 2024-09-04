@@ -63,7 +63,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
   set fish_pager_color_prefix -o $FOREGROUND
   set fish_pager_color_completion -o $CYAN
   set fish_pager_color_description -o $GRAY
-  set fish_pager_color_selected_background -b $GREEN
+  set fish_pager_color_selected_background -b $CYAN
   set fish_pager_color_selected_prefix -o $WHITE
   set fish_pager_color_selected_completion $WHITE
   set fish_pager_color_selected_description $LIGHTGREEN
