@@ -16,6 +16,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
   set -f MAGENTA C800E2
   set -f BLUE 005be4
   set -f GRAY 808080
+  set -f LIGHTGRAY C0C0C0
 
   if test "$profile" = "light"
     set -f RED CC0000
@@ -66,7 +67,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
   set fish_pager_color_selected_background -b $CYAN
   set fish_pager_color_selected_prefix -o $WHITE
   set fish_pager_color_selected_completion $WHITE
-  set fish_pager_color_selected_description $GRAY
+  set fish_pager_color_selected_description $LIGHTGRAY
 end
 
 # The environment variable is sent to inherit in SSH
