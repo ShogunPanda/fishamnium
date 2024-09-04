@@ -66,7 +66,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
   set fish_pager_color_selected_background -b $CYAN
   set fish_pager_color_selected_prefix -o $WHITE
   set fish_pager_color_selected_completion $WHITE
-  set fish_pager_color_selected_description $LIGHTGREEN
+  set fish_pager_color_selected_description $GRAY
 end
 
 # The environment variable is sent to inherit in SSH
