@@ -1,6 +1,6 @@
 function execute_on_list
   set orig_pwd $PWD
-  argparse -i --name=execute_on_list "x/execute" "l/list" -- $argv
+  argparse -i --name=execute_on_list "x/execute" "l/list" "c/continue" -- $argv
 
   if test -n $_flag_l
     set list $(string split " " "$argv[1]")
@@ -17,7 +17,7 @@ function execute_on_list
     cd $item
     eval $argv[2..]
 
-    if test $status -ne 0;
+    if test $status -ne 0 -a -z $_flag_c;
       cd $orig_pwd
       echo -e "$FISHAMNIUM_COLOR_ERROR--> Aborting due to non zero exit code.$FISHAMNIUM_COLOR_RESET"
       return 1
