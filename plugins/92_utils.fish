@@ -1,8 +1,10 @@
 function execute_on_list
   set orig_pwd $PWD
-  argparse -i --name=execute_on_list "x/execute" -- $argv
+  argparse -i --name=execute_on_list "x/execute" "l/list" -- $argv
 
-  if test -z $_flag_x
+  if test -n $_flag_l
+    set list $(string split " " "$argv[1]")
+  else if test -z $_flag_x
     set list $(cat $argv[1])
   else
     set list $(eval $argv[1])
