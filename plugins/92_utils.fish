@@ -17,10 +17,11 @@ function execute_on_list
     cd $item
     eval $argv[2..]
 
+    set current_status $status
     if test $status -ne 0;
       if ! set -q _flag_c
         cd $orig_pwd
-        echo -e "$FISHAMNIUM_COLOR_ERROR--> Aborting due to non zero exit code.$FISHAMNIUM_COLOR_RESET"
+        echo -e "$FISHAMNIUM_COLOR_ERROR--> Aborting due to non zero exit code ($FISHAMNIUM_COLOR_BOLD$current_status$FISHAMNIUM_COLOR_NORMAL) on directory $FISHAMNIUM_COLOR_BOLD$item$FISHAMNIUM_COLOR_NORMAL.$FISHAMNIUM_COLOR_RESET"
         return 1
       end
     end
