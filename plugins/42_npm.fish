@@ -49,6 +49,21 @@ function nrc -d "Interactively run a script using npm"
   end
 end
 
+function nic -d "Reinstall all packages ensuring a clean local folder"
+  set runner $RUNNER
+  test -z "$runner"; and set runner "npm"
+
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock"
+  rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock
+
+  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> $RUNNER install"
+  $RUNNER install
+end
+
 function pnrc -d "Interactively run a script using pnpm"
   RUNNER=pnpm nrc
+end
+
+function pnic -d "Reinstall all packages ensuring a clean local folder using pnpm"
+  RUNNER=pnpm nic
 end
