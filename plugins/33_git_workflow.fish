@@ -2,12 +2,13 @@ function __g_refresh
   set remote $argv[1]
   set base $argv[2]
   set branch $argv[3]
+  set operation $argv[4]
 
   __git fetch $remote; or return
 	__git checkout $base; or return
 	__git pull $remote $base; or return
   __git checkout $branch; or return
-  __git rebase $base; or return
+  __git $operation $base; or return
 end
 
 function __g_finish
@@ -73,10 +74,15 @@ function g_refresh -d "Rebases the current branch on top of an existing remote b
   g_is_repository; or return
 
   # Parse arguments
-  argparse -i --name=g_refresh "r/remote=" "N/dry-run" -- $argv
+  argparse -i --name=g_refresh "r/remote=" "N/dry-run" "m/--merge" -- $argv
   set branch $(g_branch_name); or return
   set base $(__g_ensure_branch $argv[1])
   set remote $(__g_ensure_remote $_flag_r)
+  set operation "merge"
+
+  if set -q _flag_m
+    set operation "merge"
+  end
 
   if test $base = $branch
     __fishamnium_print_error "You are already on the base branch. Use the g_update command."
@@ -84,7 +90,7 @@ function g_refresh -d "Rebases the current branch on top of an existing remote b
   end
 
   # Execute command(s)
-  dryRun=$_flag_N __g_refresh $remote $base $branch
+  dryRun=$_flag_N __g_refresh $remote $base $branch $operation
 end
 
 function g_finish -d "Merges a branch back to its base remote branch"
