@@ -16,7 +16,7 @@ function __g_finish
   set base $argv[2]
   set branch $argv[3]
 
-  __g_refresh $remote $base $branch; or return
+  __g_refresh $remote $base $branch rebase; or return
   __git checkout $base; or return
   __git merge --no-ff --no-edit $branch; or return
 end
@@ -78,7 +78,7 @@ function g_refresh -d "Rebases the current branch on top of an existing remote b
   set branch $(g_branch_name); or return
   set base $(__g_ensure_branch $argv[1])
   set remote $(__g_ensure_remote $_flag_r)
-  set operation "merge"
+  set operation "rebase"
 
   if set -q _flag_m
     set operation "merge"
@@ -168,7 +168,7 @@ function g_pull_request -d "Sends a Pull Request and deletes the local branch"
 
   # Execute command(s)
   dryRun=$_flag_N __g_status g_refresh
-  dryRun=$_flag_N __g_refresh $remote $base $branch
+  dryRun=$_flag_N __g_refresh $remote $base $branch rebase
   _flag_f=$_flag_f _flag_s=$_flag_s _flag_N=$_flag_N __g_pull_request $remote $base $branch
 end
 
@@ -196,7 +196,7 @@ function g_fast_pull_request -d "Creates a local branch, commit changes and then
   dryRun=$_flag_N __g_status g_commit_with_task
   _flag_N=$_flag_N g_commit_with_task -a $message; or return
   dryRun=$_flag_N __g_status g_refresh
-  dryRun=$_flag_N __g_refresh $remote $base $branch
+  dryRun=$_flag_N __g_refresh $remote $base $branch rebase
   dryRun=$_flag_N __g_status g_pull_request
   _flag_f=$_flag_f _flag_s=$_flag_s _flag_N=$_flag_N __g_pull_request $remote $base $branch
 end
@@ -299,7 +299,7 @@ function g_refresh_release -d "Rebases the current branch on top of an existing 
   set release $(printf "%s%s" $(g_release_prefix) "$release")
 
   # Execute command(s)
-  dryRun=$_flag_N __g_refresh $remote $release $branch
+  dryRun=$_flag_N __g_refresh $remote $release $branch rebase
 end
 
 function g_finish_release -d "Merges the current branch back to its base remote release branch"
