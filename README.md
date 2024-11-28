@@ -11,23 +11,34 @@ https://sw.cowtech.it/fishamnium
 
 Fishamnium requires the following dependencies:
 
-| Name     | Description                                                                  | URL                             | Installation guide                           |
-| -------- | ---------------------------------------------------------------------------- | ------------------------------- | -------------------------------------------- |
-| yq       | Lightweight and portable command-line YAML, JSON and XML processor.          | http://mikefarah.github.io/yq/  | http://mikefarah.github.io/yq/#install       |
-| starship | The minimal, blazing-fast, and infinitely customizable prompt for any shell! | https://starship.rs/guide/      | https://starship.rs/guide/#🚀-installation   |
-| fzf      | A command-line fuzzy finder                                                  | https://github.com/junegunn/fzf | https://github.com/junegunn/fzf#installation |
+| Name                | Description                                                                  | URL                             | Installation guide                           |
+| ------------------- | ---------------------------------------------------------------------------- | ------------------------------- | -------------------------------------------- |
+| yq                  | Lightweight and portable command-line YAML, JSON and XML processor.          | https://mikefarah.gitbook.io/yq | https://mikefarah.gitbook.io/yq#install      |
+| starship            | The minimal, blazing-fast, and infinitely customizable prompt for any shell! | https://starship.rs/guide/      | https://starship.rs/guide/#🚀-installation   |
+| fzf                 | A command-line fuzzy finder                                                  | https://github.com/junegunn/fzf | https://github.com/junegunn/fzf#installation |
+| Fira Code Nerd Font | An amazing looking font with icons                                           | https://www.nerdfonts.com/      | N/A                                          |
+
+If you are using Homebrew on MacOS, you can install them easily by using:
+
+```bash
+brew install starship yq fzf font-fira-code-nerd-font
+```
 
 ## Install
 
 Type the following inside a fish shell and you're done!
 
-`curl -sL https://sw.cowtech.it/fishamnium/installer | fish`
+```bash
+curl -sL https://sw.cowtech.it/fishamnium/installer | fish
+```
 
 ## Uninstall
 
 Type the following inside a fish shell and you're done!
 
-`~/.config/fish/fishamnium/installer -u`
+```bash
+~/.config/fish/fishamnium/installer -u
+```
 
 ## Contributing to fishamnium
 
