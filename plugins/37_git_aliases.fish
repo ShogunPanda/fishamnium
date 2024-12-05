@@ -26,6 +26,8 @@ alias gcae='git commit -a -e'
 alias gcaes='git commit -s -a -e'
 alias gcaen='git commit -a -e -n'
 alias gcaens='git commit -s -a -e -n'
+alias gcf='git commit -a -n -m fixup'
+alias gcfs='git commit -s -a -n -m fixup'
 
 # Checkout
 alias gco='git checkout'
