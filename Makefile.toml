@@ -36,7 +36,7 @@
     valid_tags = array major minor patch auto
     valid = array_contains ${valid_tags} ${1}
     if not ${valid}
-      trigger_error "Usage: make version type=(major|minor|patch|auto)"
+      trigger_error "Usage: makers version type=(major|minor|patch|auto)"
     end
     release valid_tags
 
@@ -47,4 +47,3 @@
     version = trim ${version.stdout}
     writefile ./version ${version}
   """
-
