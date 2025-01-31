@@ -106,7 +106,7 @@ function g_cleanup -d "Deletes all non default branches"
   set remote $(__g_ensure_remote $_flag_r)
 
   # Prepare the branches to remove
-  set branches $(git branch --merged $base | string match -r -- "^\s{2}(?!$base).+" "$branches" | string trim); or return
+  set branches $(git branch --merged $base | string match -r -- "^\s{2}(?!$base).+" | string trim); or return
   
   # Execute command(s)
   if test $(count $branches) -gt 0
