@@ -29,6 +29,10 @@ alias gcaens='git commit -s -a -e -n'
 alias gcf='git commit -a -n -m fixup'
 alias gcfs='git commit -s -a -n -m fixup'
 
+function gcs
+  git commit -a -n --squash=$argv[1]
+end
+
 # Checkout
 alias gco='git checkout'
 alias gcot='git checkout --track'

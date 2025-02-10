@@ -23,4 +23,4 @@ function gh_pr_approve -d "Approves a PR"
   end
 
   gh pr review -a -b "$message" $pr
-end 
+end
