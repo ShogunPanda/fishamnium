@@ -11,6 +11,9 @@
 [tasks.version]
   dependencies = ["bump-version", "save-version"]
 
+[tasks.deploy]
+  dependencies = ["save-version", "release", "install"]
+
 [tasks.release]
   script_runner = "@duckscript"
   script = """
