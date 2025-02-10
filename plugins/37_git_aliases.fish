@@ -30,7 +30,11 @@ alias gcf='git commit -a -n -m fixup'
 alias gcfs='git commit -s -a -n -m fixup'
 
 function gcs
-  git commit -a -n --squash=$argv[1]
+  git commit -a -n -m fixup --squash=$argv[1]
+end
+
+function gcss
+  git commit -a -n -s -m fixup --squash=$argv[1]
 end
 
 # Checkout
