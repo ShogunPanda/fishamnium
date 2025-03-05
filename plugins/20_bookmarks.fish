@@ -1,6 +1,8 @@
 function bookmarks_list -d "Lists all bookmarks"
   set query ".+"
 
+  argparse -i --name=bookmarks_list "e/export" "p/export-prefix=" -- $argv
+
   if test -n "$argv[1]"
     set query "(?:$argv[1])"
   end
@@ -19,6 +21,23 @@ function bookmarks_list -d "Lists all bookmarks"
   end
 
   set indexes $(seq 1 3 $(math $(count $bookmarks) - 1))
+
+  # Shell export
+  if test -n "$_flag_e"
+    set exportPrefix $_flag_p
+
+    if test -z $exportPrefix
+      set exportPrefix "B_"
+    end
+
+    for i in $indexes
+      set name $(string upper -- (string replace --all -- "-" "_" "$bookmarks[$i]"))
+      set destination $(string replace -- "~" "$HOME" $bookmarks[(math $i + 1)])
+      echo "set -x -g $exportPrefix$name \"$destination\""
+    end
+
+    return
+  end
 
   # Calculate paddings
   set idPadding 0
@@ -200,6 +219,7 @@ function bookmark_open_select -d "Interactively edits a bookmark using the curre
 end
 
 alias l=bookmarks_list
+alias le="bookmarks_list -e > ~/.config/fishamnium/20_bookmarks.fish && chmod a+x ~/.config/fishamnium/20_bookmarks.fish"
 alias b=bookmark_show
 alias s=bookmark_save
 alias d=bookmark_delete
