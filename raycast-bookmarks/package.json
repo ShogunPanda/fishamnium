@@ -1,0 +1,60 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "raycast-fishamnium-bookmarks",
+  "version": "0.1.0",
+  "description": "A Raycast extension to use Fishamnium bookmarks",
+  "homepage": "https://sw.cowtech.it/fishamnium",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShogunPanda/fishamnium.git"
+  },
+  "keywords": [
+    "raycast",
+    "fishamnium",
+    "bookmarks"
+  ],
+  "bugs": {
+    "url": "https://github.com/ShogunPanda/acquerello/issues"
+  },
+  "author": "ShogunPanda",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "format": "prettier -w src test",
+    "lint": "eslint --cache",
+    "prepublishOnly": "echo \"\\n\\nIt seems like you are trying to publish the Raycast extension to npm.\\n\\nIf you did intend to publish it to npm, remove the \\`prepublishOnly\\` script and rerun \\`npm publish\\` again.\\nIf you wanted to publish it to the Raycast Store instead, use \\`npm run publish\\` instead.\\n\\n\" && exit 1",
+    "publish": "npx @raycast/api@latest publish"
+  },
+  "dependencies": {
+    "@raycast/api": "^1.94.3",
+    "@raycast/utils": "^1.17.0",
+    "yaml": "^2.7.1"
+  },
+  "devDependencies": {
+    "@cowtech/eslint-config": "10.2.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "19.0.10",
+    "eslint": "^9.22.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">= 20.18.0"
+  },
+  "title": "raycast-fishamnium-bookmarks",
+  "icon": "cowtech.png",
+  "categories": [
+    "Developer Tools"
+  ],
+  "commands": [
+    {
+      "name": "bookmarks",
+      "title": "Fishamnium Bookmarks",
+      "description": "Manage Fishamnium bookmarks",
+      "mode": "view"
+    }
+  ]
+}
