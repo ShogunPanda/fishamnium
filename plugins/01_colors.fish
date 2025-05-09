@@ -1,8 +1,13 @@
 function fishamnium_update_colors -d "Updates fishamnium color settings"
   set -f profile $argv[1]
 
-  if test -z "$profile" -a "$(uname)" = "Darwin"
-    set -f profile $(python3 ~/.config/fish/fishamnium/data/iterm2/get_default_profile.py)
+  if test -z "$profile"
+    # Add a default profile
+    # TODO: Move the default file to `~/.config/fishamnium/config.yml` here and everywhere is used. Use a env var to define this path.
+    set profile $(yq '.profile // "dark"' $FISHAMNIUM_CONFIG)
+  else
+    # Update the profile in the config file
+    yq -i ".profile=\"$profile\"" $FISHAMNIUM_CONFIG
   end
 
   set profile $(string lower "$profile")

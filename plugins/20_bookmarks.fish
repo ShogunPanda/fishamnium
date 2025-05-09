@@ -8,7 +8,7 @@ function bookmarks_list -d "Lists all bookmarks"
   end
 
   # Gather bookmarks
-  for raw in $(yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name])" ~/.fishamnium.yml | sort | string split -- "\n")
+  for raw in $(yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name])" $FISHAMNIUM_CONFIG | sort | string split -- "\n")
     set bookmark $(string split -- "," "$raw")
 
     if string match -qre "$query" "$bookmark[1]"
@@ -72,11 +72,11 @@ function bookmarks_list -d "Lists all bookmarks"
 end
 
 function bookmarks_autocomplete -d "Autocomplete bookmarks"
-  yq -o=tsv -eMP ".bookmarks | to_entries | map([.key, .value.path | sub(\"~\", \"\$\$HOME\")])" ~/.fishamnium.yml
+  yq -o=tsv -eMP ".bookmarks | to_entries | map([.key, .value.path | sub(\"~\", \"\$\$HOME\")])" $FISHAMNIUM_CONFIG
 end
 
 function bookmarks_names -d "Lists all bookmarks names"
-  yq -eMP ".bookmarks | keys | .[]" ~/.fishamnium.yml 2>/dev/null
+  yq -eMP ".bookmarks | keys | .[]" $FISHAMNIUM_CONFIG 2>/dev/null
 end
 
 function bookmark_show -d "Reads a bookmark"
@@ -89,7 +89,7 @@ function bookmark_show -d "Reads a bookmark"
   end
 
   # Search the bookmark
-  if ! yq -eMP ".bookmarks[\"$bookmark\"] | .path | sub(\"~\", \"$HOME\")" ~/.fishamnium.yml 2>/dev/null
+  if ! yq -eMP ".bookmarks[\"$bookmark\"] | .path | sub(\"~\", \"$HOME\")" $FISHAMNIUM_CONFIG 2>/dev/null
     __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
     return 1
   end
@@ -124,7 +124,7 @@ function bookmark_save -d "Writes a bookmark"
   # Save the element
   set newElement $(printf '[{"name": "%s", "bookmark": "%s", "rootPath": "%s", "paths": [], "group": ""}]' "$name" "$bookmark" "$destination")
   
-  if ! yq -i -o yaml ".bookmarks[\"$bookmark\"] |= {\"path\": \"$destination\", \"name\": \"$name\"}" ~/.fishamnium.yml 2>/dev/null
+  if ! yq -i -o yaml ".bookmarks[\"$bookmark\"] |= {\"path\": \"$destination\", \"name\": \"$name\"}" $FISHAMNIUM_CONFIG 2>/dev/null
     __fishamnium_print_error "Cannot save the bookmark."
     return 1
   end
@@ -146,7 +146,7 @@ function bookmark_delete -d "Deletes a bookmark"
   end
 
   # Remove the bookmark from the file
-  if ! yq -i -o yaml "del(.bookmarks[\"$bookmark\"])" ~/.fishamnium.yml 2>/dev/null
+  if ! yq -i -o yaml "del(.bookmarks[\"$bookmark\"])" $FISHAMNIUM_CONFIG 2>/dev/null
     __fishamnium_print_error "Cannot delete the bookmark."
     return 1
   end

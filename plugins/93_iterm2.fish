@@ -11,7 +11,6 @@ function switch_iterm2_profile
   end
 
   echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Switching to profile $FISHAMNIUM_COLOR_BOLD$profile ...$FISHAMNIUM_COLOR_RESET"
-  python3 ~/.config/fish/fishamnium/data/iterm2/switch_to_profile.py $profile  
-  
-  fishamnium_update_colors
+  fishamnium_update_colors (string lower "$profile")
+  python3 ~/.config/fish/fishamnium/data/iterm2/switch_to_profile.py $profile    
 end

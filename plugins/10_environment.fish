@@ -1,4 +1,4 @@
-set -x -g EDITOR "nano"
+set -x -g EDITOR "nvim"
 set -x -g GEDITOR "code"
 set -x -g fish_greeting
 

@@ -1,3 +1,6 @@
+# Set up config file path
+set -x -g FISHAMNIUM_CONFIG "$HOME/.config/fishamnium/config.yml"
+
 # Set some common directories
 for root in /usr/local /opt /opt/homebrew /var
   for dir in $root/bin $root/sbin
