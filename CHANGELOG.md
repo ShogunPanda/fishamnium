@@ -1,3 +1,7 @@
+### 2025-05-09 / 10.0.1
+
+- fix: Fixed icon.
+
 ### 2025-05-09 / 10.0.0
 
 - feat: Better config management.
