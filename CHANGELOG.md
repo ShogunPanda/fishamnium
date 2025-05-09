@@ -1,3 +1,7 @@
+### 2025-05-09 / 10.1.0
+
+- feat: Added fishamnium_update.
+
 ### 2025-05-09 / 10.0.1
 
 - fix: Fixed icon.
