@@ -1,3 +1,9 @@
+### 2025-05-09 / 10.0.0
+
+- feat: Better config management.
+- chore: Minor fix.
+- chore: Minor fix.
+
 ### 2024-01-27 / 9.29.0
 
 - fix: Do not continue execution on failures.
