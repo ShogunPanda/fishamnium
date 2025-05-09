@@ -44,7 +44,7 @@ function nrc -d "Interactively run a script using npm"
   set choice $(string join0 $scripts | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
   
   if test $status -eq 0
-    echo -e "$FISHAMNIUM_COLOR_PRIMARY--> $runner run $choice$FISHAMNIUM_COLOR_RESET"
+    echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> $runner run $choice$FISHAMNIUM_COLOR_RESET"
     $runner run $choice
   end
 end
@@ -53,10 +53,10 @@ function nic -d "Reinstall all packages ensuring a clean local folder"
   set runner $RUNNER
   test -z "$runner"; and set runner "npm"
 
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock"
+  echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock"
   rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock
 
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> $RUNNER install"
+  echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> $RUNNER install"
   $RUNNER install
 end
 
