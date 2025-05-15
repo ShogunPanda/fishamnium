@@ -80,6 +80,8 @@ function bookmarks_names -d "Lists all bookmarks names"
 end
 
 function bookmark_show -d "Reads a bookmark"
+  argparse -i --name=bookmark_show "y/copy" -- $argv
+  
   # Parse arguments
   set bookmark $argv[1]
 
@@ -89,10 +91,18 @@ function bookmark_show -d "Reads a bookmark"
   end
 
   # Search the bookmark
-  if ! yq -eMP ".bookmarks[\"$bookmark\"] | .path | sub(\"~\", \"$HOME\")" $FISHAMNIUM_CONFIG 2>/dev/null
+  set destination (yq -eMP ".bookmarks[\"$bookmark\"] | .path | sub(\"~\", \"$HOME\")" $FISHAMNIUM_CONFIG 2>/dev/null)
+  
+  if test $status -ne 0
     __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
     return 1
   end
+
+  if test -n "$_flag_y"
+    echo -n "$destination" | fish_clipboard_copy
+  end
+
+  echo $destination
 end
 
 function bookmark_save -d "Writes a bookmark"
@@ -221,6 +231,7 @@ end
 alias l=bookmarks_list
 alias le="bookmarks_list -e > ~/.config/fishamnium/20_bookmarks.fish && chmod a+x ~/.config/fishamnium/20_bookmarks.fish"
 alias b=bookmark_show
+alias y="bookmark_show -y"
 alias s=bookmark_save
 alias d=bookmark_delete
 alias c=bookmark_cd
