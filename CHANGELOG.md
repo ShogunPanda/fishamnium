@@ -1,3 +1,7 @@
+### 2025-05-15 / 10.2.1
+
+- fix: Added missing alias completion.
+
 ### 2025-05-15 / 10.2.0
 
 - feat: Added copying of bookmarks.
