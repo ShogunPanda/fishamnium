@@ -1,3 +1,7 @@
+### 2025-05-15 / 10.2.0
+
+- feat: Added copying of bookmarks.
+
 ### 2025-05-09 / 10.1.0
 
 - feat: Added fishamnium_update.
