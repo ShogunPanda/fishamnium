@@ -1,3 +1,7 @@
+### 2025-05-20 / 10.2.2
+
+- fix: Fixed GIT aliases.
+
 ### 2025-05-15 / 10.2.1
 
 - fix: Added missing alias completion.
