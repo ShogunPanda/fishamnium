@@ -8,7 +8,7 @@ function fishamnium_reload -d "Reloads Fishamnium"
 end
 
 function fishamnium_forced_reload -d "Reloads Fishamnium (forced)"
-  set -x FISHAMNIUM_PLUGINS FISHAMNIUM_COMPLETIONS FISHAMNIUM_LOADED_PLUGINS FISHAMNIUM_LOADED_COMPLETIONS
+  set -e -g FISHAMNIUM_PLUGINS FISHAMNIUM_COMPLETIONS FISHAMNIUM_LOADED_PLUGINS FISHAMNIUM_LOADED_COMPLETIONS
   fishamnium_reload
 end
 

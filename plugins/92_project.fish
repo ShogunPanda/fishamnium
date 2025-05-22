@@ -1,9 +1,9 @@
 function project_root
   set destination $PWD
 
-  argparse -i --name=project_root "N/dry-run" "s/skip-current" "y/copy" -- $argv
+  argparse -i --name=project_root "N/dry-run" "c/include-current" "y/copy" -- $argv
 
-  if set -ql _flag_s
+  if ! set -ql _flag_c
     set destination $(path dirname "$destination")
   end
 
