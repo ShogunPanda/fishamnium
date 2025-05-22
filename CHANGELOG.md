@@ -1,3 +1,7 @@
+### 2025-05-22 / 10.3.0
+
+- feat: Added project plugin.
+
 ### 2025-05-20 / 10.2.2
 
 - fix: Fixed GIT aliases.
