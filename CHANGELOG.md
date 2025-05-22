@@ -1,3 +1,7 @@
+### 2025-05-22 / 10.3.1
+
+- fix: Fixed flag.
+
 ### 2025-05-22 / 10.3.0
 
 - feat: Added project plugin.
