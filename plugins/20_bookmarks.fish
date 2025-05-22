@@ -45,9 +45,9 @@ function bookmarks_list -d "Lists all bookmarks"
   set namePadding 0
 
   for i in $indexes
-    set idPadding $(math max \($idPadding, $(string length $bookmarks[$i])\))    
-    set destinationPadding $(math max \($destinationPadding, $(string length $bookmarks[(math $i + 1)])\))    
-    set namePadding $(math max \($namePadding, $(string length $bookmarks[(math $i + 2)])\))    
+    set idPadding $(math max \($idPadding, $(string length $bookmarks[$i])\))
+    set destinationPadding $(math max \($destinationPadding, $(string length $bookmarks[(math $i + 1)])\))
+    set namePadding $(math max \($namePadding, $(string length $bookmarks[(math $i + 2)])\))
   end
 
   # Prepare the row - In the destination we use 6 as ~ will be replaced with ~
@@ -81,7 +81,7 @@ end
 
 function bookmark_show -d "Reads a bookmark"
   argparse -i --name=bookmark_show "y/copy" -- $argv
-  
+
   # Parse arguments
   set bookmark $argv[1]
 
@@ -92,13 +92,13 @@ function bookmark_show -d "Reads a bookmark"
 
   # Search the bookmark
   set destination (yq -eMP ".bookmarks[\"$bookmark\"] | .path | sub(\"~\", \"$HOME\")" $FISHAMNIUM_CONFIG 2>/dev/null)
-  
+
   if test $status -ne 0
     __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
     return 1
   end
 
-  if test -n "$_flag_y"
+  if set -ql $_flag_y
     echo -n "$destination" | fish_clipboard_copy
   end
 
@@ -123,7 +123,7 @@ function bookmark_save -d "Writes a bookmark"
   # Validate the bookmark name and that is not already existing
   if ! string match -qre "^(?:[a-z0-9-_.:@]+)\$" "$bookmark"
     __fishamnium_print_error "Use only letters, numbers, and -, _, ., : and @ for the name."
-    return 
+    return
   end
 
   if set existing $(bookmark_show $bookmark 2>/dev/null)
@@ -133,7 +133,7 @@ function bookmark_save -d "Writes a bookmark"
 
   # Save the element
   set newElement $(printf '[{"name": "%s", "bookmark": "%s", "rootPath": "%s", "paths": [], "group": ""}]' "$name" "$bookmark" "$destination")
-  
+
   if ! yq -i -o yaml ".bookmarks[\"$bookmark\"] |= {\"path\": \"$destination\", \"name\": \"$name\"}" $FISHAMNIUM_CONFIG 2>/dev/null
     __fishamnium_print_error "Cannot save the bookmark."
     return 1
@@ -196,7 +196,7 @@ function bookmark_delete_select -d "Interactively deletes a bookmark"
   set height $(math $(count $bookmarks) + 1)
 
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
-  
+
   if test $status -eq 0
     bookmarks $choice
   end
@@ -209,7 +209,7 @@ function bookmark_cd_select -d "Interactively deletes a bookmark"
   set height $(math $(count $bookmarks) + 1)
 
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
-  
+
   if test $status -eq 0
     bookmark_cd $choice
   end
@@ -222,7 +222,7 @@ function bookmark_open_select -d "Interactively edits a bookmark using the curre
   set height $(math $(count $bookmarks) + 1)
 
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
-  
+
   if test $status -eq 0
     bookmark_cd $choice
   end
@@ -240,4 +240,3 @@ alias e=bookmark_edit
 alias ds=bookmark_delete_select
 alias cs=bookmark_cd_select
 alias os=bookmark_open_select
-

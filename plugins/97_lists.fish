@@ -31,37 +31,3 @@ function execute_on_list
 
   echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_SUCCESS--> All operations completed successfully.$FISHAMNIUM_COLOR_RESET"
 end
-
-function cd_project_root
-  argparse -i --name=cd_project_root "N/dry-run" -- $argv
-
-  set destination $(path dirname "$PWD")
-
-  while test $destination != "/"
-    set destination $(path dirname "$destination")
-
-    set is_root 0
-
-    for file in package.json Cargo.toml Makefile go.mod README.md;
-     if test -e $destination/$file;
-       set is_root 1
-     end
-    end
-
-    if test $is_root -eq 1;
-      break;
-    end
-  end
-
-  if test $destination = "/";
-    echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_ERROR--> No projects found.$FISHAMNIUM_COLOR_RESET"
-    return 0
-  end
-
-  if test -z $_flag_N
-		echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> Moving to $FISHAMNIUM_COLOR_RESET$destination$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
-    cd $destination
-	else
-		echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_SECONDARY--> Would move to $FISHAMNIUM_COLOR_RESET$destination$FISHAMNIUM_COLOR_SECONDARY.$FISHAMNIUM_COLOR_RESET"
-  end
-end
