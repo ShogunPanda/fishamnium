@@ -1,3 +1,7 @@
+### 2025-05-22 / 10.3.2
+
+- fix: Reverse default flag.
+
 ### 2025-05-22 / 10.3.1
 
 - fix: Fixed flag.
