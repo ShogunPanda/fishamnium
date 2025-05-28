@@ -3,7 +3,7 @@ function project_root
 
   argparse -i --name=project_root "N/dry-run" "c/include-current" "y/copy" -- $argv
 
-  if ! set -ql _flag_c
+  if ! set -q _flag_c
     set destination $(path dirname "$destination")
   end
 
@@ -24,14 +24,14 @@ function project_root
   end
 
   if test $destination = "/";
-    if ! set -ql $flag_y
+    if ! set -q _flag_y
       echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_ERROR--> No projects found.$FISHAMNIUM_COLOR_RESET"
     end
 
     return 1
   end
 
-  if set -ql $flag_y
+  if set -q _flag_y
     echo -n "$destination" | fish_clipboard_copy
   else
     echo $destination
@@ -46,15 +46,15 @@ function cd_project_root
   # Get the project directory
   set destination $(project_root $argv)
 
+  if test $status -ne 0
+    echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_ERROR--> No projects found.$FISHAMNIUM_COLOR_RESET"
+    return 1
+  end
+
   # Use the result
   argparse -i --name=cd_project_root "N/dry-run" -- $argv
 
-  if test -z "$destination"
-    echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_ERROR--> No projects found.$FISHAMNIUM_COLOR_RESET"
-    return 0
-  end
-
-  if set -ql $flag_N
+  if set -q _flag_N
     echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_SECONDARY--> Would move to $FISHAMNIUM_COLOR_RESET$destination$FISHAMNIUM_COLOR_SECONDARY.$FISHAMNIUM_COLOR_RESET"
   else
 		echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> Moving to $FISHAMNIUM_COLOR_RESET$destination$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"

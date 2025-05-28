@@ -98,7 +98,7 @@ function bookmark_show -d "Reads a bookmark"
     return 1
   end
 
-  if set -ql $_flag_y
+  if set -q _flag_y
     echo -n "$destination" | fish_clipboard_copy
   end
 
