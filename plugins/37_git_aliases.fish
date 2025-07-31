@@ -56,6 +56,7 @@ alias grbs='git rebase --skip'
 alias gcp='git cherry-pick'
 alias gcpc='git cherry-pick --continue'
 alias gcpa='git cherry-pick --abort'
+alias gcps='git cherry-pick --skip'
 
 # Branch
 alias gb='git branch'
