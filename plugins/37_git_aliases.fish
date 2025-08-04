@@ -31,7 +31,6 @@ alias gcfs='git commit -s -n -m fixup'
 alias gcaf='git commit -a -n -m fixup'
 alias gcafs='git commit -s -a -n -m fixup'
 
-
 # Checkout
 alias gco='git checkout'
 alias gcot='git checkout --track'
