@@ -25,7 +25,7 @@ alias grc=g_cleanup
 # Workflow
 alias gws=g_start
 alias gwr=g_refresh
-alias gwrm=g_refresh --merge
+alias gwrm="g_refresh --merge"
 alias gwf=g_finish
 alias gwff=g_full_finish
 alias gwfc=g_fast_commit
