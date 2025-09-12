@@ -101,12 +101,15 @@ function g_cleanup -d "Deletes all non default branches"
   g_is_repository; or return
 
   # Parse arguments
-  argparse -i --name=g_cleanup "N/dry-run" -- $argv
+  argparse -i --name=g_cleanup "f/force" "N/dry-run" -- $argv
   set base $(__g_ensure_branch $argv[1])
-  set remote $(__g_ensure_remote $_flag_r)
 
   # Prepare the branches to remove
-  set branches $(git branch --merged $base | string match -r -- "^\s{2}(?!$base).+" | string trim); or return
+  if set -q _flag_f
+    set branches $(git branch --list | string match -r -- "^\s{2}(?!$base).+" | string trim); or return
+  else
+    set branches $(git branch --list --merged $base | string match -r -- "^\s{2}(?!$base).+" | string trim); or return
+  end
   
   # Execute command(s)
   if test $(count $branches) -gt 0
@@ -136,7 +139,7 @@ function g_branch_delete_select -d "Interactively delete local branches"
   set branches $(git branch --no-color | grep -v "^\*" | cut -c 3-)
   set prompt "--> Which branch you want to checkout? (current branch is filtered out)"
   set colors $FISHAMNIUM_INTERACTIVE_COLORS
-  set height $(math $(count $branches) + 1)
+  set height $(math $(count $branches) + 3)
 
   set choice $(string join0 $branches | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors -m)
   

@@ -74,7 +74,7 @@ function g_refresh -d "Rebases the current branch on top of an existing remote b
   g_is_repository; or return
 
   # Parse arguments
-  argparse -i --name=g_refresh "r/remote=" "N/dry-run" "m/--merge" -- $argv
+  argparse -i --name=g_refresh "m/merge" "r/remote=" "N/dry-run" -- $argv
   set branch $(g_branch_name); or return
   set base $(__g_ensure_branch $argv[1])
   set remote $(__g_ensure_remote $_flag_r)
