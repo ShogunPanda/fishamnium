@@ -30,6 +30,10 @@ alias gcf='git commit -n -m fixup'
 alias gcfs='git commit -s -n -m fixup'
 alias gcaf='git commit -a -n -m fixup'
 alias gcafs='git commit -s -a -n -m fixup'
+alias gcw='git commit -n -m wip'
+alias gcws='git commit -s -n -m wip'
+alias gcaw='git commit -a -n -m wip'
+alias gcaws='git commit -s -a -n -m wip'
 
 # Checkout
 alias gco='git checkout'

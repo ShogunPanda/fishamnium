@@ -195,7 +195,7 @@ function bookmark_delete_select -d "Interactively deletes a bookmark"
   set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
-  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
     bookmarks $choice
@@ -208,7 +208,7 @@ function bookmark_cd_select -d "Interactively deletes a bookmark"
   set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
-  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
     bookmark_cd $choice
@@ -221,7 +221,7 @@ function bookmark_open_select -d "Interactively edits a bookmark using the curre
   set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
-  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt $prompt --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
     bookmark_cd $choice
