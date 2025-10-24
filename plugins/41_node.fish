@@ -1,8 +1,7 @@
-set base "node --test"
-
-set only "" "--test-only"
-set tap "" "--test-reporter=tap"
-set concurrency "" "--test-concurrency=1"
+set -l base "node --test"
+set -l only "" "--test-only"
+set -l tap "" "--test-reporter=tap"
+set -l concurrency "" "--test-concurrency=1"
 
 set -e FISHAMNIUM_NODE_TEST_ALIASES
 
