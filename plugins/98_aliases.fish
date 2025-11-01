@@ -1,5 +1,6 @@
 alias clcd='clear; cd'
 alias cdc='cd $(pwd)'
+alias cdn='basename $(pwd)'
 alias cp='cp -R -v -i'
 alias mv='mv -v -i'
 alias rm='rm -R'
