@@ -1,0 +1,10 @@
+---
+nt: node --test
+ntt: node --test --test-reporter=tap
+nt1: node --test --test-concurrency=1
+ntt1: node --test --test-reporter=tap --test-concurrency=1
+
+nto: node --test --test-only
+ntot: node --test --test-only --test-reporter=tap
+nto1: node --test --test-only --test-concurrency=1
+ntot1: node --test --test-only --test-reporter=tap --test-concurrency=1
