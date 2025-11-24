@@ -34,7 +34,7 @@
     "yaml": "^2.7.1"
   },
   "devDependencies": {
-    "@cowtech/eslint-config": "10.2.0",
+    "@cowtech/eslint-config": "^10.2.0",
     "@types/node": "^22.10.2",
     "@types/react": "19.0.10",
     "eslint": "^9.22.0",
@@ -42,7 +42,7 @@
     "typescript": "^5.8.2"
   },
   "engines": {
-    "node": ">= 20.18.0"
+    "node": ">= 22.21.0"
   },
   "title": "raycast-fishamnium-bookmarks",
   "icon": "cowtech.png",
