@@ -28,7 +28,9 @@ function __fishamnium_get_configuration
 	set fallback $argv[2]
 	# Read the value from a configuration file, if any
 	if set configurationPath $(__fishamnium_find_configuration_file)
-		set value $(yq -e "$selector" $configurationPath 2>/dev/null)
+		if test -f "$configurationPath"
+			set value $(yq -e "$selector" $configurationPath 2>/dev/null)
+		end
 	end
 
 	# Return the value or the fallback

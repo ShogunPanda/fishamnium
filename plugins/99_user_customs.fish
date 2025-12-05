@@ -19,12 +19,12 @@ function __fishamnium_dirhook --on-variable PWD
     set root $(project_root)
 
     if test $status -eq 0
-      set new_directory $root
-      
+      set new_directory $root      
     end
   end
 
   if test $new_directory = $FISHAMNIUM_DIRHOOK_CURRENT
+    set -e FISHAMNIUM_DIRHOOK_OPERATION
     return
   end
 
@@ -42,4 +42,6 @@ function __fishamnium_dirhook --on-variable PWD
     source $new_directory/.fishamnium.fish
     set -e FISHAMNIUM_DIRHOOK_OPERATION
   end
+
+  set -e FISHAMNIUM_DIRHOOK_OPERATION
 end
