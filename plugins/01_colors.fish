@@ -15,7 +15,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
   set -f WHITE FFFFFF
   set -f BLACK 000000
   set -f RED CC0000
-  set -f GREEN 008800
+  set -f GREEN 00CC00
   set -f LIGHTGREEN 00CC00
   set -f YELLOW FFDF00
   set -f MAGENTA C800E2
@@ -25,12 +25,14 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
 
   if test "$profile" = "light"
     set -f RED CC0000
+    set -f GREEN 00CC00
     set -f CYAN 0088E2
     set -f FOREGROUND $BLACK
     set -f PRIMARY $MAGENTA
     set -f SECONDARY $CYAN
   else
     set -f RED EE0000
+    set -f GREEN EE0000
     set -f CYAN 5EBBF9
     set -f FOREGROUND $WHITE
     set -f PRIMARY $YELLOW
