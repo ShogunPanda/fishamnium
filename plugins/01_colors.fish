@@ -50,6 +50,26 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
   set -x -g FISHAMNIUM_COLOR_PRIMARY $(set_color $PRIMARY)
   set -x -g FISHAMNIUM_COLOR_SECONDARY $(set_color $SECONDARY)
   set -x -g FISHAMNIUM_INTERACTIVE_COLORS "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline"
+  set -x -g FISHAMNIUM_COLOR_FG_WHITE $(set_color $WHITE)
+  set -x -g FISHAMNIUM_COLOR_FG_BLACK $(set_color $BLACK)
+  set -x -g FISHAMNIUM_COLOR_FG_RED $(set_color $RED)
+  set -x -g FISHAMNIUM_COLOR_FG_GREEN $(set_color $GREEN)
+  set -x -g FISHAMNIUM_COLOR_FG_LIGHTGREEN $(set_color $LIGHTGREEN)
+  set -x -g FISHAMNIUM_COLOR_FG_YELLOW $(set_color $YELLOW)
+  set -x -g FISHAMNIUM_COLOR_FG_MAGENTA $(set_color $MAGENTA)
+  set -x -g FISHAMNIUM_COLOR_FG_BLUE $(set_color $BLUE)
+  set -x -g FISHAMNIUM_COLOR_FG_GRAY $(set_color $GRAY)
+  set -x -g FISHAMNIUM_COLOR_FG_LIGHTGRAY $(set_color $LIGHTGRAY)
+  set -x -g FISHAMNIUM_COLOR_BG_WHITE $(set_color -b $WHITE)
+  set -x -g FISHAMNIUM_COLOR_BG_BLACK $(set_color -b $BLACK)
+  set -x -g FISHAMNIUM_COLOR_BG_RED $(set_color -b $RED)
+  set -x -g FISHAMNIUM_COLOR_BG_GREEN $(set_color -b $GREEN)
+  set -x -g FISHAMNIUM_COLOR_BG_LIGHTGREEN $(set_color -b $LIGHTGREEN)
+  set -x -g FISHAMNIUM_COLOR_BG_YELLOW $(set_color -b $YELLOW)
+  set -x -g FISHAMNIUM_COLOR_BG_MAGENTA $(set_color -b $MAGENTA)
+  set -x -g FISHAMNIUM_COLOR_BG_BLUE $(set_color -b $BLUE)
+  set -x -g FISHAMNIUM_COLOR_BG_GRAY $(set_color -b $GRAY)
+  set -x -g FISHAMNIUM_COLOR_BG_LIGHTGRAY $(set_color -b $LIGHTGRAY)
 
   set fish_color_normal $FOREGROUND
   set fish_color_command $FOREGROUND
