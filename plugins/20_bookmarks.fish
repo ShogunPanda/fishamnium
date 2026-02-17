@@ -163,12 +163,18 @@ function bookmark_delete -d "Deletes a bookmark"
 end
 
 function bookmark_cd -d "Changes current directory to a saved bookmark"
+  argparse -i --name=bookmark_cd "z/zoxide" -- $argv
+
   if ! set destination $(bookmark_show $argv 2>/dev/null)
     echo $destination
     return 1
   end
 
-  cd "$destination"
+  if set -q _flag_z
+    zoxide "$destination"
+  else
+    bookmark_cd "$destination"
+  end
 end
 
 function bookmark_open -d "Edits a bookmark using the current editor"
@@ -198,11 +204,13 @@ function bookmark_delete_select -d "Interactively deletes a bookmark"
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
-    bookmarks $choice
+    bookmarks "$choice"
   end
 end
 
 function bookmark_cd_select -d "Interactively deletes a bookmark"
+  argparse -i --name=bookmbookmark_cd_selectark_cd "z/zoxide" -- $argv
+
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to move to?"
   set colors $FISHAMNIUM_INTERACTIVE_COLORS
@@ -211,7 +219,11 @@ function bookmark_cd_select -d "Interactively deletes a bookmark"
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
-    bookmark_cd $choice
+    if set -q _flag_z
+      zoxide add -- "$choice"
+    else
+      bookmark_cd "$choice"
+    end
   end
 end
 
@@ -224,7 +236,7 @@ function bookmark_open_select -d "Interactively edits a bookmark using the curre
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
-    bookmark_cd $choice
+    bookmark_cd "$choice"
   end
 end
 
@@ -235,8 +247,9 @@ alias y="bookmark_show -y"
 alias s=bookmark_save
 alias d=bookmark_delete
 alias c=bookmark_cd
+alias cz="bookmark_cd -z"
 alias o=bookmark_open
 alias e=bookmark_edit
 alias ds=bookmark_delete_select
-alias cs=bookmark_cd_select
+alias csz="bookmark_cd_select -z"
 alias os=bookmark_open_select
