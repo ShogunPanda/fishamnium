@@ -171,9 +171,9 @@ function bookmark_cd -d "Changes current directory to a saved bookmark"
   end
 
   if set -q _flag_z
-    zoxide "$destination"
+    zoxide $destination
   else
-    bookmark_cd "$destination"
+    bookmark_cd $destination
   end
 end
 
@@ -204,7 +204,7 @@ function bookmark_delete_select -d "Interactively deletes a bookmark"
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
-    bookmarks "$choice"
+    bookmarks $choice
   end
 end
 
@@ -220,9 +220,9 @@ function bookmark_cd_select -d "Interactively deletes a bookmark"
 
   if test $status -eq 0
     if set -q _flag_z
-      zoxide add -- "$choice"
+      zoxide add -- $choice
     else
-      bookmark_cd "$choice"
+      bookmark_cd $choice
     end
   end
 end
@@ -236,7 +236,7 @@ function bookmark_open_select -d "Interactively edits a bookmark using the curre
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
-    bookmark_cd "$choice"
+    bookmark_cd $choice
   end
 end
 
