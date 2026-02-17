@@ -102,7 +102,7 @@ function bookmark_show -d "Reads a bookmark"
     echo -n "$destination" | fish_clipboard_copy
   end
 
-  echo $destination
+  echo "$destination"
 end
 
 function bookmark_save -d "Writes a bookmark"
@@ -166,20 +166,20 @@ function bookmark_cd -d "Changes current directory to a saved bookmark"
   argparse -i --name=bookmark_cd "z/zoxide" -- $argv
 
   if ! set destination $(bookmark_show $argv 2>/dev/null)
-    echo $destination
+    echo "$destination"
     return 1
   end
 
   if set -q _flag_z
-    zoxide $destination
+    zoxide "$destination"
   else
-    bookmark_cd $destination
+    cd "$destination"
   end
 end
 
 function bookmark_open -d "Edits a bookmark using the current editor"
   if ! set destination $(bookmark_show $argv 2>/dev/null)
-    echo $destination
+    echo "$destination"
     return 1
   end
 
@@ -204,7 +204,7 @@ function bookmark_delete_select -d "Interactively deletes a bookmark"
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
-    bookmarks $choice
+    bookmark_delete "$choice"
   end
 end
 
@@ -220,9 +220,9 @@ function bookmark_cd_select -d "Interactively deletes a bookmark"
 
   if test $status -eq 0
     if set -q _flag_z
-      zoxide add -- $choice
+      zoxide add -- "$choice"
     else
-      bookmark_cd $choice
+      cd "$choice"
     end
   end
 end
@@ -236,7 +236,7 @@ function bookmark_open_select -d "Interactively edits a bookmark using the curre
   set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
 
   if test $status -eq 0
-    bookmark_cd $choice
+    cd "$choice"
   end
 end
 
