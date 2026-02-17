@@ -123,7 +123,7 @@ function g_switch -d "Interactively switch between local branch"
   set branches $(git branch --no-color | cut -c 3-)
   set prompt "--> Which branch you want to checkout? "
   set colors $FISHAMNIUM_INTERACTIVE_COLORS
-  set height $(math $(count $branches) + 1)
+  set height $(math $(count $branches) + 3)
 
   set choice $(string join0 $branches | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
   
