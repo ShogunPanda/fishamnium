@@ -241,7 +241,7 @@ function bookmark_open_select -d "Interactively edits a bookmark using the curre
 end
 
 alias l=bookmarks_list
-alias le="bookmarks_list -e > ~/.config/fishamnium/20_bookmarks.fish && chmod a+x ~/.config/fishamnium/20_bookmarks.fish"
+alias le="bookmarks_list -e > $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish && chmod a+x $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish"
 alias b=bookmark_show
 alias y="bookmark_show -y"
 alias s=bookmark_save

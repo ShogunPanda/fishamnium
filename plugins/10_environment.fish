@@ -13,7 +13,7 @@ function fishamnium_forced_reload -d "Reloads Fishamnium (forced)"
 end
 
 function fishamnium_update -d "Updates Fishamnium"
-  rm ~/.config/fish/fishamnium ~/.config/fish/conf.d/fishamnium.fish
+  rm ~/.local/share/fishamnium ~/.config/fish/conf.d/fishamnium.fish
   curl -sL https://sw.cowtech.it/fishamnium/installer | fish
   fishamnium_forced_reload
 end

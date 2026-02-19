@@ -31,7 +31,7 @@ argparse "l/local" "u/ininstall" -- $argv
 
 set origPwd $PWD
 set repo ShogunPanda/fishamnium
-set target ~/.config/fish/fishamnium
+set target ~/.local/share/fishamnium
 set loaderDirectory ~/.config/fish/conf.d
 set loader "$loaderDirectory/fishamnium.fish"
 set source /tmp/fishamnium-(date +%Y%m%d%H%M%S)

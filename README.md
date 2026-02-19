@@ -37,7 +37,7 @@ curl -sL https://sw.cowtech.it/fishamnium/installer | fish
 Type the following inside a fish shell and you're done!
 
 ```bash
-~/.config/fish/fishamnium/installer -u
+~/.local/share/fishamnium/installer -u
 ```
 
 ## Contributing to fishamnium

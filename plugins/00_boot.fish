@@ -1,4 +1,5 @@
 # Set up config file path
+set -x -g FISHAMNIUM_ROOT "$HOME/.local/share/fishamnium"
 set -x -g FISHAMNIUM_CONFIG "$HOME/.config/fishamnium/config.yml"
 
 # Set some common directories
