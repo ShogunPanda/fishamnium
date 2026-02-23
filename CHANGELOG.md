@@ -1,3 +1,68 @@
+### 2026-02-19 / 11.0.0
+
+- feat: Better paths.
+
+### 2026-02-17 / 10.15.0
+
+- feat: Added support for zoxide.
+
+### 2026-02-05 / 10.14.0
+
+- feat: Export colors.
+
+### 2026-02-03 / 10.13.0
+
+- fix: Fixed colors.
+
+### 2026-02-03 / 10.12.0
+
+- fix: Fixed colors.
+
+### 2025-11-20 / 10.11.0
+
+- feat: Simplified Node aliases generation.
+- feat: Added cdn alias.
+
+### 2025-10-24 / 10.10.1
+
+- fix: Minor fix.
+
+### 2025-10-23 / 10.10.0
+
+- feat: Added dirhook support.
+
+### 2025-10-20 / 10.9.0
+
+- feat: Added single test concurrency aliases for Node.js
+
+### 2025-09-12 / 10.8.0
+
+- feat: Added -f flag to g_cleanup.
+
+### 2025-08-21 / 10.7.0
+
+- feat: New Node aliases.
+
+### 2025-08-08 / 10.6.2
+
+- fix: Fixed alias.
+
+### 2025-08-08 / 10.6.1
+
+- fix: Fixed alias.
+
+### 2025-08-04 / 10.6.0
+
+- feat: Added gwrm alias.
+
+### 2025-07-31 / 10.5.0
+
+- feat: Added gcps alias.
+
+### 2025-05-28 / 10.4.0
+
+- fix: Minor fix.
+
 ### 2025-05-22 / 10.3.2
 
 - fix: Reverse default flag.
@@ -33,8 +98,127 @@
 ### 2025-05-09 / 10.0.0
 
 - feat: Better config management.
-- chore: Minor fix.
-- chore: Minor fix.
+
+### 2025-04-02 / 9.51.0
+
+- feat: Added Raycast extension.
+
+### 2025-03-05 / 9.50.1
+
+- feat: Bugfix.
+
+### 2025-03-05 / 9.50.0
+
+- feat: Support bookmarks exporting.
+
+### 2025-02-10 / 9.49.0
+
+- feat: Added ghpr.
+
+### 2025-02-10 / 9.48.0
+
+- feat: Added gcss alias.
+
+### 2025-02-10 / 9.47.0
+
+- feat: Added gcs alias.
+
+### 2025-02-03 / 9.46.0
+
+- feat: Added Node testing aliases.
+
+### 2025-01-31 / 9.45.2
+
+- fix: Fixed makefile.
+- fix: Fixed command.
+
+### 2024-12-09 / 9.45.1
+
+- fix: Update permissions.
+
+### 2024-12-05 / 9.45.0
+
+- feat: Added new aliases.
+
+### 2024-11-01 / 9.44.1
+
+- fix: Fixed command.
+
+### 2024-10-30 / 9.44.0
+
+- feat: Added merge option to g_refresh.
+
+### 2024-10-20 / 9.43.0
+
+- feat: Added nic command.
+
+### 2024-09-11 / 9.42.2
+
+- fix: Minor fix.
+
+### 2024-09-11 / 9.42.1
+
+- fix: Fixed execute_on_list.
+
+### 2024-09-10 / 9.42.0
+
+- feat: Added -c to execute_on_list.
+
+### 2024-09-10 / 9.41.0
+
+- feat: Added -l to execute_on_list.
+
+### 2024-09-04 / 9.40.0
+
+- feat: Added new color.
+
+### 2024-09-04 / 9.33.4
+
+- fix: Changed color.
+
+### 2024-09-04 / 9.33.3
+
+- fix: Changed color.
+
+### 2024-08-30 / 9.33.2
+
+- fix: Minor fix.
+
+### 2024-08-30 / 9.33.1
+
+- fix: Minor fix.
+
+### 2024-08-30 / 9.33.0
+
+- feat: Added cdc alias.
+
+### 2024-08-27 / 9.32.3
+
+- fix: Minor fix.
+
+### 2024-08-27 / 9.32.2
+
+- fix: Minor fix.
+
+### 2024-08-27 / 9.32.1
+
+- fix: Minor fix.
+
+### 2024-08-27 / 9.32.0
+
+- fix: Added light/dark mode support.
+
+### 2024-08-23 / 9.31.1
+
+- fix: Minor fix.
+
+### 2024-08-23 / 9.31.0
+
+- feat: Added GitHub PR aliases.
+
+### 2024-07-19 / 9.30.0
+
+- feat: Added -s variants to git commit.
 
 ### 2024-01-27 / 9.29.0
 
@@ -49,29 +233,156 @@
 
 - feat: Make list file executable.
 
+### 2023-10-25 / 9.26.0
+
+- feat: Added cdr command.
+
 ### 2023-08-07 / 9.25.1
 
 - fix: Sort bookmarks when listing.
+
+### 2023-07-07 / 9.25.0
+
+- feat: Added new alias.
+
+### 2023-07-05 / 9.24.0
+
+- feat: Renamed aliases.
+
+### 2023-07-04 / 9.23.0
+
+- feat: Added g_sync.
+
+### 2023-05-16 / 9.22.0
+
+- feat: Updated aliases.
+
+### 2023-03-28 / 9.21.0
+
+- feat: Added new alias.
+- fix: Fixed makefile.
+
+### 2023-02-26 / 9.20.3
+
+- fix: Support new homebrew path.
+
+### 2023-02-14 / 9.20.2
+
+- fix: Argument fix.
+
+### 2023-02-14 / 9.20.1
+
+- fix: Removed hardcoded argument.
+
+### 2023-02-14 / 9.20.0
+
+- feat: Added new GitHub aliases.
 
 ### 2023-01-26 / 9.19.0
 
 - feat: Added direnv.
 
-### 2021-02-07 / 9.2.0
+### 2022-12-19 / 9.18.1
 
-- fix: Fixed configuration file detection and parsing.
+- fix: Solved alias bump.
 
-### 2021-02-07 / 9.0.0
+### 2022-12-19 / 9.18.0
+
+- feat: Added pnrs alias.
+
+### 2022-11-23 / 9.17.1
+
+- fix: Fixed alias.
+
+### 2022-08-23 / 9.17.0
+
+- fix: Do not allow PRs starting from the base branch.
+
+### 2022-06-20 / 9.16.0
+
+- feat: Updated themes.
+
+### 2022-06-17 / 9.15.0
+
+- feat: Use higher timeouts in starship.
+
+### 2022-06-10 / 9.14.1
+
+- fix: Minor fix.
+
+### 2022-06-10 / 9.14.0
+
+- feat: Revamped build system.
+- fix: Minor fix.
+- fix: Minor fix.
+
+### 2022-06-03 / 9.13.0
+
+- feat: Added ds, cs and os commands.
+
+### 2022-05-31 / 9.12.0
+
+- feat: Add nre and pnre.
+
+### 2022-05-31 / 9.11.0
+
+- feat: Added nrs and pnrs.
+
+### 2022-05-20 / 9.10.0
+
+- feat: Updated themes.
+
+### 2022-04-29 / 9.9.0
+
+- feat: Added g_branch_delete_select.
+
+### 2022-04-15 / 9.8.0
+
+- feat: Removed rbenv
+
+### 2022-04-14 / 9.7.1
+
+- feat: Added alias for g_switch.
+
+### 2022-04-12 / 9.7.0
+
+- feat: Added g_switch.
+
+### 2022-03-13 / 9.6.0
+
+- feat: Allow comments in execute_on_list.
+
+### 2022-03-07 / 9.5.0
+
+- feat: Added new commands.
+
+### 2022-03-07 / 9.4.0
+
+- feat: Added execute_on_list.
+
+### 2022-03-06 / 9.3.0
+
+- feat: Added new aliases.
+
+### 2022-03-02 / 9.2.0
+
+- fix: Fix configuration parsing.
+
+### 2022-03-02 / 9.1.1
+
+- fix: Fix configuration file detection.
+
+### 2022-02-18 / 9.1.0
+
+- feat: Use main YML file for bookmarks.
+- feat: Complete rewrite in fish only.
+- fix: Minor fix.
+
+### 2022-02-07 / 9.0.0
 
 - feat: Complete rewrite in fish only.
-
-### 2021-07-04 / 8.7.0
-
 - feat: Changed default theme.
-- fix: Fixed installer.
-
-### 2021-04-30 / 8.6.5
-
+- fix: Added release script.
 - fix: Fixed installer.
 
 ### 2021-02-10 / 8.6.4
@@ -114,22 +425,22 @@
 ### 2021-01-09 / 8.3.0
 
 - feat: Also build for Linux ARM64.
-- chore: Updated badges.
-- chore: Fixed installer.
 
 ### 2019-10-11 / 8.2.0
 
-- chore: Use go modules.
 - feat: Better short prompt.
 
 ### 2019-07-12 / 8.1.0
 
 - feat: Added BitBucket repository to workflow.
-- chore: Updated CHANGELOG.md.
 
-### 2019-01-03 / 7.0.0
+### 2019-01-03 / 8.0.0
 
-- fix: **BREAKING CHANGE**: Required Fish 3.0.0
+- feat: Updated syntax.
+
+### 2019-01-03 / 6.8.0
+
+- feat: Updated syntax.
 
 ### 2018-10-11 / 6.7.0
 
@@ -155,7 +466,7 @@
 
 - feat: Added no-verify flag
 
-### 2018-07-06 / 6.4.1
+### 2018-07-06 / 6.1.0
 
 - fix: Minor Node fix.
 
@@ -165,483 +476,454 @@
 
 ### 2018-06-29 / 6.3.1
 
-- fix: Improved prompt for smaller windows.
+- fix(prompt): Improved prompt for smaller windows.
 
 ### 2018-05-25 / 6.3.0
 
 - feat: Use master as default git branch.
-- fix: Emoji fixes.
-- fix: Fixed installer.
-- fix: Minor fix.
-- fix: Minor fix.
-- chore: Added missing file.
-- feat: Improved logging.
+- Emoji fixes.
+- Fixed installer.
+- Minor fix.
+- Minor fix.
+- Added missing file.
+- Improved logging.
 
 ### 2018-04-27 / 6.2.0
 
-- feat: Improved output emoji handling.
+- Version 6.2.0
+- Updated CHANGELOG.md.
+- Improved output emoji handling.
 
 ### 2018-04-22 / 6.1.8
 
+- Version 6.1.8
+- Updated CHANGELOG.md.
+
 ### 2018-04-22 / 6.1.7
+
+- Version 6.1.7
+- Updated CHANGELOG.md.
 
 ### 2018-04-22 / 6.1.6
 
+- Version 6.1.6
+- Updated CHANGELOG.md.
+
 ### 2018-04-22 / 6.1.5
+
+- Version 6.1.5
+- Updated CHANGELOG.md.
 
 ### 2018-04-22 / 6.1.4
 
-- fix: Allow multiple releasing.
+- Version 6.1.4
+- Updated CHANGELOG.md.
+- Allow multiple releasing.
 
 ### 2018-04-22 / 6.1.3
 
+- Version 6.1.3
+- Updated CHANGELOG.md.
+
 ### 2018-04-22 / 6.1.2
 
-- feat: Improve generation file.
-- feat: Improve updating of the version.
-- chore: Replace Rakefile with Magefile.
-- chore: Removed vendor folder from GIT.
-- chore: Added dep file.
+- Version 6.1.2
+- Updated CHANGELOG.md.
+- Improve generation file.
+- Improve updating of the version.
+- Replace Rakefile with Magefile.
+- Removed vendor folder from GIT.
+- Added dep file.
 
 ### 2018-02-21 / 6.1.1
 
-- fix: Bugfixes.
-
-### 2018-02-21 / 6.1.0
-
-- fix: Bugfixes.
+- Updated CHANGELOG.md
+- Updated CHANGELOG.md
+- Added lint command.
 
 ### 2018-02-14 / 6.0.6
 
-### 2018-02-14 / 6.0.5
-
-### 2018-02-14 / 6.0.4
-
-- fix: Do not cleanup if there is nothing to clean.
-- fix: PR correctly moves to the base branch.
+- Updated CHANGELOG.md
+- Version 6.0.5.
+- Updated CHANGELOG.md
+- Updated CHANGELOG.md
+- Updated license links and badges.
 
 ### 2018-02-04 / 6.0.3
 
-- chore: Update license file.
+- Updated CHANGELOG.md
 
 ### 2018-02-04 / 6.0.2
 
-- fix: Correctly tag version.
+- Updated CHANGELOG.md
 
 ### 2018-02-04 / 6.0.1
 
-- chore: Switched to tempera
-- fix: Minor fixes
+- Updated CHANGELOG.md
 
-### 2018-01-27 / 6.0.0
+### 2018-02-04 / 6.0.0
 
-- feat: Updated release script
+- Minor fixes, switched to tempera.
+- Minor bugfixing.
+- Minor changes.
+- Minor changes.
+- Updated CHANGELOG.md
 
-### 2017-01-25 / 6.0.0
+### 2018-01-27 / 5.10.0
 
-- chore: Rewrite the helper in go and provide libraries for all platforms (on amd64 architecture).
-- feat: Discard any dependency to Node.js.
-- feat: Embed convert utility in the bookmarks module.
-- feat: Vastly improve autocompletion.
-- feat: Discard `g_*` functions
+- Updated tasks.
+- Rewritten in Go.
 
 ### 2017-12-06 / 5.2.1
 
-- fix: Bugfix.
+- 5.2.1
+- Updated CHANGELOG.md.
+- Fix build pipeline.
+
+### 2017-12-05 / 5.2.0
+
+- 5.2.0
+- Fix build pipeline.
+
+### 2017-12-05 / 5.1.0
+
+- 5.1.0
+- Fix build pipeline.
+
+### 2017-12-05 / 5.0.2
+
+- 5.0.2
+- Include missing files.
+- Added missing script.
+
+### 2017-12-05 / 5.0.1
+
+- 5.0.1
+- Minor fixes.
+- Minor fix.
 
 ### 2017-12-05 / 5.0.0
 
-- chore: Rewritten helpers to avoid external dependencies.
-- chore: Improved installer.
+- Release 5.0.0.
+- WIP: Rewriting in TypeScript.
 
 ### 2017-07-19 / 4.3.2
 
-- fix: Fixed name handling.
+- 4.3.2
+- Updated CHANGELOG.md
 
 ### 2017-07-19 / 4.3.1
 
-- fix: Minor bugfix.
+- 4.3.1
+- Updated CHANGELOG.md
 
 ### 2017-07-19 / 4.3.0
+
+- 4.3.0
+- Updated CHANGELOG.md
 
 ### 2017-07-19 / 4.2.4
 
-### 2017-07-19 / 4.3.0
-
-- feat: Add name as second optional argument to the bookmark saving.
-
-### 2017-07-13 / 4.2.3
-
-- feat: Add force flag to the push command of git helper.
+- 4.2.4
+- Updated CHANGELOG.md
+- Fixed code style.
+- Add name as second optional argument to the bookmark saving.
 
 ### 2017-07-13 / 4.2.3
 
-- feat: Added `--force` flag to the `push` command of the git helper.
+- 4.2.3
+- Updated CHANGELOG.md
 
 ### 2017-06-22 / 4.2.2
 
-- fix: Bugfix for GitHub PRs.
+- 4.2.2
+- Updated CHANGELOG.md
 
 ### 2017-06-22 / 4.2.1
 
-- fix: Bugfix on reading local configuration file.
+- 4.2.1
+- Updated CHANGELOG.md
+- Fixed README.
+- 4.2.0
 
 ### 2017-06-21 / 4.2.0
 
-- feat: Added `push` to the git helper to push the current branch.
-
-### 2017-06-20 / 4.1.3
-
-- fix: Fixed autocompletion.
+- 4.2.0
+- Updated CHANGELOG.md
+- Version 4.1.3.
+- Fixed autocompletion.
+- Added release script.
 
 ### 2017-05-08 / 4.1.2
 
-- fix: Bugfix for `g cleanup`.
+- 4.1.2
+- Updated CHANGELOG.md
+
+### 2017-05-08 / 4.1.1
+
+- 4.1.1
+- Updated CHANGELOG.md
 
 ### 2017-05-02 / 4.1.0
 
-- feat: Added `update` to the git helper to fetch and pull a branch.
-- fix: Bugfix for `g cleanup`.
+- Version 4.1.0.
 
 ### 2017-04-06 / 4.0.0
 
-- feat: Change format of bookmarks file. See README.md for more information on how to upgrade.
-- feat: Renamed `is_git_repository` to `g_is_repository` and replace `git_` prefix with `g_` in `32_git_functions.fish`.
-- feat: Rewritten helpers in Node.js (which now is a dependency along with Yarn) to maximize portability.
-- chroe: Rewritten core installer in Node.js
+- Version 4.0.0.
+- Minor fix.
+
+### 2017-04-06 / 2.0.0
+
+- Version 4.0.0.
+- Rewritten using Node.js.
 
 ### 2017-02-08 / 3.4.1
 
-- fix: Minor fix.
+- Version 3.4.1.
 
 ### 2017-02-08 / 3.4.0
 
-- feat: Added `pull_request` and `fast_pull_request` to the git helper.
+- Version 3.4.0.
 
 ### 2017-01-20 / 3.3.0
 
-- feat: Replaced `nvm` with `n` (and `FISHAMNIUM_THEME_SHOW_NVM` with `FISHAMNIUM_THEME_SHOW_NODE` option) and added yarn support.
-- feat: Replaced `rvm` with `rbenv` (and `FISHAMNIUM_THEME_SHOW_RVM` with `FISHAMNIUM_THEME_SHOW_RUBY` option).
-- chore: Cleanup.
+- Version 3.3.0.
 
 ### 2016-12-09 / 3.2.0
 
-- feat: Added `e` and `o` commands to the bookmark helper to edit bookmarks.
+- Version 3.2.0.
 
 ### 2016-10-19 / 3.1.2
 
-- fix: Bugfix.
+- Version 3.1.2.
 
 ### 2016-10-19 / 3.1.1
 
-- feat: Added single bookmark shortcut.
+- Version 3.1.1.
 
-### 2016-10-19 / 3.1
+### 2016-10-19 / 3.1.0
 
-- chore: Refactored helpers completions.
+- Version 3.1.
 
 ### 2016-10-14 / 3.0.6
 
-- fix: Minor fast-commit issue.
+- Version 3.0.6.
 
 ### 2016-10-12 / 3.0.5
 
-- fix: Minor fast-commit issue.
+- Version 3.0.5.
 
 ### 2016-10-12 / 3.0.4
 
-- fix: Minor fast-commit issue.
+- Version 3.0.4.
 
 ### 2016-10-12 / 3.0.3
 
-- fix: Minor formatting issue.
+- Version 3.0.3.
 
 ### 2016-10-11 / 3.0.2
 
-- fix: Fixed labels.
+- Version 3.0.2.
 
 ### 2016-10-11 / 3.0.1
 
-- fix: Minor helper fixes.
+- Version 3.0.1.
 
 ### 2016-10-09 / 3.0.0
 
-- chore: Rewritten helpers in Swift.
-- chore: Introduced a `rake build:helpers` to build helpers locally (Swift 3 and Swift Package Manager needed).
-- feat: Introduced `FISHAMNIUM_THEME_SHOW_RVM` and `FISHAMNIUM_THEME_SHOW_NVM` to show RVM and NVM in the default prompt. Otherwise they are hidden by default now.
-- feat: Move bookmarks back to `l`, `s`, `d` commands. Renamed d_g to `m`.
-
-### 2016-07-11 / 2.1.3
-
-- fix: Removed debug line.
+- Version 3.0.0.
+- Updated links.
 
 ### 2016-07-11 / 2.1.2
 
-- fix: Minor execution bug.
+- Version 2.1.2.
+- Version 2.1.2.
 
 ### 2016-07-08 / 2.1.1
 
-- feat: Moved all bookmarks aliases to d
+- Version 2.1.1.
 
 ### 2016-07-08 / 2.1.0
 
-- feat: Moved all GIT aliases to g
+- Version 2.1.0.
 
 ### 2016-07-06 / 2.0.2
 
-- fix: Bugfix for execution.
+- Version 2.0.2.
 
 ### 2016-07-05 / 2.0.1
 
-- fix: Bugfix
-
-### 2016-07-02 / 2.0.0
-
-- feat: Moved all GIT related tasks to a Node.js helper, fishamnium_git.
-- feat: Rewritten bookmarks functionality in a Node.js helper, fishamnium_bookmarks.
+- Version 2.0.1.
+- Version 2.0.0.
 
 ### 2016-06-30 / 1.27.1
 
-- fix: Minor fix.
+- Version 1.27.1.
 
 ### 2016-06-30 / 1.27.0
 
-- feat: Removed docker-machine.
+- Version 1.27.0.
 
 ### 2016-06-30 / 1.26.0
 
-- feat: Added git_fast_commit.
+- Version 1.26.0.
 
 ### 2016-06-14 / 1.25.0
 
-- feat: Improve Git workflow.
-
-### 2016-06-14 / 1.25.0
-
-- feat: Improve Git workflow.
+- Version 1.25.0.
+- Version 1.25.0.
 
 ### 2016-03-04 / 1.24.0
 
-- chore: Improve Git task detection.
+- Version 1.24.0.
+- Version 1.24.0.
 
 ### 2016-03-03 / 1.23.16
 
-- fix: Bugfix on RVM
+- Version 1.23.16.
 
 ### 2016-02-29 / 1.23.15
 
-- fix: Do not assume a default name for docker machine.
+- Version 1.23.15.
 
 ### 2016-02-27 / 1.23.14
 
-- fix: Bugfix.
+- Version 1.23.14.
 
 ### 2016-02-27 / 1.23.13
 
-- fix: Bugfix.
+- Version 1.23.13.
 
 ### 2016-02-27 / 1.23.12
 
-- fix: Bugfix.
+- Version 1.23.12.
 
 ### 2016-02-27 / 1.23.11
 
-- fix: Enable RVM and NVM only if it makes sense.
+- Version 1.23.11.
 
 ### 2016-02-27 / 1.23.10
 
-- fix: Bugfix for RVM under Alpine.
+- Version 1.23.10.
 
 ### 2016-02-27 / 1.23.9
 
-- fix: Bugfix.
+- Version 1.23.9.
 
 ### 2016-02-27 / 1.23.8
 
-- fix: Change installer not to require Ruby and rake.
+- Version 1.23.8.
 
 ### 2016-02-26 / 1.23.7
 
-- feat: Added seconds to the shell prompt.
-- feat: Speed up checking whether within GIT repo.
+- Version 1.23.7.
 
 ### 2016-01-21 / 1.23.6
 
-- feat: Docker Machine (0.5.5+) now supports fish.
+- Docker machine directly supports fish.
 
 ### 2015-12-14 / 1.23.5
 
-- fix: Minor fixes.
+- Minor fixes on Docker and Git workflow.
 
-### 2015-10-13 / 1.23.4
+### 2015-10-16 / 1.23.4
 
-- fix: Minor fixes.
+- Version 1.23.4.
 
 ### 2015-10-13 / 1.23.3
 
-- fix: Regression fixes.
+- Version 1.23.3.
 
 ### 2015-10-13 / 1.23.2
 
-- fix: Minor fixes.
+- Version 1.23.2.
 
 ### 2015-10-13 / 1.23.1
 
-- fix: Minor fixes.
+- Version 1.23.1.
 
 ### 2015-10-13 / 1.23.0
 
-- feat: Added help to all git workflow commands.
-- feat: Renamed `g_release` to `g_release_tag`.
-- feat: Added `g_hotfix_full_finish`, `g_release_start`, `g_release_refresh`, `g_release_finish`, `g_release_full_finish`, `g_import_release`, `g_import_production`.
+- Version 1.23.0.
 
 ### 2015-04-29 / 1.22.0
 
-- feat: Add docker_setup.
+- Version 1.22.0.
 
-### 2015-04-25 / 1.21.0
+### 2015-04-29 / 1.21.0
 
-- feat: Add Docker Machine support.
+- Version 1.21.0.
+- Version 1.21.0.
 
-### 2015-01-27 / 1.20.0
+### 2015-03-28 / 1.20.0
 
-- chore: Switched to nvm-fish-wrapper.
-
-### 2015-01-27 / 1.11.1
-
-- fix: Fixed bug in `g_import`.
+- Version 1.20.0.
 
 ### 2015-01-27 / 1.11.0
 
-- feat: Added `g_full_finish`.
+- Version 1.11.0.
 
 ### 2015-01-27 / 1.10.0
 
-- feat: Added `g_hotfix_start`, `g_hotfix_start`, `g_hotfix_refresh`, `g_hotfix_finish` and `g_import`.
-- fix: Fixed bin path.
+- Version 1.10.0.
 
-### 2014-12-28 / 1.9.1
+### 2014-12-29 / 1.9.1
 
-- chore: Maintenance version. Added `release` task.
+- Version 1.9.1.
 
-### 2014-12-28 / 1.9.0
+### 2014-12-29 / 1.9.0
 
-- feat: Added support for NVM.
-- feat: Added `clcd` command.
-
-### 2014-11-11 / 1.8.0
-
-- feat: Added support for NPM local bins.
-
-### 2014-10-25 / 1.7.0
-
-- feat: Added `git_full_branch_name`, `git_full_branch_name_copy`, `git_branch_name`, `git_branch_name_copy`, `git_task`, `git_task_copy`, `git_commit_with_task`, `gct`, `gcat` functions.
-
-### 2014-10-25 / 1.6.0
-
-- feat: Added compatibility functions.
-
-### 2014-09-12 / 1.5.9
-
-- fix: Added missing statement.
-
-### 2014-09-12 / 1.5.8
-
-- fix: Fixed RVM debug handling.
-
-### 2014-09-12 / 1.5.7
-
-- feat: Updated RVM support.
-
-### 2014-08-27 / 1.5.6
-
-- fix: Bugfix.
-
-### 2014-08-11 / 1.5.5
-
-- fix: Bugfix.
-
-### 2014-08-10 / 1.5.3
-
-- fix: Do not rely on external aliases.
-
-### 2014-08-10 / 1.5.2
-
-- fix: Bugfix on g_cleanup.
-
-### 2014-08-10 / 1.5.1
-
-- feat: Renamed g_clean to g_reset.
-- feat: Added g_cleanup.
-
-### 2014-08-10 / 1.5.0
-
-- feat: Add Git workflow.
-
-### 2014-04-06 / 1.4.4
-
-- feat: Update to SublimeText 3.
-
-### 2014-04-06 / 1.4.3
-
-- feat: Update to SublimeText 3.
-
-### 2014-02-26 / 1.4.2
-
-- feat: Updated keybindings.
-
-### 2014-02-07 / 1.4.1
-
-- feat: Include the current directory bin in the path.
-
-### 2014-02-07 / 1.4.0
-
-- feat: Added fishamnium_reload.
-
-### 2014-01-25 / 1.3.1
-
-- fix: Bugfix.
-
-### 2014-01-25 / 1.3.0
-
-- feat: Added new aliases for git.
-
-### 2013-10-11 / 1.1.0
-
-- feat: Added new aliases for git.
-
-### 2013-10-11 / 1.0.13
-
-- feat: Added GIT autocompletions.
-
-### 2013-09-12 / 1.0.12
-
-- chore: Update RVM settings.
-
-### 2013-09-12 / 1.0.11
-
-- fix: Fixed installer.
-
-### 2013-09-15 / 1.0.10
-
-- feat: Unix compatibility.
-
-### 2013-09-14 / 1.0.9
-
-- fix: Fixed Rakefile indentation.
-
-### 2013-09-14 / 1.0.8
-
-- chore: Removed unused Rake tasks.
-
-### 2013-09-13 / 1.0.7
-
-- feat: Added "gfbnc" and "gbnc".
-
-### 2013-08-26 / 1.0.6
-
-- fix: Fixed GIT autocompletion.
-
-### 2013-08-26 / 1.0.5
-
-- fix: Fixed keybindings.
+- Version 1.9.0: Added clcd and nvm.
+- Added support for NPM.
+- Version 1.7.0.
+- Fixed permissions.
+- Version 1.6.0
+- Version 1.5.9
+- Version 1.5.8
+- Version 1.5.7
+- Version 1.5.6
+- Version 1.5.5
+- Version 1.5.4
+- Updated site URL.
+- Updated site URL.
+- Updated site URL.
+- Version 1.5.3
+- Version 1.5.2
+- Version 1.5.1
+- Added GIT workflow.
+- Removed fork badge
+- Version 1.4.4.
+- Version 1.4.4.
+- Added fork badge.
+- Version 1.4.3.
+- Version 1.4.2.
+- Version 1.4.0
+- Version 1.3.1
+- Added new aliases for git.
+- Version 1.2.0
+- Added missing alias.
+- Version 1.1.0
+- Added new aliases for git.
+- Version 1.0.13
+- Version 1.0.12
+- Version 1.0.11
+- Version 1.0.10
+- Added Bitdeli badge.
+- Version 1.0.9
+- Version 1.0.8
+- Version 1.0.6
+- Fixed persistence of keybindings.
+- Fixed autocompletion.
+- Bugfix
+- Fixed GIT dirty directory detection.
+- Fixed installer.
+- Fixed Rakefile for Ruby 2.0.0
+- Update installer.
+- Bugfix.
+- Update installer.
+- Updated installer.
+- Fixed minor bugs.
+- Bugfix.
+- Updated site installer.
+- Initial commit

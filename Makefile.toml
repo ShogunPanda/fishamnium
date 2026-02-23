@@ -8,45 +8,64 @@
   command = "./installer"
   args    = ["-l"]
 
-[tasks.version]
-  dependencies = ["bump-version", "save-version"]
-
 [tasks.deploy]
-  dependencies = ["save-version", "release", "install"]
+  dependencies = ["version:bump", "release", "install"]
 
-[tasks.release]
+[tasks.pack]
+  command = "tar"
+  args = [
+    "czvf",
+    "fishamnium.tar.gz",
+    "completions",
+    "data",
+    "installer",
+    "LICENSE.md",
+    "loader.fish",
+    "plugins",
+    "themes",
+    "version",
+  ]
+
+[tasks."version:bump"]
   script_runner = "@duckscript"
   script = """
+    if is_empty ${1}
+      exec cambi update -o -t
+    else
+      valid_tags = array major minor patch
+      valid = array_contains ${valid_tags} ${1}
+      
+      if not ${valid}
+        trigger_error "Usage: makers version [type=major|minor|patch]"
+      end
+      
+      exec cambi update -o -t ${1}
+    end
+  """
+
+[tasks.prerelease]
+  script_runner = "@duckscript"
+  script = """
+    exec rm -f fishamnium.tar.gz
+    
     status = exec git status -s
 
     if not is_empty ${status.stdout}
       trigger_error "Before triggering the workflow, make sure that the GIT branch is clean and pushed."
     end
-
-    version = readfile ./version
-    version = trim ${version}
-
-    exec git push origin main
-	  exec gh release create v${version} --generate-notes
   """
 
-[tasks.save-version]
-  script = ["git add version", "git commit -m 'chore: Version bump.'"]
-
-[tasks.bump-version]
+[tasks.release]
+  dependencies = ["prerelease", "pack"]
   script_runner = "@duckscript"
   script = """
-    valid_tags = array major minor patch auto
-    valid = array_contains ${valid_tags} ${1}
-    if not ${valid}
-      trigger_error "Usage: makers version type=(major|minor|patch|auto)"
-    end
-    release valid_tags
+    version = readfile ./version
+    version = trim ${version}
+    notes = exec cambi release -n
+    writefile release-notes.txt ${notes}
 
-    current = readfile ./version
-    current = trim ${current}
-
-    version = exec cambi change ${current} ${1}
-    version = trim ${version.stdout}
-    writefile ./version ${version}
+    exec git push origin
+    exec git push origin -f --tags
+	  exec gh release create "v${version}" -t "${version}" -F release-notes.txt fishamnium.tar.gz    
+    exec rm -f fishamnium.tar.gz release-notes.txt
   """
