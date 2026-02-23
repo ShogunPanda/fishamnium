@@ -30,6 +30,7 @@
   script_runner = "@duckscript"
   script = """
     if is_empty ${1}
+      exec cambi cambi
       exec cambi update -o -t
     else
       valid_tags = array major minor patch
@@ -39,6 +40,7 @@
         trigger_error "Usage: makers version [type=major|minor|patch]"
       end
       
+      exec cambi cambi ${1}
       exec cambi update -o -t ${1}
     end
   """
