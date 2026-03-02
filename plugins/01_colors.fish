@@ -32,7 +32,7 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
     set -f SECONDARY $MAGENTA
   else
     set -f RED EE0000
-    set -f GREEN EE0000
+    set -f GREEN 00EE00
     set -f CYAN 5EBBF9
     set -f FOREGROUND $WHITE
     set -f PRIMARY $YELLOW
