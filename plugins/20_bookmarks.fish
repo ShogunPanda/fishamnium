@@ -1,3 +1,38 @@
+function __bookmarks_list
+  set bookmarks
+  for raw in $(yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name, (.value.recursive // \"\")])" $FISHAMNIUM_CONFIG | string split -- "\n")
+    set bookmark $(string split -- "," "$raw")
+
+    if test -n "$bookmark[4]"
+      set -a bookmarks  "$bookmark[4]-root,$bookmark[2],$bookmark[3]: Root"
+      set folders $(find (string replace -- "~" "$HOME" $bookmark[2]) -mindepth 1 -maxdepth 1 -type d ! -name '.*' | xargs -n1 basename)
+
+      for folder in $folders
+        set -a bookmarks  "$bookmark[4]-$folder,$bookmark[2]/$folder,$bookmark[3]: $folder"
+      end
+    else 
+      set -a bookmarks  "$bookmark[1],$bookmark[2],$bookmark[3]"
+    end
+  end
+
+  printf '%s\n' $bookmarks | sort
+end
+
+function __bookmarks_get_path
+  set query $argv[1]
+
+  for raw in $(__bookmarks_list)
+    set bookmark $(string split -- "," "$raw")
+
+    if test "$bookmark[1]" = "$query"
+      set destination $(string replace -- "~" "$HOME" "$bookmark[2]")
+      break
+    end
+  end
+
+  echo $destination
+end
+
 function bookmarks_list -d "Lists all bookmarks"
   set query ".+"
 
@@ -8,11 +43,11 @@ function bookmarks_list -d "Lists all bookmarks"
   end
 
   # Gather bookmarks
-  for raw in $(yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name])" $FISHAMNIUM_CONFIG | sort | string split -- "\n")
+  for raw in $(__bookmarks_list)
     set bookmark $(string split -- "," "$raw")
 
     if string match -qre "$query" "$bookmark[1]"
-      set bookmarks $bookmarks $bookmark
+      set bookmarks $bookmarks $bookmark[1] $bookmark[2] $bookmark[3]
     end
   end
 
@@ -72,29 +107,34 @@ function bookmarks_list -d "Lists all bookmarks"
 end
 
 function bookmarks_autocomplete -d "Autocomplete bookmarks"
-  yq -o=tsv -eMP ".bookmarks | to_entries | map([.key, .value.path | sub(\"~\", \"\$\$HOME\")])" $FISHAMNIUM_CONFIG
+  for raw in $(__bookmarks_list)
+    set bookmark $(string split -- "," "$raw")
+    echo -e "$bookmark[1]\t$bookmark[2]"
+  end
 end
 
 function bookmarks_names -d "Lists all bookmarks names"
-  yq -eMP ".bookmarks | keys | .[]" $FISHAMNIUM_CONFIG 2>/dev/null
+  for raw in $(__bookmarks_list)
+    set bookmark $(string split -- "," "$raw")
+    echo -e "$bookmark[1]"
+  end
 end
 
 function bookmark_show -d "Reads a bookmark"
   argparse -i --name=bookmark_show "y/copy" -- $argv
 
   # Parse arguments
-  set bookmark $argv[1]
+  set query $argv[1]
 
-  if test -z "$bookmark"
+  if test -z "$query"
     __fishamnium_print_error "Please provide a bookmark name."
     return 1
   end
 
-  # Search the bookmark
-  set destination (yq -eMP ".bookmarks[\"$bookmark\"] | .path | sub(\"~\", \"$HOME\")" $FISHAMNIUM_CONFIG 2>/dev/null)
+  set destination $(__bookmarks_get_path $query)
 
-  if test $status -ne 0
-    __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
+  if test -z $destination
+    __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$query$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
     return 1
   end
 
@@ -132,8 +172,6 @@ function bookmark_save -d "Writes a bookmark"
   end
 
   # Save the element
-  set newElement $(printf '[{"name": "%s", "bookmark": "%s", "rootPath": "%s", "paths": [], "group": ""}]' "$name" "$bookmark" "$destination")
-
   if ! yq -i -o yaml ".bookmarks[\"$bookmark\"] |= {\"path\": \"$destination\", \"name\": \"$name\"}" $FISHAMNIUM_CONFIG 2>/dev/null
     __fishamnium_print_error "Cannot save the bookmark."
     return 1
@@ -149,7 +187,7 @@ function bookmark_delete -d "Deletes a bookmark"
     return 1
   end
 
-  # Validate the bookmark
+  # # Validate the bookmark
   if ! bookmark_show $bookmark >/dev/null
     __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
     return 1
