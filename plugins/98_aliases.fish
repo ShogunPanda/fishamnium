@@ -1,4 +1,5 @@
 alias clcd='clear; cd'
+alias clf='printf "\033c"'
 alias cdc='cd $(pwd)'
 alias cdn='basename $(pwd)'
 alias cp='cp -R -v -i'
