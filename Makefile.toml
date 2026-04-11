@@ -14,7 +14,8 @@
 [tasks.pack]
   command = "tar"
   args = [
-    "czvf",
+    "--exclude='.*'",
+    "-czvf",
     "fishamnium.tar.gz",
     "completions",
     "data",
