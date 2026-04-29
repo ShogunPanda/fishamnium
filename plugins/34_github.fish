@@ -40,5 +40,5 @@ function gh_remote_add -d "Adds a remote for a PR"
     set name "origin"
   end
 
-  echo git remote add $name git@github.com:$repository.git
+  git remote add $name git@github.com:$repository.git
 end
