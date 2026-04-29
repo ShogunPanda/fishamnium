@@ -5,3 +5,5 @@ alias ghpr='gh pr list -H (git branch --show-current) --json number -q ".[0].num
 alias ghprb=gh_pr_branch
 alias ghpra=gh_pr_approve
 alias ghprm='gh pr merge'
+
+alias ghra=gh_remote_add

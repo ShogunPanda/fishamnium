@@ -24,3 +24,21 @@ function gh_pr_approve -d "Approves a PR"
 
   gh pr review -a -b "$message" $pr
 end
+
+function gh_remote_add -d "Adds a remote for a PR"
+  g_is_repository; or return
+
+  set repository $argv[1]
+  set name $argv[2]
+
+  if test -z "$repository"
+    __fishamnium_print_error "You must provide a repository in the form of owner/repo."
+    return 1
+  end
+  
+  if test -z "$name"
+    set name "origin"
+  end
+
+  echo git remote add $name git@github.com:$repository.git
+end
