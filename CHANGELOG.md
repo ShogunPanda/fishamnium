@@ -1,3 +1,7 @@
+### 2026-04-29 / 11.4.0
+
+- feat: Added bookmarks_export_to_env.
+
 ### 2026-04-29 / 11.3.1
 
 - fix: Minor fix.
