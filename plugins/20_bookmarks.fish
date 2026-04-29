@@ -278,8 +278,14 @@ function bookmark_open_select -d "Interactively edits a bookmark using the curre
   end
 end
 
+function bookmarks_export_to_env -d "Exports bookmarks as environment variables"
+  bookmarks_list -e > $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish
+  chmod a+x $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish
+  source $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish
+end
+
 alias l=bookmarks_list
-alias le="bookmarks_list -e > $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish && chmod a+x $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish && source $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish"
+alias le=bookmarks_export_to_env
 alias b=bookmark_show
 alias y="bookmark_show -y"
 alias s=bookmark_save

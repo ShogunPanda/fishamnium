@@ -15,6 +15,8 @@ end
 function fishamnium_update -d "Updates Fishamnium"
   rm ~/.local/share/fishamnium ~/.config/fish/conf.d/fishamnium.fish
   curl -sL https://sw.cowtech.it/fishamnium/installer | fish
+
+  bookmarks_export_to_env
   fishamnium_forced_reload
 end
 
