@@ -1,3 +1,7 @@
+### 2026-05-05 / 11.5.0
+
+- feat: Simplified configuration.
+
 ### 2026-04-29 / 11.4.0
 
 - feat: Added bookmarks_export_to_env.
