@@ -1,6 +1,7 @@
 alias clcd='clear; cd'
 alias clf='printf "\033c"'
 alias cdc='cd $(pwd)'
+alias cdy='pwd | fish_clipboard_copy'
 alias cdn='basename $(pwd)'
 alias cp='cp -R -v -i'
 alias mv='mv -v -i'
