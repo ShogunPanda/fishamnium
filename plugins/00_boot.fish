@@ -1,7 +1,14 @@
 # Set up config file path
 set -x -g FISHAMNIUM_ROOT "$HOME/.local/share/fishamnium"
-set -x -g FISHAMNIUM_CONFIG "$HOME/.config/fishamnium/config.yml"
 set -x -g FISHAMNIUM_CONFIG_ROOT "$HOME/.config/fishamnium"
+set -x -g FISHAMNIUM_HOST $(hostname -s)
+
+if test -f "$FISHAMNIUM_CONFIG_ROOT/config.$FISHAMNIUM_HOST.yml"
+  set -x -g FISHAMNIUM_CONFIG "$FISHAMNIUM_CONFIG_ROOT/config.$FISHAMNIUM_HOST.yml"
+else
+  set -x -g FISHAMNIUM_CONFIG "$FISHAMNIUM_CONFIG_ROOT/config.yml"
+end
+
 
 # Set some common directories
 for root in /usr/local /opt /opt/homebrew /var
