@@ -1,3 +1,7 @@
+### 2026-05-13 / 11.6.0
+
+- feat: Support per machine config.
+
 ### 2026-05-05 / 11.5.0
 
 - feat: Simplified configuration.
