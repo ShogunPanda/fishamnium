@@ -1,3 +1,7 @@
+### 2026-05-13 / 11.6.1
+
+- fix: Fixed recursive listing of non existent folders.
+
 ### 2026-05-13 / 11.6.0
 
 - feat: Support per machine config.
