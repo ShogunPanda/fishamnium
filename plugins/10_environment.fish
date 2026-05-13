@@ -4,12 +4,7 @@ set -x -g fish_greeting
 
 function fishamnium_reload -d "Reloads Fishamnium"
   echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> Reloading Fishamnium ...$FISHAMNIUM_COLOR_RESET"
-
-  if test -f ~/.config/fish/conf.d/fishamnium.fish
-    source ~/.config/fish/conf.d/fishamnium.fish
-  else if test -f ~/.config/fish/conf.d/10-fishamnium.fish
-    source ~/.config/fish/conf.d/10-fishamnium.fish
-  end  
+  source ~/.config/fish/conf.d/fishamnium.fish  
 end
 
 function fishamnium_forced_reload -d "Reloads Fishamnium (forced)"
@@ -18,7 +13,7 @@ function fishamnium_forced_reload -d "Reloads Fishamnium (forced)"
 end
 
 function fishamnium_update -d "Updates Fishamnium"
-  rm -rf ~/.local/share/fishamnium ~/.config/fish/conf.d/*fishamnium.fish
+  rm -rf ~/.local/share/fishamnium ~/.config/fish/conf.d/fishamnium.fish
   curl -sL https://sw.cowtech.it/fishamnium/installer | fish
 
   bookmarks_export_to_env
