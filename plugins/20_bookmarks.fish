@@ -5,10 +5,14 @@ function __bookmarks_list
 
     if test -n "$bookmark[4]"
       set -a bookmarks  "$bookmark[4]-root,$bookmark[2],$bookmark[3]: Root"
-      set folders $(find (string replace -- "~" "$HOME" $bookmark[2]) -mindepth 1 -maxdepth 1 -type d ! -name '.*' | xargs -n1 basename)
+      set root $(string replace -- "~" "$HOME" $bookmark[2])
 
-      for folder in $folders
-        set -a bookmarks  "$bookmark[4]-$folder,$bookmark[2]/$folder,$bookmark[3]: $folder"
+      if test -d "$root"
+        set folders $(find $root -mindepth 1 -maxdepth 1 -type d ! -name '.*' | xargs -n1 basename)
+
+        for folder in $folders
+          set -a bookmarks  "$bookmark[4]-$folder,$bookmark[2]/$folder,$bookmark[3]: $folder"
+        end
       end
     else 
       set -a bookmarks  "$bookmark[1],$bookmark[2],$bookmark[3]"
