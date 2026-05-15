@@ -1,3 +1,7 @@
+### 2026-05-15 / 15.0.0
+
+- feat!: Move to Rust based helper.
+
 ### 2026-05-13 / 11.6.1
 
 - fix: Fixed recursive listing of non existent folders.
