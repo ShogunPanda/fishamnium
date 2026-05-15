@@ -386,7 +386,7 @@ function g_sync -d "Syncs two remotes"
   set branch $(__g_ensure_branch $argv[1])
 
   if test -z "$_flag_u"
-    set upstream "upstream"
+    set upstream $(__fishamnium_get_configuration .git.upstreamRemote)
   else
     set upstream $_flag_u
   end

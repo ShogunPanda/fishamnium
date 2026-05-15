@@ -34,7 +34,7 @@ function nrc -d "Interactively run a script using npm"
   test ! $status -eq 0; and return
 
   set runner $RUNNER
-  test -z "$runner"; and set runner "npm"
+  test -z "$runner"; and set runner $(__fishamnium_get_configuration .node.runner)
 
   set prompt "--> Which script do you want to run? "
   set colors $FISHAMNIUM_INTERACTIVE_COLORS
@@ -50,13 +50,13 @@ end
 
 function nic -d "Reinstall all packages ensuring a clean local folder"
   set runner $RUNNER
-  test -z "$runner"; and set runner "npm"
+  test -z "$runner"; and set runner $(__fishamnium_get_configuration .node.runner)
 
   printf "%s%s--> rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$FISHAMNIUM_COLOR_RESET"
   rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock
 
-  printf "%s%s--> %s install%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$RUNNER" "$FISHAMNIUM_COLOR_RESET"
-  $RUNNER install
+  printf "%s%s--> %s install%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$runner" "$FISHAMNIUM_COLOR_RESET"
+  $runner install
 end
 
 function pnrc -d "Interactively run a script using pnpm"

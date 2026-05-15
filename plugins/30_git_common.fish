@@ -46,8 +46,8 @@ function g_default_branch -d "Get the default branch for the current repository"
 		return
 	end
 
-	# Lookup the value in the configuration file, with fallback
-	__fishamnium_get_configuration .git.branch "main"
+	# Lookup the value in the configuration file
+	__fishamnium_get_configuration .git.branch
 end
 
 function g_default_remote -d "Get the default remote for the current repository"
@@ -57,8 +57,8 @@ function g_default_remote -d "Get the default remote for the current repository"
 		return
 	end
 
-	# Lookup the value in the configuration file, with fallback
-  __fishamnium_get_configuration .git.remote "origin"
+	# Lookup the value in the configuration file
+  __fishamnium_get_configuration .git.remote
 end
 
 function g_task_matchers -d "Get the task matchers for the current repository"
@@ -68,13 +68,8 @@ function g_task_matchers -d "Get the task matchers for the current repository"
 		return
 	end
 
-	# Lookup the value in the configuration file, with fallback
-	__fishamnium_get_configuration .git.taskMatchers "
-git@github\\.com:(?<repo>.+)\\.git https://github.com/@repo@/compare/@base@...@branch@?expand=1
-https://github\\.com/(?<repo>.+)\\.git https://github.com/@repo@/compare/@base@...@branch@?expand=1
-git@gitlab\\.com:(?<repo>.+)\\.git https://gitlab.com/@repo@/merge_requests/new?merge_request%5Btarget_branch%5D=@base@&merge_request%5Bsource_branch%5D=@branch@
-https://gitlab\\.com/(?<repo>.+)\\.git.git https://gitlab.com/@repo@/merge_requests/new?merge_request%5Btarget_branch%5D=@base@&merge_request%5Bsource_branch%5D=@branch@
-  "
+	# Lookup the value in the configuration file
+	__fishamnium_get_configuration .git.taskMatchers
 end
 
 function g_task_template -d "Get the task template for the current repository"
@@ -84,8 +79,8 @@ function g_task_template -d "Get the task template for the current repository"
 		return
 	end
 
-	# Lookup the value in the configuration file, with fallback
-	__fishamnium_get_configuration .git.taskTemplate "@message@ [#@task@]"
+	# Lookup the value in the configuration file
+	__fishamnium_get_configuration .git.taskTemplate
 end
 
 function g_open_path -d "Get the Pull Request open command for the current repository"
@@ -95,8 +90,8 @@ function g_open_path -d "Get the Pull Request open command for the current repos
 		return
 	end
 
-	# Lookup the value in the configuration file, with fallback
-	__fishamnium_get_configuration .git.openPath "/usr/bin/open"
+	# Lookup the value in the configuration file
+	__fishamnium_get_configuration .git.openPath
 end
 
 function g_release_prefix -d "Get the release prefix for the current repository"
@@ -106,6 +101,6 @@ function g_release_prefix -d "Get the release prefix for the current repository"
 		return
 	end
 
-	# Lookup the value in the configuration file, with fallback
-	__fishamnium_get_configuration .git.releasePrefix "release-"
+	# Lookup the value in the configuration file
+	__fishamnium_get_configuration .git.releasePrefix
 end

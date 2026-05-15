@@ -72,7 +72,7 @@ function g_task -d "Get the task name from the current branch name"
   g_is_repository; or return
 
   set branch $(git symbolic-ref --short HEAD); or return
-  set matchers '$GIT_TASK_MATCHERS ^(?<task>[a-z0-9]*-?\\d+)-{1,2} -{1,2}(?<task>[a-z0-9]*-?\\d+)$'
+  set matchers $(__fishamnium_get_configuration .git.taskNameMatchers)
   for matcher in $(string split -- " " $(string trim -- "$matchers"))
     if string match -qir -- "$matcher" "$branch"
       echo $task

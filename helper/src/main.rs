@@ -3,6 +3,7 @@ mod bookmarks;
 mod cli;
 mod colors;
 mod config;
+mod defaults;
 mod env;
 
 use crate::application::*;
@@ -34,17 +35,18 @@ fn handle_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) -> R
       if let [request, payload @ ..] = request.split(" ").collect::<Vec<_>>().as_slice() {
         let first_arg = payload.first().copied();
         let second_arg = payload.get(1).copied();
+        let arguments = payload.get(1..).unwrap_or(&[]);
 
         match *request {
           "pid" => Ok(Arc::new(format!("{}", id()).into_bytes())),
-          "env" => Ok(Arc::new(Environment::new()?.to_response(first_arg))),
+          "env" => Ok(Arc::new(Environment::new()?.to_response(first_arg)?)),
           "shell-environment" => Ok(Arc::new(Environment::to_shell_response(first_arg, second_arg)?)),
           "colors" => Ok(Arc::new(Colors::new(first_arg)?.to_response())),
           "configuration-file" => Ok(Arc::new(Config::current_path()?.into_bytes())),
           "config" | "configuration" => Ok(Arc::new(
-            Config::load_current()?.get(first_arg, second_arg)?.into_bytes(),
+            Config::load_current()?.get(first_arg, arguments)?.into_bytes(),
           )),
-          "bookmarks" => Bookmark::handle(first_arg, payload.get(1..).unwrap_or(&[])),
+          "bookmarks" => Bookmark::handle(first_arg, arguments),
           "exit" | "quit" => quit(events.clone()),
           _ => Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into()),
         }

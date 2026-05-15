@@ -37,7 +37,7 @@ function __fishamnium_find_configuration_file
 end
 
 function __fishamnium_get_configuration
-  $FISHAMNIUM_HELPER config "$argv[1]" "$argv[2]"
+  $FISHAMNIUM_HELPER config "$argv[1]" $argv[2..-1]
 end
 
 # Public functions
@@ -106,8 +106,6 @@ __fishamnium_shell_environment shell-environment (string join : $PATH)
 fish_config theme choose None
 fishamnium_update_colors $FISHAMNIUM_COLOR_PROFILE
 
-set -x -g EDITOR "nvim"
-set -x -g GEDITOR "code"
 set -x -g fish_greeting
 
 # Direnv

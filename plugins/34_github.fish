@@ -19,7 +19,7 @@ function gh_pr_approve -d "Approves a PR"
     __fishamnium_print_error "You must provide a PR ID."
     return 1
   else if test -z "$message"
-    set message "LGTM!"
+    set message $(__fishamnium_get_configuration .git.approvalMessage)
   end
 
   gh pr review -a -b "$message" $pr
@@ -37,7 +37,7 @@ function gh_remote_add -d "Adds a remote for a PR"
   end
   
   if test -z "$name"
-    set name "origin"
+    set name $(g_default_remote)
   end
 
   git remote add $name git@github.com:$repository.git

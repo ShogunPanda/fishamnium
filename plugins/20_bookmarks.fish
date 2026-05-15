@@ -19,7 +19,7 @@ function bookmarks_list -d "Lists all bookmarks"
     set exportPrefix $_flag_p
 
     if test -z "$exportPrefix"
-      set exportPrefix "B_"
+      set exportPrefix $(__fishamnium_get_configuration .bookmarksExportPrefix)
     end
 
     for line in $($FISHAMNIUM_HELPER bookmarks export "$query" "$exportPrefix")

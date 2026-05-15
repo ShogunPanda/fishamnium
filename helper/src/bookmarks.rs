@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use crate::colors::Colors;
-use crate::config::{empty_response, Config};
+use crate::config::{Config, empty_response};
 use crate::env::Environment;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -36,7 +36,11 @@ impl Bookmark {
       Some("export") => Arc::new(
         Self::to_export(
           &Self::list_filtered(payload.first().copied())?,
-          payload.get(1).copied().unwrap_or("B_"),
+          &payload.get(1).copied().map(ToString::to_string).unwrap_or_else(|| {
+            Config::load_current()
+              .map(|config| config.bookmarks_export_prefix)
+              .unwrap_or_default()
+          }),
         )?
         .into_bytes(),
       ),

@@ -1,5 +1,6 @@
 use crate::bookmarks::Bookmark;
 use crate::colors::Colors;
+use crate::config::Config;
 use nix::unistd::gethostname;
 use std::{collections::HashSet, error::Error, path::PathBuf};
 
@@ -39,22 +40,26 @@ impl Environment {
     })
   }
 
-  pub fn to_response(&self, existing_path: Option<&str>) -> Vec<u8> {
+  pub fn to_response(&self, existing_path: Option<&str>) -> Result<Vec<u8>, Box<dyn Error>> {
     let paths = Self::paths(existing_path);
+    let config = Config::load_current()?;
 
-    format!(
-      "FISHAMNIUM_HOST={}\nFISHAMNIUM_ROOT={}\nFISHAMNIUM_CONFIG_ROOT={}\nFISHAMNIUM_CONFIG={}\nPATH={}\n",
+    Ok(format!(
+      "FISHAMNIUM_HOST={}\nFISHAMNIUM_ROOT={}\nFISHAMNIUM_CONFIG_ROOT={}\nFISHAMNIUM_CONFIG={}\nPATH={}\nEDITOR={}\nGEDITOR={}\n",
       Environment::quote_env_value(&self.hostname),
       Environment::quote_env_value(&self.root),
       Environment::quote_env_value(&self.config_root),
       Environment::quote_env_value(&self.config),
       Environment::quote_env_value(&paths.join(":")),
+      Environment::quote_env_value(&config.editor.terminal),
+      Environment::quote_env_value(&config.editor.graphical),
     )
-    .into_bytes()
+    .into_bytes())
   }
 
-  pub fn to_fish_response(&self, existing_path: Option<&str>) -> Vec<u8> {
+  pub fn to_fish_response(&self, existing_path: Option<&str>) -> Result<Vec<u8>, Box<dyn Error>> {
     let paths = Self::paths(existing_path);
+    let config = Config::load_current()?;
 
     let mut response = String::new();
     Self::push_fish_variable(&mut response, "FISHAMNIUM_HOST", &[self.hostname.as_str()]);
@@ -66,12 +71,14 @@ impl Environment {
       "PATH",
       &paths.iter().map(String::as_str).collect::<Vec<_>>(),
     );
+    Self::push_fish_variable(&mut response, "EDITOR", &[config.editor.terminal.as_str()]);
+    Self::push_fish_variable(&mut response, "GEDITOR", &[config.editor.graphical.as_str()]);
 
-    response.into_bytes()
+    Ok(response.into_bytes())
   }
 
   pub fn to_shell_response(existing_path: Option<&str>, profile: Option<&str>) -> Result<Vec<u8>, Box<dyn Error>> {
-    let mut response = Self::new()?.to_fish_response(existing_path);
+    let mut response = Self::new()?.to_fish_response(existing_path)?;
     response.extend(Colors::new(profile)?.to_fish_response());
     Ok(response)
   }
