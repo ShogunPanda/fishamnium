@@ -78,7 +78,7 @@ if ! set -q _flag_u
   cd $target/helper; or exit 1
   command mkdir ../bin; or exit 1
   if test (uname) = Linux
-    command env RUSTFLAGS="-C target-feature=+crt-static" $cargo build --release; or exit 1
+    command env CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-C target-feature=+crt-static" $cargo build --release; or exit 1
   else
     command $cargo build --release; or exit 1
   end
