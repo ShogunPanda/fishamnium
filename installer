@@ -42,12 +42,12 @@ if ! set -q _flag_u
   if ! set -q _flag_l
     set -l fishamniumVersion $(curl -s https://api.github.com/repos/$repo/releases | yq ".[0].tag_name | sub(\"v\", \"\")")
     printf "%s--> Downloading Fishamnium %s into %s%s%s ...%s\n" "$C_PRIMARY" "$fishamniumVersion" "$C_RESET" "$source" "$C_PRIMARY" "$C_RESET"
-    
+
     command mkdir -p $source; or exit 1
     command curl -sSL -o $source/fishamnium.tar.gz https://github.com/$repo/releases/latest/download/fishamnium.tar.gz
     cd "$source"
     command tar -zxf $source/fishamnium.tar.gz; or exit 1
-  else 
+  else
     command rm -rf helper/target; or exit 1
   end
 
@@ -77,11 +77,7 @@ if ! set -q _flag_u
 
   cd $target/helper; or exit 1
   command mkdir ../bin; or exit 1
-  if test (uname) = Linux
-    command env CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-C target-feature=+crt-static" $cargo build --release; or exit 1
-  else
-    command $cargo build --release; or exit 1
-  end
+  command $cargo build --release; or exit 1
 
   command cp -av target/release/fishamnium "../bin/fishamnium"; or exit 1
   command rm -rf target; or exit 1
