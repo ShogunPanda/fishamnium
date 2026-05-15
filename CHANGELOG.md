@@ -1,3 +1,7 @@
+### 2026-05-15 / 12.1.0
+
+- feat: Better file handling.
+
 ### 2026-05-15 / 12.0.1
 
 - fix: Fixed theme choosing.
