@@ -1,3 +1,7 @@
+### 2026-05-15 / 12.0.1
+
+- fix: Fixed theme choosing.
+
 ### 2026-05-15 / 15.0.0
 
 - feat!: Move to Rust based helper.
