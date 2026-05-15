@@ -11,12 +11,13 @@ https://sw.cowtech.it/fishamnium
 
 Fishamnium requires the following dependencies:
 
-| Name                | Description                                                                  | URL                             | Installation guide                           |
-| ------------------- | ---------------------------------------------------------------------------- | ------------------------------- | -------------------------------------------- |
-| yq                  | Lightweight and portable command-line YAML, JSON and XML processor.          | https://mikefarah.gitbook.io/yq | https://mikefarah.gitbook.io/yq#install      |
-| starship            | The minimal, blazing-fast, and infinitely customizable prompt for any shell! | https://starship.rs/guide/      | https://starship.rs/guide/#🚀-installation   |
-| fzf                 | A command-line fuzzy finder                                                  | https://github.com/junegunn/fzf | https://github.com/junegunn/fzf#installation |
-| Fira Code Nerd Font | An amazing looking font with icons                                           | https://www.nerdfonts.com/      | N/A                                          |
+| Name                | Description                                                                  | URL                              | Installation guide                                                |
+| ------------------- | ---------------------------------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------- |
+| yq                  | Lightweight and portable command-line YAML, JSON and XML processor.          | https://mikefarah.gitbook.io/yq  | https://mikefarah.gitbook.io/yq#install                           |
+| starship            | The minimal, blazing-fast, and infinitely customizable prompt for any shell! | https://starship.rs/guide/       | https://starship.rs/guide/#🚀-installation                        |
+| fzf                 | A command-line fuzzy finder                                                  | https://github.com/junegunn/fzf  | https://github.com/junegunn/fzf#installation                      |
+| Fira Code Nerd Font | An amazing looking font with icons                                           | https://www.nerdfonts.com/       | N/A                                                               |
+| cargo               | The Rust package manager                                                     | https://doc.rust-lang.org/cargo/ | https://doc.rust-lang.org/cargo/getting-started/installation.html |
 
 If you are using Homebrew on MacOS, you can install them easily by using:
 

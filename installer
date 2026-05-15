@@ -1,28 +1,28 @@
 #!/usr/bin/env fish
 
-set -x -g FISHAMNIUM_COLOR_RESET "\x1b[0m"
-set -x -g FISHAMNIUM_COLOR_BOLD "\x1b[1m"
-set -x -g FISHAMNIUM_COLOR_NORMAL "\x1b[22m"
-set -x -g FISHAMNIUM_COLOR_ERROR "\x1b[31m\x1b[1m"
-set -x -g FISHAMNIUM_COLOR_SUCCESS "\x1b[32m\x1b[1m"
-set -x -g FISHAMNIUM_COLOR_PRIMARY "\x1b[35m\x1b[1m"
-set -x -g FISHAMNIUM_COLOR_SECONDARY "\x1b[34m\x1b[1m"
+set -x -g C_RESET (printf "\033[0m")
+set -x -g C_BOLD (printf "\033[1m")
+set -x -g C_NORMAL (printf "\033[22m")
+set -x -g C_ERROR (printf "\033[31m\033[1m")
+set -x -g C_SUCCESS (printf "\033[32m\033[1m")
+set -x -g C_PRIMARY (printf "\033[35m\033[1m")
+set -x -g C_SECONDARY (printf "\033[34m\033[1m")
 
 # Check fish version and other dependencies
 set version_tokens $(string split -- "." "$version")
 
 if test $version_tokens[1] -lt 3 -o $version_tokens[1] -lt 3
-  echo -e "$FISHAMNIUM_COLOR_ERRORFishamnium requires Fish $FISHAMNIUM_COLOR_RESET3.3.0$FISHAMNIUM_COLOR_ERROR or greater, while you are on $FISHAMNIUM_COLOR_RESET$version$FISHAMNIUM_COLOR_ERROR.$FISHAMNIUM_COLOR_RESET"
+  printf "%sFishamnium requires Fish %s3.3.0%s or greater, while you are on %s%s%s.%s\n" "$C_ERROR" "$C_RESET" "$C_ERROR" "$C_RESET" "$version" "$C_ERROR" "$C_RESET"
   exit 1
 end
 
 if ! which yq >/dev/null 2>/dev/null
-  echo -e "$FISHAMNIUM_COLOR_ERRORFishamnium requires yq $FISHAMNIUM_COLOR_RESET4.18.1$FISHAMNIUM_COLOR_ERROR or greater. Please check $FISHAMNIUM_COLOR_RESEThttp://mikefarah.github.io/yq/#install$FISHAMNIUM_COLOR_ERROR.$FISHAMNIUM_COLOR_RESET"
+  printf "%sFishamnium requires yq %s4.18.1%s or greater. Please check %shttp://mikefarah.github.io/yq/#install%s.%s\n" "$C_ERROR" "$C_RESET" "$C_ERROR" "$C_RESET" "$C_ERROR" "$C_RESET"
   exit 1
 end
 
 if ! which starship >/dev/null 2>/dev/null
-  echo -e "$FISHAMNIUM_COLOR_ERRORFishamnium requires starship $FISHAMNIUM_COLOR_RESET1.2.1$FISHAMNIUM_COLOR_ERROR or greater. Please check $FISHAMNIUM_COLOR_RESEThttps://starship.rs/guide/#🚀-installation$FISHAMNIUM_COLOR_ERROR.$FISHAMNIUM_COLOR_RESET"
+  printf "%sFishamnium requires starship %s1.2.1%s or greater. Please check %shttps://starship.rs/guide/#🚀-installation%s.%s\n" "$C_ERROR" "$C_RESET" "$C_ERROR" "$C_RESET" "$C_ERROR" "$C_RESET"
   exit 1
 end
 
@@ -40,50 +40,72 @@ set source /tmp/fishamnium-(date +%Y%m%d%H%M%S)
 if ! set -q _flag_u
   # Clone locally if asked to
   if ! set -q _flag_l
-    set fishamniumVersion $(curl -s https://api.github.com/repos/$repo/releases | yq ".[0].tag_name | sub(\"v\", \"\")")
-    echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Downloading Fishamnium $fishamniumVersion into $FISHAMNIUM_COLOR_RESET$source$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
+    set -l fishamniumVersion $(curl -s https://api.github.com/repos/$repo/releases | yq ".[0].tag_name | sub(\"v\", \"\")")
+    printf "%s--> Downloading Fishamnium %s into %s%s%s ...%s\n" "$C_PRIMARY" "$fishamniumVersion" "$C_RESET" "$source" "$C_PRIMARY" "$C_RESET"
     
-    mkdir -p $source; or exit 1
-    curl -sSL -o $source/fishamnium.tar.gz https://github.com/$repo/archive/refs/tags/v$fishamniumVersion.tar.gz; or exit 1
-    tar -zxf $source/fishamnium.tar.gz -C $source --strip-components=1; or exit 1
+    command mkdir -p $source; or exit 1
+    command curl -sSL -o $source/fishamnium.tar.gz https://github.com/$repo/releases/latest/download/fishamnium.tar.gz
     cd "$source"
+    command tar -zxf $source/fishamnium.tar.gz; or exit 1
+  else 
+    command rm -rf helper/target; or exit 1
   end
 
   # Remove previous installations
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Removing any previous fishamnium installations in $FISHAMNIUM_COLOR_RESET$target$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
+  printf "%s--> Removing any previous fishamnium installations in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$target" "$C_PRIMARY" "$C_RESET"
   command rm -rf "$target" "$loader"; or exit 1
 
   # Create required directories
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Creating required directories ...$FISHAMNIUM_COLOR_RESET"  
+  printf "%s--> Creating required directories ...%s\n" "$C_PRIMARY" "$C_RESET"
   command mkdir -vp "$target" "$loaderDirectory"; or exit 1
 
   # Copy files
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Copying fishamnium in $FISHAMNIUM_COLOR_RESET$target$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
-  command cp -av data completions plugins themes installer version "$target" | sort; or exit 1
+  printf "%s--> Copying fishamnium in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$target" "$C_PRIMARY" "$C_RESET"
+  command cp -av completions data helper installer plugins themes version "$target" | sort; or exit 1
 
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Copying loader file in $FISHAMNIUM_COLOR_RESET$loader$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
+  printf "%s--> Copying loader file in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$loader" "$C_PRIMARY" "$C_RESET"
   command cp -av loader.fish "$loader"; or exit 1
 
+  # Build helper
+  printf "%s--> Building optimized fishamnium helper ...%s\n" "$C_PRIMARY" "$C_RESET"
+
+  set cargo $(which cargo 2>/dev/null)
+  if ! test -x "$cargo"
+    printf "%sFishamnium requires cargo to build the helper.%s\n" "$C_ERROR" "$C_RESET"
+    exit 1
+  end
+
+  cd $target/helper; or exit 1
+  command mkdir ../bin; or exit 1
+  if test (uname) = Linux
+    command env RUSTFLAGS="-C target-feature=+crt-static" $cargo build --release; or exit 1
+  else
+    command $cargo build --release; or exit 1
+  end
+
+  command cp -av target/release/fishamnium "../bin/fishamnium"; or exit 1
+  command rm -rf target; or exit 1
+
   # Ensure permissions
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Fixing file permissions ...$FISHAMNIUM_COLOR_RESET"
+  printf "%s--> Fixing file permissions ...%s\n" "$C_PRIMARY" "$C_RESET"
   command chmod -R a+x "$target" "$loader"; or exit 1
 
   # Remove temporary directory if needed
   if ! set -q _flag_l
-    echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Removing temporary installation files in $FISHAMNIUM_COLOR_RESET$source$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
+    printf "%s--> Removing temporary installation files in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$source" "$C_PRIMARY" "$C_RESET"
     cd "$origPwd"
     command rm -rf "$source"; or exit 1
   end
 
   # Print a status
-  printf "\n$FISHAMNIUM_COLOR_SUCCESS--> To load fish right now without restarting the terminal, run: $FISHAMNIUM_COLOR_RESETsource ~/.config/fish/conf.d/fishamnium.fish$FISHAMNIUM_COLOR_SUCCESS"
-  printf "\n$FISHAMNIUM_COLOR_SUCCESS--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A$FISHAMNIUM_COLOR_RESET\n"
+  printf "\n%s--> To load fish right now without restarting the terminal, run: %ssource ~/.config/fish/conf.d/fishamnium.fish%s" "$C_SUCCESS" "$C_RESET" "$C_SUCCESS"
+  printf "\n%s--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A%s\n" "$C_SUCCESS" "$C_RESET"
 else
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Removing directory $FISHAMNIUM_COLOR_RESET$target$FISHAMNIUM_COLOR_PRIMARY and loader file $FISHAMNIUM_COLOR_RESET$loader$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
+  printf "%s--> Removing directory %s%s%s and loader file %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$target" "$C_PRIMARY" "$C_RESET" "$loader" "$C_PRIMARY" "$C_RESET"
   command rm -rf "$target" "$loader"; or exit 1
 
-  echo -e "$FISHAMNIUM_COLOR_PRIMARY--> Removing loader file $FISHAMNIUM_COLOR_RESET$loader$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
+  printf "%s--> Removing loader file %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$loader" "$C_PRIMARY" "$C_RESET"
   command rm -rf "$loader"; or exit 1
 
-  printf "\n$FISHAMNIUM_COLOR_SUCCESS--> Fishamnium has been uninstalled. Hope you liked it. Farewell! \U0001F37A$FISHAMNIUM_COLOR_RESET\n"
+  printf "\n%s--> Fishamnium has been uninstalled. Hope you liked it. Farewell! \U0001F37A%s\n" "$C_SUCCESS" "$C_RESET"
 end

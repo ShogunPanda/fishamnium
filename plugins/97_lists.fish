@@ -13,7 +13,7 @@ function execute_on_list
   for item in $list
     string match -qr -- "^#" "$item"; and continue;
 
-    echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> Executing on directory $FISHAMNIUM_COLOR_BOLD$item$FISHAMNIUM_COLOR_NORMAL ...$FISHAMNIUM_COLOR_RESET"
+    printf "%s%s--> Executing on directory %s%s%s ...%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$FISHAMNIUM_COLOR_BOLD" "$item" "$FISHAMNIUM_COLOR_NORMAL" "$FISHAMNIUM_COLOR_RESET"
     cd $item
     eval $argv[2..]
 
@@ -21,7 +21,7 @@ function execute_on_list
     if test $status -ne 0;
       if ! set -q _flag_c
         cd $orig_pwd
-        echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_ERROR--> Aborting due to non zero exit code ($FISHAMNIUM_COLOR_BOLD$current_status$FISHAMNIUM_COLOR_NORMAL) on directory $FISHAMNIUM_COLOR_BOLD$item$FISHAMNIUM_COLOR_NORMAL.$FISHAMNIUM_COLOR_RESET"
+        printf "%s%s--> Aborting due to non zero exit code (%s%s%s) on directory %s%s%s.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_BOLD" "$current_status" "$FISHAMNIUM_COLOR_NORMAL" "$FISHAMNIUM_COLOR_BOLD" "$item" "$FISHAMNIUM_COLOR_NORMAL" "$FISHAMNIUM_COLOR_RESET"
         return 1
       end
     end
@@ -29,5 +29,5 @@ function execute_on_list
     cd $orig_pwd
   end
 
-  echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_SUCCESS--> All operations completed successfully.$FISHAMNIUM_COLOR_RESET"
+  printf "%s%s--> All operations completed successfully.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_SUCCESS" "$FISHAMNIUM_COLOR_RESET"
 end

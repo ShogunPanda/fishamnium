@@ -1,5 +1,0 @@
-alias bi="bundle install"
-alias bu="bundle update"
-alias be="bundle exec"
-alias bl="bundle list"
-alias bs="bundle show"

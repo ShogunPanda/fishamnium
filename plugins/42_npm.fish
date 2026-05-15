@@ -37,14 +37,13 @@ function nrc -d "Interactively run a script using npm"
   test -z "$runner"; and set runner "npm"
 
   set prompt "--> Which script do you want to run? "
-  # TODO@PI: See bookmarks
   set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $scripts) + 1)
 
   set choice $(string join0 $scripts | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
   
   if test $status -eq 0
-    echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> $runner run $choice$FISHAMNIUM_COLOR_RESET"
+    printf "%s%s--> %s run %s%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$runner" "$choice" "$FISHAMNIUM_COLOR_RESET"
     $runner run $choice
   end
 end
@@ -53,10 +52,10 @@ function nic -d "Reinstall all packages ensuring a clean local folder"
   set runner $RUNNER
   test -z "$runner"; and set runner "npm"
 
-  echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock"
+  printf "%s%s--> rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$FISHAMNIUM_COLOR_RESET"
   rm -rf node_modules package-lock.json pnpm-lock.yaml yarn.lock
 
-  echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> $RUNNER install"
+  printf "%s%s--> %s install%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$RUNNER" "$FISHAMNIUM_COLOR_RESET"
   $RUNNER install
 end
 

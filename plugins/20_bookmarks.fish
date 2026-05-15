@@ -1,40 +1,9 @@
 function __bookmarks_list
-  set bookmarks
-  for raw in $(yq -o=csv -eMP ".bookmarks | to_entries | map([.key, .value.path, .value.name, (.value.recursive // \"\")])" $FISHAMNIUM_CONFIG | string split -- "\n")
-    set bookmark $(string split -- "," "$raw")
-
-    if test -n "$bookmark[4]"
-      set -a bookmarks  "$bookmark[4]-root,$bookmark[2],$bookmark[3]: Root"
-      set root $(string replace -- "~" "$HOME" $bookmark[2])
-
-      if test -d "$root"
-        set folders $(find $root -mindepth 1 -maxdepth 1 -type d ! -name '.*' | xargs -n1 basename)
-
-        for folder in $folders
-          set -a bookmarks  "$bookmark[4]-$folder,$bookmark[2]/$folder,$bookmark[3]: $folder"
-        end
-      end
-    else 
-      set -a bookmarks  "$bookmark[1],$bookmark[2],$bookmark[3]"
-    end
-  end
-
-  printf '%s\n' $bookmarks | sort
+  $FISHAMNIUM_HELPER bookmarks tsv $argv
 end
 
 function __bookmarks_get_path
-  set query $argv[1]
-
-  for raw in $(__bookmarks_list)
-    set bookmark $(string split -- "," "$raw")
-
-    if test "$bookmark[1]" = "$query"
-      set destination $(string replace -- "~" "$HOME" "$bookmark[2]")
-      break
-    end
-  end
-
-  echo $destination
+  $FISHAMNIUM_HELPER bookmarks show $argv[1]  
 end
 
 function bookmarks_list -d "Lists all bookmarks"
@@ -46,88 +15,36 @@ function bookmarks_list -d "Lists all bookmarks"
     set query "(?:$argv[1])"
   end
 
-  # Gather bookmarks
-  for raw in $(__bookmarks_list)
-    set bookmark $(string split -- "," "$raw")
-
-    if string match -qre "$query" "$bookmark[1]"
-      set bookmarks $bookmarks $bookmark[1] $bookmark[2] $bookmark[3]
-    end
-  end
-
-  if test $(count $bookmarks) -eq 0
-    return
-  end
-
-  set indexes $(seq 1 3 $(math $(count $bookmarks) - 1))
-
-  # Shell export
   if test -n "$_flag_e"
     set exportPrefix $_flag_p
 
-    if test -z $exportPrefix
+    if test -z "$exportPrefix"
       set exportPrefix "B_"
     end
 
-    for i in $indexes
-      set name $(string upper -- (string replace --all -- "-" "_" "$bookmarks[$i]"))
-      set destination $(string replace -- "~" "$HOME" $bookmarks[(math $i + 1)])
-      echo "set -x -g $exportPrefix$name \"$destination\""
+    for line in $($FISHAMNIUM_HELPER bookmarks export "$query" "$exportPrefix")
+      set parts (string split -m 1 -- "=" "$line")
+      test (count $parts) -eq 2; or continue
+      echo "set -x -g $parts[1] $parts[2]"
     end
 
     return
   end
 
-  # Calculate paddings
-  set idPadding 0
-  set destinationPadding 0
-  set namePadding 0
-
-  for i in $indexes
-    set idPadding $(math max \($idPadding, $(string length $bookmarks[$i])\))
-    set destinationPadding $(math max \($destinationPadding, $(string length $bookmarks[(math $i + 1)])\))
-    set namePadding $(math max \($namePadding, $(string length $bookmarks[(math $i + 2)])\))
-  end
-
-  # Prepare the row - In the destination we use 6 as ~ will be replaced with ~
-  set row $(printf "+%s+%s+%s+" $(string repeat -n $(math $idPadding + 2) '-') $(string repeat -n $(math $destinationPadding + 6) '-') $(string repeat -n $(math $namePadding + 2) '-'))
-
-  # Print the header - In the destination we use 6 as ~ will be replaced with ~
-  echo $row
-  printf "| %s | %s | %s |\n" $(string pad -r -w $idPadding "ID") $(string pad -r -w $(math $destinationPadding + 4) "Destination") $(string pad -r -w $namePadding "Name")
-  echo $row
-
-  # Print the bookmarks
-  for i in $indexes
-    set bookmark $(string pad -r -w $idPadding $bookmarks[$i])
-    set destination $(string pad -r -w $destinationPadding $bookmarks[(math $i + 1)])
-    set destination $(string replace "~" "$FISHAMNIUM_COLOR_PRIMARY\$HOME$FISHAMNIUM_COLOR_RESET" "$destination")
-    set name $(string pad -r -w $namePadding $bookmarks[(math $i + 2)])
-
-    printf "| $FISHAMNIUM_COLOR_SUCCESS$FISHAMNIUM_COLOR_BOLD%s$FISHAMNIUM_COLOR_RESET | %b | $FISHAMNIUM_COLOR_SECONDARY%s$FISHAMNIUM_COLOR_RESET |\n" "$bookmark" "$destination" "$name"
-  end
-
-  echo $row
+  $FISHAMNIUM_HELPER bookmarks list "$query"
 end
 
 function bookmarks_autocomplete -d "Autocomplete bookmarks"
-  for raw in $(__bookmarks_list)
-    set bookmark $(string split -- "," "$raw")
-    echo -e "$bookmark[1]\t$bookmark[2]"
-  end
+  $FISHAMNIUM_HELPER bookmarks autocomplete $argv
 end
 
 function bookmarks_names -d "Lists all bookmarks names"
-  for raw in $(__bookmarks_list)
-    set bookmark $(string split -- "," "$raw")
-    echo -e "$bookmark[1]"
-  end
+  $FISHAMNIUM_HELPER bookmarks names $argv
 end
 
 function bookmark_show -d "Reads a bookmark"
   argparse -i --name=bookmark_show "y/copy" -- $argv
 
-  # Parse arguments
   set query $argv[1]
 
   if test -z "$query"
@@ -135,9 +52,7 @@ function bookmark_show -d "Reads a bookmark"
     return 1
   end
 
-  set destination $(__bookmarks_get_path $query)
-
-  if test -z $destination
+  if ! set destination $(__bookmarks_get_path $query)
     __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$query$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
     return 1
   end
@@ -150,9 +65,7 @@ function bookmark_show -d "Reads a bookmark"
 end
 
 function bookmark_save -d "Writes a bookmark"
-  # Parse arguments
   set bookmark $argv[1]
-  set destination $PWD
   set name $argv[2]
 
   if test -z "$bookmark"
@@ -160,30 +73,11 @@ function bookmark_save -d "Writes a bookmark"
     return 1
   end
 
-  # Normalize arguments
   test -z "$name"; and set name $bookmark
-  set destination $(string replace "$HOME" "~" "$destination")
-
-  # Validate the bookmark name and that is not already existing
-  if ! string match -qre "^(?:[a-z0-9-_.:@]+)\$" "$bookmark"
-    __fishamnium_print_error "Use only letters, numbers, and -, _, ., : and @ for the name."
-    return
-  end
-
-  if set existing $(bookmark_show $bookmark 2>/dev/null)
-    __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL already exists and points to $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$existing$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL."
-    return 1
-  end
-
-  # Save the element
-  if ! yq -i -o yaml ".bookmarks[\"$bookmark\"] |= {\"path\": \"$destination\", \"name\": \"$name\"}" $FISHAMNIUM_CONFIG 2>/dev/null
-    __fishamnium_print_error "Cannot save the bookmark."
-    return 1
-  end
+  $FISHAMNIUM_HELPER bookmarks save "$bookmark" "$name"
 end
 
 function bookmark_delete -d "Deletes a bookmark"
-  # Parse arguments
   set bookmark $argv[1]
 
   if test -z "$bookmark"
@@ -191,17 +85,7 @@ function bookmark_delete -d "Deletes a bookmark"
     return 1
   end
 
-  # # Validate the bookmark
-  if ! bookmark_show $bookmark >/dev/null
-    __fishamnium_print_error "The bookmark $FISHAMNIUM_COLOR_RESET$FISHAMNIUM_COLOR_BOLD$bookmark$FISHAMNIUM_COLOR_ERROR$FISHAMNIUM_COLOR_NORMAL does not exists."
-    return 1
-  end
-
-  # Remove the bookmark from the file
-  if ! yq -i -o yaml "del(.bookmarks[\"$bookmark\"])" $FISHAMNIUM_CONFIG 2>/dev/null
-    __fishamnium_print_error "Cannot delete the bookmark."
-    return 1
-  end
+  $FISHAMNIUM_HELPER bookmarks delete "$bookmark"
 end
 
 function bookmark_cd -d "Changes current directory to a saved bookmark"
@@ -251,7 +135,7 @@ function bookmark_delete_select -d "Interactively deletes a bookmark"
 end
 
 function bookmark_cd_select -d "Interactively deletes a bookmark"
-  argparse -i --name=bookmbookmark_cd_selectark_cd "z/zoxide" -- $argv
+  argparse -i --name=bookmbookmark_cd_select "z/zoxide" -- $argv
 
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to move to?"

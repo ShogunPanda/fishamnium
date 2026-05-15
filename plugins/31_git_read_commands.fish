@@ -31,8 +31,7 @@ function g_remotes -d "Show GIT remotes in JSON format"
   end
 
   # Format arguments
-  # TODO@PI: You don't need printf
-  printf "[%s]" $(string join -- "," "$output") | yq -o json -MP '.[] as $item ireduce ({}; .[$item.remote][$item.type]=$item.url) | (.[] | select(.fetch == .push)) |= .fetch'
+  string join -- "" "[" (string join -- "," $output) "]" | yq -o json -MP '.[] as $item ireduce ({}; .[$item.remote][$item.type]=$item.url) | (.[] | select(.fetch == .push)) |= .fetch'
 end
 
 function g_remotes_autocomplete -d "List remotes name and description for autocompletion"

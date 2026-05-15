@@ -25,7 +25,7 @@ function project_root
 
   if test $destination = "/";
     if ! set -q _flag_y
-      echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_ERROR--> No projects found.$FISHAMNIUM_COLOR_RESET"
+      printf "%s%s--> No projects found.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
     end
 
     return 1
@@ -47,7 +47,7 @@ function cd_project_root
   set destination $(project_root $argv)
 
   if test $status -ne 0
-    echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_ERROR--> No projects found.$FISHAMNIUM_COLOR_RESET"
+    printf "%s%s--> No projects found.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
     return 1
   end
 
@@ -55,9 +55,9 @@ function cd_project_root
   argparse -i --name=cd_project_root "N/dry-run" -- $argv
 
   if set -q _flag_N
-    echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_SECONDARY--> Would move to $FISHAMNIUM_COLOR_RESET$destination$FISHAMNIUM_COLOR_SECONDARY.$FISHAMNIUM_COLOR_RESET"
+    printf "%s%s--> Would move to %s%s%s.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_SECONDARY" "$FISHAMNIUM_COLOR_RESET" "$destination" "$FISHAMNIUM_COLOR_FG_SECONDARY" "$FISHAMNIUM_COLOR_RESET"
   else
-		echo -e "$FISHAMNIUM_COLOR_BOLD$FISHAMNIUM_COLOR_PRIMARY--> Moving to $FISHAMNIUM_COLOR_RESET$destination$FISHAMNIUM_COLOR_PRIMARY ...$FISHAMNIUM_COLOR_RESET"
+    printf "%s%s--> Moving to %s%s%s ...%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$FISHAMNIUM_COLOR_RESET" "$destination" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$FISHAMNIUM_COLOR_RESET"
     cd $destination
   end
 end
