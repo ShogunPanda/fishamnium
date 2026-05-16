@@ -1,3 +1,7 @@
+### 2026-05-16 / 12.2.0
+
+- feat: Added new listing capability.
+
 ### 2026-05-15 / 12.1.0
 
 - feat: Better file handling.
