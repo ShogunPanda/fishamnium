@@ -77,6 +77,9 @@ pub struct EditorConfig {
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
+  #[serde(default, skip_serializing_if = "Vec::is_empty")]
+  pub hosts: Vec<String>,
+
   #[serde(default, skip_serializing_if = "is_git_config")]
   pub git: GitConfig,
 
@@ -171,6 +174,11 @@ impl Config {
       ["editor", "graphical"] => Some(self.editor.graphical.as_str()),
       ["bookmarksExportPrefix"] => Some(self.bookmarks_export_prefix.as_str()),
       ["profile"] => Some(self.profile.as_str()),
+      ["hosts"] => return Ok(self.hosts.join(" ")),
+      ["hosts", index] => match index.parse::<usize>() {
+        Ok(index) => self.hosts.get(index).map(String::as_str),
+        Err(_) => None,
+      },
       ["bookmarks", key, "path"] => self.bookmarks.get(*key).map(|bookmark| bookmark.path.as_str()),
       ["bookmarks", key, "name"] => self.bookmarks.get(*key).map(|bookmark| bookmark.name.as_str()),
       ["bookmarks", key, "recursive"] => self
@@ -187,6 +195,7 @@ impl Config {
 impl Default for Config {
   fn default() -> Self {
     Self {
+      hosts: Vec::new(),
       git: GitConfig::default(),
       bookmarks: BTreeMap::new(),
       bookmarks_export_prefix: bookmarks_export_prefix(),

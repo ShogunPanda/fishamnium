@@ -32,6 +32,7 @@ impl Bookmark {
   pub fn handle(command: Option<&str>, payload: &[&str]) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
     Ok(match command {
       Some("list") => Arc::new(Self::to_table(&Self::list_filtered(payload.first().copied())?)?.into_bytes()),
+      Some("list-raw") => Arc::new(Self::to_raw_list(&Self::list_filtered(payload.first().copied())?)?.into_bytes()),
       Some("tsv") => Arc::new(Self::to_tsv(&Self::list_filtered(payload.first().copied())?).into_bytes()),
       Some("export") => Arc::new(
         Self::to_export(
@@ -167,6 +168,23 @@ impl Bookmark {
     }
 
     response
+  }
+
+  pub fn to_raw_list(bookmarks: &[Self]) -> Result<String, Box<dyn Error>> {
+    let mut response = String::new();
+
+    for bookmark in bookmarks {
+      response.push_str(&bookmark.id);
+      response.push('\t');
+      response.push_str(&bookmark.name);
+      response.push('\t');
+      response.push_str(&bookmark.path);
+      response.push('\t');
+      response.push_str(&Self::expand_home(&bookmark.path)?);
+      response.push('\n');
+    }
+
+    Ok(response)
   }
 
   pub fn to_export(bookmarks: &[Self], prefix: &str) -> Result<String, Box<dyn Error>> {
