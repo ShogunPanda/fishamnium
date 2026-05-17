@@ -1,5 +1,76 @@
 use crate::config::{EditorConfig, GitConfig, NodeConfig};
 
+pub const COLORS_WHITE: &str = "FFFFFF";
+pub const COLORS_BLACK: &str = "000000";
+pub const COLORS_LIGHTGREEN: &str = "00CC00";
+pub const COLORS_YELLOW: &str = "FFDF00";
+pub const COLORS_MAGENTA: &str = "C800E2";
+pub const COLORS_BLUE: &str = "005be4";
+pub const COLORS_GRAY: &str = "808080";
+pub const COLORS_LIGHTGRAY: &str = "C0C0C0";
+pub const COLORS_LIGHT_RED: &str = "CC0000";
+pub const COLORS_LIGHT_GREEN: &str = "00CC00";
+pub const COLORS_LIGHT_CYAN: &str = "0088E2";
+pub const COLORS_DARK_RED: &str = "EE0000";
+pub const COLORS_DARK_GREEN: &str = "00EE00";
+pub const COLORS_DARK_CYAN: &str = "5EBBF9";
+
+pub fn colors_white() -> String {
+  COLORS_WHITE.to_string()
+}
+
+pub fn colors_black() -> String {
+  COLORS_BLACK.to_string()
+}
+
+pub fn colors_lightgreen() -> String {
+  COLORS_LIGHTGREEN.to_string()
+}
+
+pub fn colors_yellow() -> String {
+  COLORS_YELLOW.to_string()
+}
+
+pub fn colors_magenta() -> String {
+  COLORS_MAGENTA.to_string()
+}
+
+pub fn colors_blue() -> String {
+  COLORS_BLUE.to_string()
+}
+
+pub fn colors_gray() -> String {
+  COLORS_GRAY.to_string()
+}
+
+pub fn colors_lightgray() -> String {
+  COLORS_LIGHTGRAY.to_string()
+}
+
+pub fn colors_light_red() -> String {
+  COLORS_LIGHT_RED.to_string()
+}
+
+pub fn colors_light_green() -> String {
+  COLORS_LIGHT_GREEN.to_string()
+}
+
+pub fn colors_light_cyan() -> String {
+  COLORS_LIGHT_CYAN.to_string()
+}
+
+pub fn colors_dark_red() -> String {
+  COLORS_DARK_RED.to_string()
+}
+
+pub fn colors_dark_green() -> String {
+  COLORS_DARK_GREEN.to_string()
+}
+
+pub fn colors_dark_cyan() -> String {
+  COLORS_DARK_CYAN.to_string()
+}
+
 pub fn git_branch() -> String {
   "main".to_string()
 }
@@ -130,10 +201,10 @@ pub fn is_editor_config(value: &EditorConfig) -> bool {
   value == &EditorConfig::default()
 }
 
-pub fn profile() -> String {
+pub fn theme() -> String {
   "dark".to_string()
 }
 
-pub fn is_profile(value: &String) -> bool {
-  value == &profile()
+pub fn is_theme(value: &String) -> bool {
+  value == &theme()
 }

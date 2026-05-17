@@ -77,10 +77,14 @@ impl Environment {
     Ok(response.into_bytes())
   }
 
-  pub fn to_shell_response(existing_path: Option<&str>, profile: Option<&str>) -> Result<Vec<u8>, Box<dyn Error>> {
+  pub fn to_shell_response(existing_path: Option<&str>, theme: Option<&str>) -> Result<Vec<u8>, Box<dyn Error>> {
     let mut response = Self::new()?.to_fish_response(existing_path)?;
-    response.extend(Colors::new(profile)?.to_fish_response());
+    response.extend(Colors::new(theme)?.to_fish_response());
     Ok(response)
+  }
+
+  pub fn root(&self) -> &str {
+    &self.root
   }
 
   pub fn config(&self) -> &str {

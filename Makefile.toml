@@ -23,6 +23,7 @@
     "fishamnium.tar.gz",
     "completions",
     "data",
+    "default.yml",
     "helper",
     "installer",
     "LICENSE.md",

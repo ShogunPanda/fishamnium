@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_yaml::Value;
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fs;
@@ -74,6 +75,65 @@ pub struct EditorConfig {
   pub graphical: String,
 }
 
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ColorsConfig {
+  #[serde(default, skip_serializing_if = "is_light_color_theme_config")]
+  pub light: ColorThemeConfig,
+
+  #[serde(
+    default = "ColorThemeConfig::dark",
+    skip_serializing_if = "is_dark_color_theme_config"
+  )]
+  pub dark: ColorThemeConfig,
+}
+
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ColorThemeConfig {
+  #[serde(default = "colors_white")]
+  pub white: String,
+
+  #[serde(default = "colors_black")]
+  pub black: String,
+
+  #[serde(default = "colors_lightgreen")]
+  pub lightgreen: String,
+
+  #[serde(default = "colors_yellow")]
+  pub yellow: String,
+
+  #[serde(default = "colors_magenta")]
+  pub magenta: String,
+
+  #[serde(default = "colors_blue")]
+  pub blue: String,
+
+  #[serde(default = "colors_gray")]
+  pub gray: String,
+
+  #[serde(default = "colors_lightgray")]
+  pub lightgray: String,
+
+  #[serde(default = "colors_light_red")]
+  pub red: String,
+
+  #[serde(default = "colors_light_green")]
+  pub green: String,
+
+  #[serde(default = "colors_light_cyan")]
+  pub cyan: String,
+
+  #[serde(default = "colors_black")]
+  pub foreground: String,
+
+  #[serde(default = "colors_light_cyan")]
+  pub primary: String,
+
+  #[serde(default = "colors_magenta")]
+  pub secondary: String,
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
@@ -98,8 +158,11 @@ pub struct Config {
   #[serde(default, skip_serializing_if = "is_editor_config")]
   pub editor: EditorConfig,
 
-  #[serde(default = "profile", skip_serializing_if = "is_profile")]
-  pub profile: String,
+  #[serde(default = "theme", skip_serializing_if = "is_theme")]
+  pub theme: String,
+
+  #[serde(default, skip_serializing_if = "is_colors_config")]
+  pub colors: ColorsConfig,
 }
 
 impl Config {
@@ -139,7 +202,15 @@ impl Config {
       fs::create_dir_all(parent)?;
     }
 
-    fs::write(path, serde_yaml::to_string(self)?)?;
+    let serialized = serde_yaml::to_value(self)?;
+    let output = if path.is_file() {
+      let existing = serde_yaml::from_str(&fs::read_to_string(path)?)?;
+      Self::merge_save_value(existing, serialized)
+    } else {
+      serialized
+    };
+
+    fs::write(path, serde_yaml::to_string(&output)?)?;
     Ok(())
   }
 
@@ -151,44 +222,159 @@ impl Config {
       _ => return Ok(fallback.to_string()),
     };
 
-    let segments = selector
+    let value = self.to_lookup_value()?;
+    let mut current = Some(&value);
+
+    for segment in selector
       .trim()
       .trim_start_matches('.')
       .split('.')
       .filter(|segment| !segment.is_empty())
-      .collect::<Vec<_>>();
+    {
+      current = match current {
+        Some(Value::Mapping(mapping)) => mapping.get(Value::String(segment.to_string())),
+        Some(Value::Sequence(sequence)) => segment.parse::<usize>().ok().and_then(|index| sequence.get(index)),
+        _ => None,
+      };
+    }
 
-    let value = match segments.as_slice() {
-      ["git", "branch"] => Some(self.git.branch.as_str()),
-      ["git", "remote"] => Some(self.git.remote.as_str()),
-      ["git", "root"] => Some(self.git.root.as_str()),
-      ["git", "taskMatchers"] => Some(self.git.task_matchers.as_str()),
-      ["git", "taskNameMatchers"] => Some(self.git.task_name_matchers.as_str()),
-      ["git", "taskTemplate"] => Some(self.git.task_template.as_str()),
-      ["git", "openPath"] => Some(self.git.open_path.as_str()),
-      ["git", "releasePrefix"] => Some(self.git.release_prefix.as_str()),
-      ["git", "upstreamRemote"] => Some(self.git.upstream_remote.as_str()),
-      ["git", "approvalMessage"] => Some(self.git.approval_message.as_str()),
-      ["node", "runner"] => Some(self.node.runner.as_str()),
-      ["editor", "terminal"] => Some(self.editor.terminal.as_str()),
-      ["editor", "graphical"] => Some(self.editor.graphical.as_str()),
-      ["bookmarksExportPrefix"] => Some(self.bookmarks_export_prefix.as_str()),
-      ["profile"] => Some(self.profile.as_str()),
-      ["hosts"] => return Ok(self.hosts.join(" ")),
-      ["hosts", index] => match index.parse::<usize>() {
-        Ok(index) => self.hosts.get(index).map(String::as_str),
-        Err(_) => None,
-      },
-      ["bookmarks", key, "path"] => self.bookmarks.get(*key).map(|bookmark| bookmark.path.as_str()),
-      ["bookmarks", key, "name"] => self.bookmarks.get(*key).map(|bookmark| bookmark.name.as_str()),
-      ["bookmarks", key, "recursive"] => self
-        .bookmarks
-        .get(*key)
-        .and_then(|bookmark| bookmark.recursive.as_deref()),
+    Ok(Self::value_to_string(current).unwrap_or(fallback))
+  }
+
+  fn value_to_string(value: Option<&Value>) -> Option<String> {
+    match value? {
+      Value::String(value) => Some(value.clone()),
+      Value::Number(value) => Some(value.to_string()),
+      Value::Bool(value) => Some(value.to_string()),
+      Value::Sequence(values) => Some(
+        values
+          .iter()
+          .filter_map(|value| Self::value_to_string(Some(value)))
+          .collect::<Vec<_>>()
+          .join(" "),
+      ),
       _ => None,
+    }
+  }
+
+  fn to_lookup_value(&self) -> Result<Value, Box<dyn Error>> {
+    let mut value = serde_yaml::to_value(self)?;
+
+    Self::insert_value(&mut value, &["hosts"], serde_yaml::to_value(&self.hosts)?);
+    Self::insert_value(&mut value, &["git", "branch"], serde_yaml::to_value(&self.git.branch)?);
+    Self::insert_value(&mut value, &["git", "remote"], serde_yaml::to_value(&self.git.remote)?);
+    Self::insert_value(&mut value, &["git", "root"], serde_yaml::to_value(&self.git.root)?);
+    Self::insert_value(
+      &mut value,
+      &["git", "taskMatchers"],
+      serde_yaml::to_value(&self.git.task_matchers)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["git", "taskNameMatchers"],
+      serde_yaml::to_value(&self.git.task_name_matchers)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["git", "taskTemplate"],
+      serde_yaml::to_value(&self.git.task_template)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["git", "openPath"],
+      serde_yaml::to_value(&self.git.open_path)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["git", "releasePrefix"],
+      serde_yaml::to_value(&self.git.release_prefix)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["git", "upstreamRemote"],
+      serde_yaml::to_value(&self.git.upstream_remote)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["git", "approvalMessage"],
+      serde_yaml::to_value(&self.git.approval_message)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["node", "runner"],
+      serde_yaml::to_value(&self.node.runner)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["editor", "terminal"],
+      serde_yaml::to_value(&self.editor.terminal)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["editor", "graphical"],
+      serde_yaml::to_value(&self.editor.graphical)?,
+    );
+    Self::insert_value(&mut value, &["theme"], serde_yaml::to_value(&self.theme)?);
+    Self::insert_value(&mut value, &["colors"], serde_yaml::to_value(&self.colors)?);
+    Self::insert_value(
+      &mut value,
+      &["bookmarksExportPrefix"],
+      serde_yaml::to_value(&self.bookmarks_export_prefix)?,
+    );
+
+    Ok(value)
+  }
+
+  fn insert_value(root: &mut Value, path: &[&str], value: Value) {
+    let Some((segment, rest)) = path.split_first() else {
+      *root = value;
+      return;
     };
 
-    Ok(value.unwrap_or(&fallback).to_string())
+    if !matches!(root, Value::Mapping(_)) {
+      *root = Value::Mapping(Default::default());
+    }
+
+    let Value::Mapping(mapping) = root else {
+      return;
+    };
+    let key = Value::String((*segment).to_string());
+
+    if rest.is_empty() {
+      mapping.insert(key, value);
+    } else {
+      Self::insert_value(
+        mapping.entry(key).or_insert(Value::Mapping(Default::default())),
+        rest,
+        value,
+      );
+    }
+  }
+
+  fn merge_save_value(existing: Value, serialized: Value) -> Value {
+    match (existing, serialized) {
+      (Value::Mapping(mut existing), Value::Mapping(serialized)) => {
+        for key in [
+          "hosts",
+          "git",
+          "bookmarks",
+          "bookmarksExportPrefix",
+          "node",
+          "editor",
+          "theme",
+          "colors",
+        ] {
+          existing.remove(Value::String(key.to_string()));
+        }
+
+        for (key, value) in serialized {
+          existing.insert(key, value);
+        }
+
+        Value::Mapping(existing)
+      }
+      (_, serialized) => serialized,
+    }
   }
 }
 
@@ -201,7 +387,8 @@ impl Default for Config {
       bookmarks_export_prefix: bookmarks_export_prefix(),
       node: NodeConfig::default(),
       editor: EditorConfig::default(),
-      profile: profile(),
+      theme: theme(),
+      colors: ColorsConfig::default(),
     }
   }
 }
@@ -236,4 +423,67 @@ impl Default for EditorConfig {
       graphical: editor_graphical(),
     }
   }
+}
+
+impl Default for ColorsConfig {
+  fn default() -> Self {
+    Self {
+      light: ColorThemeConfig::default(),
+      dark: ColorThemeConfig::dark(),
+    }
+  }
+}
+
+impl Default for ColorThemeConfig {
+  fn default() -> Self {
+    Self {
+      white: colors_white(),
+      black: colors_black(),
+      lightgreen: colors_lightgreen(),
+      yellow: colors_yellow(),
+      magenta: colors_magenta(),
+      blue: colors_blue(),
+      gray: colors_gray(),
+      lightgray: colors_lightgray(),
+      red: colors_light_red(),
+      green: colors_light_green(),
+      cyan: colors_light_cyan(),
+      foreground: colors_black(),
+      primary: colors_light_cyan(),
+      secondary: colors_magenta(),
+    }
+  }
+}
+
+impl ColorThemeConfig {
+  fn dark() -> Self {
+    Self {
+      white: colors_white(),
+      black: colors_black(),
+      lightgreen: colors_lightgreen(),
+      yellow: colors_yellow(),
+      magenta: colors_magenta(),
+      blue: colors_blue(),
+      gray: colors_gray(),
+      lightgray: colors_lightgray(),
+      red: colors_dark_red(),
+      green: colors_dark_green(),
+      cyan: colors_dark_cyan(),
+      foreground: colors_white(),
+      primary: colors_yellow(),
+      secondary: colors_dark_cyan(),
+    }
+  }
+}
+
+fn is_colors_config(value: &ColorsConfig) -> bool {
+  value == &ColorsConfig::default()
+}
+
+fn is_light_color_theme_config(value: &ColorThemeConfig) -> bool {
+  value == &ColorThemeConfig::default()
+}
+
+fn is_dark_color_theme_config(value: &ColorThemeConfig) -> bool {
+  value == &ColorThemeConfig::dark()
 }

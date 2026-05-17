@@ -230,9 +230,9 @@ impl Bookmark {
 
     let color_reset = "\x1b[0m";
     let color_bold = "\x1b[1m";
-    let color_success = colors.foreground(colors.palette.green);
-    let color_primary = colors.foreground(colors.palette.primary);
-    let color_secondary = colors.foreground(colors.palette.secondary);
+    let color_success = colors.foreground(&colors.palette.green);
+    let color_primary = colors.foreground(&colors.palette.primary);
+    let color_secondary = colors.foreground(&colors.palette.secondary);
     let mut table = Table::new();
     table
       .set_style(TableComponent::LeftBorder, '│')

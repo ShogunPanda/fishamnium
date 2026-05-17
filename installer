@@ -61,7 +61,7 @@ if ! set -q _flag_u
 
   # Copy files
   printf "%s--> Copying fishamnium in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$target" "$C_PRIMARY" "$C_RESET"
-  command cp -av completions data helper installer plugins themes version "$target" | sort; or exit 1
+  command cp -av completions data default.yml helper installer plugins themes version "$target" | sort; or exit 1
 
   printf "%s--> Copying loader file in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$loader" "$C_PRIMARY" "$C_RESET"
   command cp -av loader.fish "$loader"; or exit 1

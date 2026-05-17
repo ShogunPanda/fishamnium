@@ -1,98 +1,122 @@
 use crate::config::Config;
+use crate::defaults::*;
 use crate::env::Environment;
 use std::error::Error;
 use std::path::Path;
 
+#[derive(Clone, Copy)]
+struct ThemeDefaults {
+  red: &'static str,
+  green: &'static str,
+  cyan: &'static str,
+  foreground: &'static str,
+  primary: &'static str,
+  secondary: &'static str,
+}
+
+const LIGHT_THEME_DEFAULTS: ThemeDefaults = ThemeDefaults {
+  red: COLORS_LIGHT_RED,
+  green: COLORS_LIGHT_GREEN,
+  cyan: COLORS_LIGHT_CYAN,
+  foreground: COLORS_BLACK,
+  primary: COLORS_LIGHT_CYAN,
+  secondary: COLORS_MAGENTA,
+};
+
+const DARK_THEME_DEFAULTS: ThemeDefaults = ThemeDefaults {
+  red: COLORS_DARK_RED,
+  green: COLORS_DARK_GREEN,
+  cyan: COLORS_DARK_CYAN,
+  foreground: COLORS_WHITE,
+  primary: COLORS_YELLOW,
+  secondary: COLORS_DARK_CYAN,
+};
+
 pub struct Palette {
   // Fixed colors
-  pub white: &'static str,
-  pub black: &'static str,
-  pub lightgreen: &'static str,
-  pub yellow: &'static str,
-  pub magenta: &'static str,
-  pub blue: &'static str,
-  pub gray: &'static str,
-  pub lightgray: &'static str,
+  pub white: String,
+  pub black: String,
+  pub lightgreen: String,
+  pub yellow: String,
+  pub magenta: String,
+  pub blue: String,
+  pub gray: String,
+  pub lightgray: String,
   // Variable colors
-  pub red: &'static str,
-  pub green: &'static str,
-  pub cyan: &'static str,
-  pub foreground: &'static str,
-  pub primary: &'static str,
-  pub secondary: &'static str,
+  pub red: String,
+  pub green: String,
+  pub cyan: String,
+  pub foreground: String,
+  pub primary: String,
+  pub secondary: String,
 }
 
 pub struct Colors {
-  pub profile: String,
+  pub theme: String,
   pub palette: Palette,
 }
 
 impl Colors {
-  pub fn new(profile: Option<&str>) -> Result<Self, Box<dyn Error>> {
+  pub fn new(theme: Option<&str>) -> Result<Self, Box<dyn Error>> {
     let environment = Environment::new()?;
     let config_path = Path::new(environment.config());
+    let default_path = Path::new(environment.root()).join("default.yml");
     let mut config = Config::load(config_path)?;
+    let default = Config::load(&default_path)?;
 
-    let profile = match profile {
-      Some(profile) => {
-        config.profile = profile.to_string();
+    let theme = match theme {
+      Some(theme) => {
+        let theme = theme.to_lowercase();
+        config.theme = theme.clone();
         config.save(config_path)?;
-        profile.to_string()
+        theme
       }
-      None => config.profile,
-    }
-    .to_lowercase();
-
-    let white = "FFFFFF";
-    let black = "000000";
-    let lightgreen = "00CC00";
-    let yellow = "FFDF00";
-    let magenta = "C800E2";
-    let blue = "005be4";
-    let gray = "808080";
-    let lightgray = "C0C0C0";
-
-    let palette = if profile == "light" {
-      let cyan = "0088E2";
-
-      Palette {
-        white,
-        black,
-        lightgreen,
-        yellow,
-        magenta,
-        blue,
-        gray,
-        lightgray,
-        red: "CC0000",
-        green: "00CC00",
-        cyan,
-        foreground: black,
-        primary: cyan,
-        secondary: magenta,
-      }
-    } else {
-      let cyan = "5EBBF9";
-
-      Palette {
-        white,
-        black,
-        lightgreen,
-        yellow,
-        magenta,
-        blue,
-        gray,
-        lightgray,
-        red: "EE0000",
-        green: "00EE00",
-        cyan,
-        foreground: white,
-        primary: yellow,
-        secondary: cyan,
-      }
+      None => config.theme.to_lowercase(),
     };
 
-    Ok(Self { profile, palette })
+    let palette = if theme == "light" {
+      Self::palette(&config, &default, "light", LIGHT_THEME_DEFAULTS)?
+    } else {
+      Self::palette(&config, &default, "dark", DARK_THEME_DEFAULTS)?
+    };
+
+    Ok(Self { theme, palette })
+  }
+
+  fn palette(
+    config: &Config,
+    default: &Config,
+    theme: &str,
+    fallback: ThemeDefaults,
+  ) -> Result<Palette, Box<dyn Error>> {
+    Ok(Palette {
+      white: Self::color(config, default, theme, "white", COLORS_WHITE)?,
+      black: Self::color(config, default, theme, "black", COLORS_BLACK)?,
+      lightgreen: Self::color(config, default, theme, "lightgreen", COLORS_LIGHTGREEN)?,
+      yellow: Self::color(config, default, theme, "yellow", COLORS_YELLOW)?,
+      magenta: Self::color(config, default, theme, "magenta", COLORS_MAGENTA)?,
+      blue: Self::color(config, default, theme, "blue", COLORS_BLUE)?,
+      gray: Self::color(config, default, theme, "gray", COLORS_GRAY)?,
+      lightgray: Self::color(config, default, theme, "lightgray", COLORS_LIGHTGRAY)?,
+      red: Self::color(config, default, theme, "red", fallback.red)?,
+      green: Self::color(config, default, theme, "green", fallback.green)?,
+      cyan: Self::color(config, default, theme, "cyan", fallback.cyan)?,
+      foreground: Self::color(config, default, theme, "foreground", fallback.foreground)?,
+      primary: Self::color(config, default, theme, "primary", fallback.primary)?,
+      secondary: Self::color(config, default, theme, "secondary", fallback.secondary)?,
+    })
+  }
+
+  fn color(
+    config: &Config,
+    default: &Config,
+    theme: &str,
+    name: &str,
+    fallback: &str,
+  ) -> Result<String, Box<dyn Error>> {
+    let selector = format!("colors.{theme}.{name}");
+    let default_value = default.get(Some(&selector), &[fallback])?;
+    config.get(Some(&selector), &[&default_value])
   }
 
   pub fn to_response(&self) -> Vec<u8> {
@@ -132,25 +156,25 @@ impl Colors {
   }
 
   fn push_variables(&self, response: &mut String, mut push: impl FnMut(&mut String, &str, &str)) {
-    push(response, "FISHAMNIUM_COLOR_PROFILE", &self.profile);
+    push(response, "FISHAMNIUM_COLOR_THEME", &self.theme);
     push(response, "FISHAMNIUM_COLOR_RESET", "\x1b[0m");
     push(response, "FISHAMNIUM_COLOR_BOLD", "\x1b[1m");
     push(response, "FISHAMNIUM_COLOR_NORMAL", "\x1b[22m");
-    push(response, "FISHAMNIUM_COLOR_ERROR", &self.foreground(self.palette.red));
+    push(response, "FISHAMNIUM_COLOR_ERROR", &self.foreground(&self.palette.red));
     push(
       response,
       "FISHAMNIUM_COLOR_SUCCESS",
-      &self.foreground(self.palette.green),
+      &self.foreground(&self.palette.green),
     );
     push(
       response,
       "FISHAMNIUM_COLOR_PRIMARY",
-      &self.foreground(self.palette.primary),
+      &self.foreground(&self.palette.primary),
     );
     push(
       response,
       "FISHAMNIUM_COLOR_SECONDARY",
-      &self.foreground(self.palette.secondary),
+      &self.foreground(&self.palette.secondary),
     );
     push(
       response,
@@ -159,20 +183,20 @@ impl Colors {
     );
 
     for (name, color) in [
-      ("WHITE", self.palette.white),
-      ("BLACK", self.palette.black),
-      ("RED", self.palette.red),
-      ("GREEN", self.palette.green),
-      ("LIGHTGREEN", self.palette.lightgreen),
-      ("YELLOW", self.palette.yellow),
-      ("MAGENTA", self.palette.magenta),
-      ("BLUE", self.palette.blue),
-      ("CYAN", self.palette.cyan),
-      ("GRAY", self.palette.gray),
-      ("LIGHTGRAY", self.palette.lightgray),
-      ("FOREGROUND", self.palette.foreground),
-      ("PRIMARY", self.palette.primary),
-      ("SECONDARY", self.palette.secondary),
+      ("WHITE", self.palette.white.as_str()),
+      ("BLACK", self.palette.black.as_str()),
+      ("RED", self.palette.red.as_str()),
+      ("GREEN", self.palette.green.as_str()),
+      ("LIGHTGREEN", self.palette.lightgreen.as_str()),
+      ("YELLOW", self.palette.yellow.as_str()),
+      ("MAGENTA", self.palette.magenta.as_str()),
+      ("BLUE", self.palette.blue.as_str()),
+      ("CYAN", self.palette.cyan.as_str()),
+      ("GRAY", self.palette.gray.as_str()),
+      ("LIGHTGRAY", self.palette.lightgray.as_str()),
+      ("FOREGROUND", self.palette.foreground.as_str()),
+      ("PRIMARY", self.palette.primary.as_str()),
+      ("SECONDARY", self.palette.secondary.as_str()),
     ] {
       push(response, &format!("FISHAMNIUM_COLOR_{name}"), color);
       push(

@@ -104,7 +104,7 @@ __fishamnium_shell_environment shell-environment (string join : $PATH)
 
 # The environment variable is sent to inherit in SSH.
 fish_config theme choose None
-fishamnium_update_colors $FISHAMNIUM_COLOR_PROFILE
+fishamnium_update_colors $FISHAMNIUM_COLOR_THEME
 
 set -x -g fish_greeting
 
