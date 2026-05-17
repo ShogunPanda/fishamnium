@@ -1,3 +1,7 @@
+### 2026-05-17 / 12.3.0
+
+- feat: Better colors support.
+
 ### 2026-05-16 / 12.2.0
 
 - feat: Added new listing capability.
