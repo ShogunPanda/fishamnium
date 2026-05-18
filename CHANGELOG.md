@@ -1,3 +1,7 @@
+### 2026-05-18 / 12.3.1
+
+- fix: Error handling.
+
 ### 2026-05-17 / 12.3.0
 
 - feat: Better colors support.
