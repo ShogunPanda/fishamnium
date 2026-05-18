@@ -1,3 +1,4 @@
+use std::backtrace::Backtrace;
 use std::env;
 use std::fs::{self, DirBuilder, File, OpenOptions};
 use std::io::{Error, ErrorKind, Read, Result, Write};
@@ -347,7 +348,10 @@ impl Application {
 
     match handler(request, sender).and_then(|response| Ok(Application::write(stream, response.as_ref())?)) {
       Ok(()) => {}
-      Err(error) => eprintln!("{transport} handler failed: {error}"),
+      Err(error) => {
+        eprintln!("{transport} handler failed: {error}");
+        eprintln!("Backtrace:\n{}", Backtrace::force_capture());
+      }
     }
   }
 

@@ -13,12 +13,34 @@ use crate::colors::*;
 use crate::config::*;
 use crate::env::*;
 use clap::Parser;
+use std::backtrace::Backtrace;
 use std::error::Error;
 use std::io::{Error as IoError, ErrorKind};
+use std::panic;
 use std::process::id;
 use std::sync::Arc;
 use std::sync::mpsc::Sender;
 use std::time::Duration;
+
+fn install_error_handler() {
+  panic::set_hook(Box::new(|panic| {
+    eprintln!("Fishamnium aborted: {panic}");
+    eprintln!("Backtrace:\n{}", Backtrace::force_capture());
+  }));
+}
+
+fn abort(error: Box<dyn Error>) -> ! {
+  eprintln!("Fishamnium aborted: {error}");
+
+  let mut source = error.source();
+  while let Some(error) = source {
+    eprintln!("Caused by: {error}");
+    source = error.source();
+  }
+
+  eprintln!("Backtrace:\n{}", Backtrace::force_capture());
+  std::process::exit(1);
+}
 
 fn quit(events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
   std::thread::spawn(move || {
@@ -64,7 +86,9 @@ fn handle_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) -> R
       framed.extend(message.as_ref());
       Ok(Arc::new(framed))
     }
-    Err(error) => Ok(Arc::new(format!("1 {error}").into_bytes())),
+    Err(error) => Ok(Arc::new(
+      format!("1\n{error}\nBacktrace:\n{}", Backtrace::force_capture()).into_bytes(),
+    )),
   }
 }
 
@@ -87,7 +111,7 @@ fn handle_client_response(response: &[u8]) -> ! {
   std::process::exit(code);
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn run() -> Result<(), Box<dyn Error>> {
   let arguments = Arguments::parse();
   let application = Application::new("fishamnium", 40_000, Some(handle_request))?;
 
@@ -109,4 +133,12 @@ fn main() -> Result<(), Box<dyn Error>> {
   }
 
   Ok(())
+}
+
+fn main() {
+  install_error_handler();
+
+  if let Err(error) = run() {
+    abort(error);
+  }
 }

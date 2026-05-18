@@ -14,8 +14,8 @@
 
 [profile.release]
   codegen-units = 1
-  debug         = false
+  debug         = true
   lto           = "fat"
   opt-level     = 3
   panic         = "abort"
-  strip         = "symbols"
+  strip         = false
