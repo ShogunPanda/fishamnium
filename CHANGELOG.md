@@ -1,3 +1,7 @@
+### 2026-05-19 / 12.4.1
+
+- fix: Fixed reloading.
+
 ### 2026-05-19 / 12.4.0
 
 - feat: Improved wire protocol.
