@@ -35,6 +35,19 @@ set target ~/.local/share/fishamnium
 set loaderDirectory ~/.config/fish/conf.d
 set loader "$loaderDirectory/fishamnium.fish"
 set source /tmp/fishamnium-(date +%Y%m%d%H%M%S)
+set stateRoot ~/.local/state
+set fishamniumWasRunning 0
+
+if set -q XDG_STATE_HOME
+  set stateRoot $XDG_STATE_HOME
+end
+
+if test -f "$stateRoot/fishamnium/server.pid"
+  set fishamniumPid (string trim (command cat "$stateRoot/fishamnium/server.pid"))
+  if test -n "$fishamniumPid"
+    command kill -0 "$fishamniumPid" >/dev/null 2>/dev/null; and set fishamniumWasRunning 1
+  end
+end
 
 # Check main operation
 if ! set -q _flag_u
@@ -91,6 +104,11 @@ if ! set -q _flag_u
     printf "%s--> Removing temporary installation files in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$source" "$C_PRIMARY" "$C_RESET"
     cd "$origPwd"
     command rm -rf "$source"; or exit 1
+  end
+
+  if test "$fishamniumWasRunning" -eq 1
+    printf "%s--> Reloading running Fishamnium instance ...%s\n" "$C_PRIMARY" "$C_RESET"
+    command "$target/bin/fishamnium" reload;
   end
 
   # Print a status

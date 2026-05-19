@@ -126,12 +126,25 @@ fn handle_client_response(response: &[u8]) -> ! {
 fn run() -> Result<(), Box<dyn Error>> {
   let arguments = Arguments::parse();
   let application = Application::new("fishamnium", 40_000, Some(handle_request))?;
+  let reload = arguments.command.as_deref() == Some("reload");
+
+  if reload && arguments.client.is_some() {
+    return Err(IoError::new(ErrorKind::InvalidInput, "Reload cannot be used with --client").into());
+  }
 
   if arguments.server {
     application.run_server()?;
     std::process::exit(0);
   } else if arguments.client.is_none() {
+    if reload {
+      application.kill_server()?;
+    }
+
     application.boot()?;
+
+    if reload {
+      return Ok(());
+    }
   }
 
   if let Some(command) = arguments.command {

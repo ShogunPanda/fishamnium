@@ -82,7 +82,7 @@ end
 
 function fishamnium_reload -d "Reloads Fishamnium"
   printf "%s%s--> Reloading Fishamnium ...%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$FISHAMNIUM_COLOR_RESET"
-  $FISHAMNIUM_HELPER exit
+  $FISHAMNIUM_HELPER reload
   source ~/.config/fish/conf.d/fishamnium.fish
 end
 

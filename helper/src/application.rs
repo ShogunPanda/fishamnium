@@ -1,3 +1,6 @@
+use nix::errno::Errno;
+use nix::sys::signal::{Signal, kill};
+use nix::unistd::{ForkResult, Uid, dup2, fork, setsid};
 use std::backtrace::Backtrace;
 use std::env;
 use std::fs::{self, DirBuilder, File, OpenOptions};
@@ -12,8 +15,6 @@ use std::sync::mpsc::{Receiver, Sender};
 use std::sync::{Arc, mpsc};
 use std::thread;
 use std::time::{Duration, Instant};
-
-use nix::unistd::{ForkResult, Uid, dup2, fork, setsid};
 use threadpool::ThreadPool;
 
 use crate::config::empty_response;
@@ -125,6 +126,23 @@ impl Application {
         Application::write(&mut stream, message)?;
         Application::read(&mut stream)
       }
+    }
+  }
+
+  pub fn kill_server(&self) -> Result<()> {
+    let pid = match fs::read_to_string(&self.pid_path) {
+      Ok(pid) => pid,
+      Err(error) if error.kind() == ErrorKind::NotFound => return Ok(()),
+      Err(error) => return Err(error),
+    };
+
+    let Ok(pid) = pid.trim().parse::<i32>() else {
+      return Ok(());
+    };
+
+    match kill(nix::unistd::Pid::from_raw(pid), Signal::SIGKILL) {
+      Ok(()) | Err(Errno::ESRCH) => Ok(()),
+      Err(error) => Err(Error::other(error)),
     }
   }
 
