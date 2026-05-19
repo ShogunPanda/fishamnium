@@ -1,3 +1,7 @@
+### 2026-05-19 / 12.4.4
+
+- fix: Fixed installer.
+
 ### 2026-05-19 / 12.4.3
 
 - fix: Fixed installer.
