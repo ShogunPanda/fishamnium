@@ -109,11 +109,12 @@ if ! set -q _flag_u
   if test "$fishamniumWasRunning" -eq 1
     printf "%s--> Reloading running Fishamnium instance ...%s\n" "$C_PRIMARY" "$C_RESET"
     command "$target/bin/fishamnium" reload;
-  end
 
-  # Print a status
-  printf "\n%s--> To load fish right now without restarting the terminal, run: %ssource ~/.config/fish/conf.d/fishamnium.fish%s" "$C_SUCCESS" "$C_RESET" "$C_SUCCESS"
-  printf "\n%s--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A%s\n" "$C_SUCCESS" "$C_RESET"
+    printf "\n%s--> Fishamnium has been update. Hope you will like it. Enjoy! \U0001F37A%s\n" "$C_SUCCESS" "$C_RESET"
+  else
+    printf "\n%s--> To load fishamnium right now without restarting the terminal, run: %ssource ~/.config/fish/conf.d/fishamnium.fish%s" "$C_SUCCESS" "$C_RESET" "$C_SUCCESS"
+    printf "\n%s--> Fishamnium has been installed. Hope you will like it. Enjoy! \U0001F37A%s\n" "$C_SUCCESS" "$C_RESET"
+  end
 else
   printf "%s--> Removing directory %s%s%s and loader file %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$target" "$C_PRIMARY" "$C_RESET" "$loader" "$C_PRIMARY" "$C_RESET"
   command rm -rf "$target" "$loader"; or exit 1
