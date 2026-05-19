@@ -11,14 +11,9 @@ use crate::defaults::*;
 use crate::env::Environment;
 
 static EMPTY_RESPONSE: OnceLock<Arc<Vec<u8>>> = OnceLock::new();
-static EMPTY_OK_RESPONSE: OnceLock<Arc<Vec<u8>>> = OnceLock::new();
 
 pub fn empty_response() -> Arc<Vec<u8>> {
   Arc::clone(EMPTY_RESPONSE.get_or_init(|| Arc::new(Vec::new())))
-}
-
-pub fn empty_ok_response() -> Arc<Vec<u8>> {
-  Arc::clone(EMPTY_OK_RESPONSE.get_or_init(|| Arc::new(b"0".to_vec())))
 }
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]

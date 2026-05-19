@@ -59,8 +59,8 @@ pub struct Colors {
 impl Colors {
   pub fn new(theme: Option<&str>) -> Result<Self, Box<dyn Error>> {
     let environment = Environment::new()?;
-    let config_path = Path::new(environment.config());
-    let default_path = Path::new(environment.root()).join("default.yml");
+    let config_path = Path::new(&environment.config);
+    let default_path = Path::new(&environment.root).join("default.yml");
     let mut config = Config::load(config_path)?;
     let default = Config::load(&default_path)?;
 

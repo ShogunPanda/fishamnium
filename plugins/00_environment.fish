@@ -37,15 +37,21 @@ function __fishamnium_find_configuration_file
 end
 
 function __fishamnium_get_configuration
-  $FISHAMNIUM_HELPER config "$argv[1]" $argv[2..-1]
+  if test (count $argv) -gt 1
+    $FISHAMNIUM_HELPER config "$argv[1]" "$argv[2]"
+  else
+    $FISHAMNIUM_HELPER config "$argv[1]"
+  end
 end
 
 # Public functions
 function fishamnium_update_colors -d "Updates fishamnium color settings"
+  set -l existing_path (string join : $PATH)
+
   if test -n "$argv[1]"
-    __fishamnium_shell_environment shell-environment (string join : $PATH) "$argv[1]"
+    __fishamnium_shell_environment shell-environment "$existing_path" "$argv[1]"
   else
-    __fishamnium_shell_environment shell-environment (string join : $PATH)
+    __fishamnium_shell_environment shell-environment "$existing_path"
   end
 
   set fish_color_normal $FISHAMNIUM_COLOR_FOREGROUND
@@ -100,7 +106,8 @@ function export
 end
 
 # Basic environment
-__fishamnium_shell_environment shell-environment (string join : $PATH)
+set -l __fishamnium_existing_path (string join : $PATH)
+__fishamnium_shell_environment shell-environment "$__fishamnium_existing_path"
 
 # The environment variable is sent to inherit in SSH.
 fish_config theme choose None

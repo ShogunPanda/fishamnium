@@ -51,6 +51,16 @@ impl Bookmark {
       Some("names") => Arc::new(Self::to_names(&Self::list_filtered(payload.first().copied())?).into_bytes()),
       Some("show") => Arc::new(Self::show_current(payload.first().copied().unwrap_or(""))?.into_bytes()),
       Some("save") => {
+        if payload.len() > 2 {
+          return Err(
+            IoError::new(
+              ErrorKind::InvalidInput,
+              "Bookmark save accepts at most one display name",
+            )
+            .into(),
+          );
+        }
+
         Self::save_current(
           payload.first().copied().unwrap_or(""),
           Bookmark::name_from_payload(payload),
@@ -344,10 +354,6 @@ impl Bookmark {
   }
 
   fn name_from_payload(payload: &[&str]) -> Option<String> {
-    if payload.len() > 1 {
-      Some(payload[1..].join(" "))
-    } else {
-      None
-    }
+    payload.get(1).map(|name| (*name).to_string())
   }
 }

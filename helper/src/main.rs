@@ -5,6 +5,7 @@ mod colors;
 mod config;
 mod defaults;
 mod env;
+mod protocol;
 
 use crate::application::*;
 use crate::bookmarks::*;
@@ -12,6 +13,7 @@ use crate::cli::*;
 use crate::colors::*;
 use crate::config::*;
 use crate::env::*;
+use crate::protocol::*;
 use clap::Parser;
 use std::backtrace::Backtrace;
 use std::error::Error;
@@ -51,64 +53,74 @@ fn quit(events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn 
   Ok(empty_response())
 }
 
-fn handle_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
-  let response: Result<Arc<Vec<u8>>, Box<dyn Error>> = match std::str::from_utf8(&request) {
-    Ok(request) => {
-      if let [request, payload @ ..] = request.split(" ").collect::<Vec<_>>().as_slice() {
-        let first_arg = payload.first().copied();
-        let second_arg = payload.get(1).copied();
-        let arguments = payload.get(1..).unwrap_or(&[]);
+fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
+  let arguments = decode_request(&request)?;
 
-        match *request {
-          "pid" => Ok(Arc::new(format!("{}", id()).into_bytes())),
-          "env" => Ok(Arc::new(Environment::new()?.to_response(first_arg)?)),
-          "shell-environment" => Ok(Arc::new(Environment::to_shell_response(first_arg, second_arg)?)),
-          "colors" => Ok(Arc::new(Colors::new(first_arg)?.to_response())),
-          "configuration-file" => Ok(Arc::new(Config::current_path()?.into_bytes())),
-          "config" | "configuration" => Ok(Arc::new(
-            Config::load_current()?.get(first_arg, arguments)?.into_bytes(),
-          )),
-          "bookmarks" => Bookmark::handle(first_arg, arguments),
-          "exit" | "quit" => quit(events.clone()),
-          _ => Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into()),
-        }
-      } else {
-        Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into())
-      }
-    }
-    Err(_) => Err(IoError::new(ErrorKind::InvalidInput, "Invalid request encoding").into()),
+  let [request, payload @ ..] = arguments.as_slice() else {
+    return Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into());
   };
 
-  match response {
-    Ok(message) if message.is_empty() => Ok(empty_ok_response()),
-    Ok(message) => {
-      let mut framed = b"0\n".to_vec();
-      framed.extend(message.as_ref());
-      Ok(Arc::new(framed))
+  let first_arg = payload.first().map(String::as_str);
+  let second_arg = payload.get(1).map(String::as_str);
+  let command_arguments = payload.get(1..).unwrap_or(&[]);
+  let command_arguments = command_arguments.iter().map(String::as_str).collect::<Vec<_>>();
+
+  match request.as_str() {
+    "pid" => Ok(Arc::new(format!("{}", id()).into_bytes())),
+    "env" => Ok(Arc::new(Environment::new()?.to_response(first_arg)?)),
+    "shell-environment" => Ok(Arc::new(Environment::to_shell_response(first_arg, second_arg)?)),
+    "colors" => Ok(Arc::new(Colors::new(first_arg)?.to_response())),
+    "configuration-file" => Ok(Arc::new(Config::current_path()?.into_bytes())),
+    "config" | "configuration" => {
+      if payload.len() > 2 {
+        return Err(IoError::new(ErrorKind::InvalidInput, "Config accepts at most one fallback argument").into());
+      }
+
+      let fallback = second_arg.into_iter().collect::<Vec<_>>();
+      Ok(Arc::new(
+        Config::load_current()?.get(first_arg, &fallback)?.into_bytes(),
+      ))
     }
-    Err(error) => Ok(Arc::new(
-      format!("1\n{error}\nBacktrace:\n{}", Backtrace::force_capture()).into_bytes(),
-    )),
+    "bookmarks" => Bookmark::handle(first_arg, &command_arguments),
+    "exit" | "quit" => quit(events.clone()),
+    _ => Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into()),
+  }
+}
+
+fn handle_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
+  let response = dispatch_request(request, events);
+
+  match response {
+    Ok(message) if message.is_empty() => Ok(Arc::new(encode_response(None)?)),
+    Ok(message) => Ok(Arc::new(encode_response(Some(message.as_ref()))?)),
+    Err(error) => Ok(Arc::new(encode_error(&format!(
+      "{error}\nBacktrace:\n{}",
+      Backtrace::force_capture()
+    ))?)),
   }
 }
 
 fn handle_client_response(response: &[u8]) -> ! {
-  let response = String::from_utf8_lossy(response);
-  let response = response.trim();
-  let (code, message) = if let Some((code, message)) = response.split_once('\n') {
-    (code.trim(), message.trim())
-  } else if let Some((code, message)) = response.split_once(' ') {
-    (code.trim(), message.trim())
-  } else {
-    (response, "")
-  };
-  let code = code.parse::<i32>().unwrap_or(1);
+  match decode_response(response) {
+    Ok(Response::Ok(message)) => {
+      if let Some(message) = message.filter(|message| !message.is_empty()) {
+        println!("{}", String::from_utf8_lossy(&message));
+      }
 
-  if !message.is_empty() {
-    println!("{message}");
+      std::process::exit(0);
+    }
+    Ok(Response::Error(message)) => {
+      if !message.is_empty() {
+        println!("{message}");
+      }
+
+      std::process::exit(1);
+    }
+    Err(error) => {
+      println!("Invalid response encoding: {error}");
+      std::process::exit(1);
+    }
   }
-
-  std::process::exit(code);
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
@@ -123,12 +135,10 @@ fn run() -> Result<(), Box<dyn Error>> {
   }
 
   if let Some(command) = arguments.command {
-    let request = if arguments.payload.is_empty() {
-      command
-    } else {
-      format!("{} {}", command, arguments.payload.join(" "))
-    };
-    let response = application.send(arguments.client.as_deref(), request.as_bytes())?;
+    let mut request = vec![command];
+    request.extend(arguments.payload);
+    let request = encode_request(&request)?;
+    let response = application.send(arguments.client.as_deref(), &request)?;
     handle_client_response(&response);
   }
 

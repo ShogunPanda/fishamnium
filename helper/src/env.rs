@@ -6,7 +6,7 @@ use std::{collections::HashSet, error::Error, path::PathBuf};
 
 pub struct Environment {
   hostname: String,
-  root: String,
+  pub root: String,
   pub config: String,
   config_root: String,
 }
@@ -81,14 +81,6 @@ impl Environment {
     let mut response = Self::new()?.to_fish_response(existing_path)?;
     response.extend(Colors::new(theme)?.to_fish_response());
     Ok(response)
-  }
-
-  pub fn root(&self) -> &str {
-    &self.root
-  }
-
-  pub fn config(&self) -> &str {
-    &self.config
   }
 
   pub fn quote_env_value(value: &str) -> String {
