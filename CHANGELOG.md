@@ -1,3 +1,7 @@
+### 2026-05-19 / 12.4.0
+
+- feat: Improved wire protocol.
+
 ### 2026-05-18 / 12.3.1
 
 - fix: Error handling.
