@@ -1,3 +1,7 @@
+### 2026-05-20 / 12.4.5
+
+- fix: Arguments passing.
+
 ### 2026-05-19 / 12.4.4
 
 - fix: Fixed installer.
