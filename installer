@@ -90,9 +90,8 @@ if ! set -q _flag_u
 
   cd $target/helper; or exit 1
   command mkdir ../bin; or exit 1
-  command $cargo build --release; or exit 1
-
-  command cp -av target/release/fishamnium "../bin/fishamnium"; or exit 1
+  command $cargo build --target-dir /tmp/fishamnium-helper-build-$USER --release; or exit 1
+  command cp -av /tmp/fishamnium-helper-build-$USER/release/fishamnium "../bin/fishamnium"; or exit 1
   command rm -rf target; or exit 1
 
   # Ensure permissions
