@@ -197,3 +197,5 @@ alias e=bookmark_edit
 alias ds=bookmark_delete_select
 alias csz="bookmark_cd_select -z"
 alias os=bookmark_open_select
+
+bookmarks_export_to_env
