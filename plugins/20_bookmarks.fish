@@ -1,5 +1,9 @@
 function __bookmarks_list
-  $FISHAMNIUM_HELPER bookmarks tsv "$argv"
+  if test (count $argv) -gt 0
+    $FISHAMNIUM_HELPER bookmarks tsv "$argv[1]"
+  else
+    $FISHAMNIUM_HELPER bookmarks tsv
+  end
 end
 
 function __bookmarks_get_path
@@ -35,11 +39,19 @@ function bookmarks_list -d "Lists all bookmarks"
 end
 
 function bookmarks_autocomplete -d "Autocomplete bookmarks"
-  $FISHAMNIUM_HELPER bookmarks autocomplete "$argv"
+  if test (count $argv) -gt 0
+    $FISHAMNIUM_HELPER bookmarks autocomplete "$argv[1]"
+  else
+    $FISHAMNIUM_HELPER bookmarks autocomplete
+  end
 end
 
 function bookmarks_names -d "Lists all bookmarks names"
-  $FISHAMNIUM_HELPER bookmarks names "$argv"
+  if test (count $argv) -gt 0
+    $FISHAMNIUM_HELPER bookmarks names "$argv[1]"
+  else
+    $FISHAMNIUM_HELPER bookmarks names
+  end
 end
 
 function bookmark_show -d "Reads a bookmark"
