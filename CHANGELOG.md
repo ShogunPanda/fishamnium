@@ -1,3 +1,7 @@
+### 2026-05-20 / 12.5.0
+
+- feat: Export bookmarks on load.
+
 ### 2026-05-20 / 12.4.5
 
 - fix: Arguments passing.
