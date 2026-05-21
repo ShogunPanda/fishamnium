@@ -44,9 +44,9 @@ impl Bookmark {
       Some("list") => Arc::new(Self::to_table(&Self::list_filtered(payload.first().copied())?)?.into_bytes()),
       Some("list-raw") => Arc::new(Self::to_raw_list(&Self::list_filtered(payload.first().copied())?)?.into_bytes()),
       Some("tsv") => Arc::new(Self::to_tsv(&Self::list_filtered(payload.first().copied())?).into_bytes()),
-      Some("vscode-projects") => Arc::new(
-        Self::to_vscode_projects(&Self::list_filtered(payload.first().copied())?)?.into_bytes(),
-      ),
+      Some("vscode-projects") => {
+        Arc::new(Self::to_vscode_projects(&Self::list_filtered(payload.first().copied())?)?.into_bytes())
+      }
       Some("export") => Arc::new(
         Self::to_export(
           &Self::list_filtered(payload.first().copied())?,
@@ -268,7 +268,6 @@ impl Bookmark {
 
     let color_reset = "\x1b[0m";
     let color_bold = "\x1b[1m";
-    let color_success = colors.foreground(&colors.palette.green);
     let color_primary = colors.foreground(&colors.palette.primary);
     let color_secondary = colors.foreground(&colors.palette.secondary);
     let mut table = Table::new();
@@ -297,17 +296,21 @@ impl Bookmark {
       .remove_style(TableComponent::LeftBorderIntersections)
       .remove_style(TableComponent::RightBorderIntersections);
 
-    table.set_header(vec![Cell::new("ID"), Cell::new("Destination"), Cell::new("Name")]);
+    table.set_header(vec![
+      Cell::new(format!("{color_primary}{color_bold}{}{color_reset}", "ID")),
+      Cell::new(format!("{color_primary}{color_bold}{}{color_reset}", "Name")),
+      Cell::new(format!("{color_primary}{color_bold}{}{color_reset}", "Destination")),
+    ]);
 
     for bookmark in bookmarks {
       table.add_row(vec![
-        Cell::new(format!("{color_success}{color_bold}{}{color_reset}", bookmark.id)),
+        Cell::new(format!("{color_primary}{color_bold}{}{color_reset}", bookmark.id)),
+        Cell::new(format!("{color_bold}{}{color_reset}", bookmark.name)),
         Cell::new(
           bookmark
             .path
-            .replace("$HOME", &format!("{color_primary}$HOME{color_reset}")),
+            .replace("$HOME", &format!("{color_secondary}{color_bold}$HOME{color_reset}")),
         ),
-        Cell::new(format!("{color_secondary}{}{color_reset}", bookmark.name)),
       ]);
     }
 

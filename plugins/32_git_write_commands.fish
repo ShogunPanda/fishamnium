@@ -122,10 +122,9 @@ function g_switch -d "Interactively switch between local branch"
 
   set branches $(git branch --no-color | cut -c 3-)
   set prompt "--> Which branch you want to checkout? "
-  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $branches) + 3)
 
-  set choice $(string join0 $branches | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $branches | __fishamnium_select "$prompt" "$height")
   
   if test $status -eq 0
     __g_status "git checkout $choice"
@@ -137,13 +136,12 @@ function g_branch_delete_select -d "Interactively delete local branches"
   g_is_repository; or return
 
   set branches $(git branch --no-color | grep -v "^\*" | cut -c 3-)
-  set prompt "--> Which branch you want to checkout? (current branch is filtered out)"
-  set colors $FISHAMNIUM_INTERACTIVE_COLORS
+  set prompt "--> Which branches do you want to delete? (current branch is filtered out)"
   set height $(math $(count $branches) + 3)
 
-  set choice $(string join0 $branches | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors -m)
+  set choices $(string join0 $branches | __fishamnium_multiselect "$prompt" "$height")
   
   if test $status -eq 0
-    __git branch -D $choice
+    __git branch -D $choices
   end
 end

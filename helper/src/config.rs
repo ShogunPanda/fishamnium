@@ -162,21 +162,6 @@ pub struct Config {
 
 impl Config {
   pub fn current_path() -> Result<String, Box<dyn Error>> {
-    let file_name = ".fishamnium.yml";
-    let mut directory = std::env::current_dir()?;
-
-    loop {
-      let candidate = directory.join(file_name);
-
-      if candidate.is_file() {
-        return Ok(candidate.to_string_lossy().into_owned());
-      }
-
-      if !directory.pop() {
-        break;
-      }
-    }
-
     Ok(Environment::new()?.config)
   }
 

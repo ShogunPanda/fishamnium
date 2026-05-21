@@ -144,31 +144,32 @@ end
 function bookmark_delete_select -d "Interactively deletes a bookmark"
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to delete?"
-  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
-  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choices $(string join0 $bookmarks | __fishamnium_multiselect "$prompt" "$height")
 
   if test $status -eq 0
-    bookmark_delete "$choice"
+    for choice in $choices
+      bookmark_delete "$choice"
+    end
   end
 end
 
 function bookmark_cd_select -d "Interactively deletes a bookmark"
-  argparse -i --name=bookmbookmark_cd_select "z/zoxide" -- $argv
+  argparse -i --name=bookmark_cd_select "z/zoxide" -- $argv
 
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to move to?"
-  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
-  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
+  set choice $(string join0 $bookmarks | __fishamnium_select "$prompt" "$height")
+  set destination $(__bookmarks_get_path "$choice")
 
   if test $status -eq 0
     if set -q _flag_z
-      zoxide add -- "$choice"
+      zoxide add -- "$destination"
     else
-      cd "$choice"
+      cd "$destination"
     end
   end
 end
@@ -176,13 +177,12 @@ end
 function bookmark_open_select -d "Interactively edits a bookmark using the current editor"
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to open?"
-  set colors $FISHAMNIUM_INTERACTIVE_COLORS
   set height $(math $(count $bookmarks) + 1)
 
-  set choice $(string join0 $bookmarks | fzf --read0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors)
-
+  set choice $(string join0 $bookmarks | __fishamnium_select "$prompt" "$height")
+  set destination $(__bookmarks_get_path "$choice")
   if test $status -eq 0
-    cd "$choice"
+    $GEDITOR "$destination"
   end
 end
 
@@ -214,6 +214,7 @@ alias cz="bookmark_cd -z"
 alias o=bookmark_open
 alias e=bookmark_edit
 alias ds=bookmark_delete_select
+alias cs="bookmark_cd_select"
 alias csz="bookmark_cd_select -z"
 alias os=bookmark_open_select
 

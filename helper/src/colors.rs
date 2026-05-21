@@ -58,6 +58,14 @@ pub struct Colors {
 
 impl Colors {
   pub fn new(theme: Option<&str>) -> Result<Self, Box<dyn Error>> {
+    Self::load(theme, true)
+  }
+
+  pub fn for_theme(theme: Option<&str>) -> Result<Self, Box<dyn Error>> {
+    Self::load(theme, false)
+  }
+
+  fn load(theme: Option<&str>, save: bool) -> Result<Self, Box<dyn Error>> {
     let environment = Environment::new()?;
     let config_path = Path::new(&environment.config);
     let default_path = Path::new(&environment.root).join("default.yml");
@@ -67,8 +75,12 @@ impl Colors {
     let theme = match theme {
       Some(theme) => {
         let theme = theme.to_lowercase();
-        config.theme = theme.clone();
-        config.save(config_path)?;
+
+        if save {
+          config.theme = theme.clone();
+          config.save(config_path)?;
+        }
+
         theme
       }
       None => config.theme.to_lowercase(),
@@ -155,6 +167,19 @@ impl Colors {
     (red, green, blue)
   }
 
+  pub fn fzf_theme(&self) -> String {
+    format!(
+      "{},prompt:#{}:bold,bg+:-1,fg+:#{}:bold,pointer:#{}:bold,marker:#{}:bold,hl:#{}:underline,hl+:#{}:bold:underline",
+      self.theme,
+      self.palette.primary,
+      self.palette.foreground,
+      self.palette.primary,
+      self.palette.primary,
+      self.palette.foreground,
+      self.palette.primary,
+    )
+  }
+
   fn push_variables(&self, response: &mut String, mut push: impl FnMut(&mut String, &str, &str)) {
     push(response, "FISHAMNIUM_COLOR_THEME", &self.theme);
     push(response, "FISHAMNIUM_COLOR_RESET", "\x1b[0m");
@@ -176,12 +201,6 @@ impl Colors {
       "FISHAMNIUM_COLOR_SECONDARY",
       &self.foreground(&self.palette.secondary),
     );
-    push(
-      response,
-      "FISHAMNIUM_INTERACTIVE_COLORS",
-      "prompt:3:bold,bg+:-1,fg+:2:bold,pointer:2:bold,hl:-1:underline,hl+:2:bold:underline",
-    );
-
     for (name, color) in [
       ("WHITE", self.palette.white.as_str()),
       ("BLACK", self.palette.black.as_str()),

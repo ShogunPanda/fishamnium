@@ -44,6 +44,24 @@ function __fishamnium_get_configuration
   end
 end
 
+function __fishamnium_select
+  set -l prompt "$argv[1]"
+  set -l height "$argv[2]"
+  set -l colors $($FISHAMNIUM_HELPER fzf-theme)
+
+  fzf --read0 --print0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors | string split0
+  return $pipestatus[1]
+end
+
+function __fishamnium_multiselect
+  set -l prompt "$argv[1]"
+  set -l height "$argv[2]"
+  set -l colors $($FISHAMNIUM_HELPER fzf-theme)
+
+  fzf --read0 --print0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors -m --marker="* " | string split0
+  return $pipestatus[1]
+end
+
 # Public functions
 function fishamnium_update_colors -d "Updates fishamnium color settings"
   set -l existing_path (string join : $PATH)

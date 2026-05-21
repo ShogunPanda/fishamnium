@@ -70,6 +70,7 @@ fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) ->
     "env" => Ok(Arc::new(Environment::new()?.to_response(first_arg)?)),
     "shell-environment" => Ok(Arc::new(Environment::to_shell_response(first_arg, second_arg)?)),
     "colors" => Ok(Arc::new(Colors::new(first_arg)?.to_response())),
+    "fzf-theme" => Ok(Arc::new(Colors::for_theme(first_arg)?.fzf_theme().into_bytes())),
     "configuration-file" => Ok(Arc::new(Config::current_path()?.into_bytes())),
     "config" | "configuration" => {
       if payload.len() > 2 {
