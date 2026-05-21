@@ -5,12 +5,14 @@ function __fishamnium_is_bookmark_argument
 end
 
 # Remove existing completions
-for i in bookmarks_list bookmark_show bookmark_save bookmark_delete bookmark_cd bookmark_open bookmark_edit
+for i in bookmarks_list bookmarks_vscode_projects bookmarks_export_to_vs_code bookmark_show bookmark_save bookmark_delete bookmark_cd bookmark_open bookmark_edit
   complete -c $i -e
 end
 
 # List and save don't take autocompletions
 complete -c bookmarks_list -x -a ""
+complete -c bookmarks_vscode_projects -x -a ""
+complete -c bookmarks_export_to_vs_code -x -a ""
 complete -c bookmark_save -x -a ""
 
 # All other commands take only the bookmark name as completions

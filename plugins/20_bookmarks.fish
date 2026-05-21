@@ -54,6 +54,14 @@ function bookmarks_names -d "Lists all bookmarks names"
   end
 end
 
+function bookmarks_vscode_projects -d "Exports bookmarks as VS Code projects JSON"
+  if test (count $argv) -gt 0
+    $FISHAMNIUM_HELPER bookmarks vscode-projects "$argv[1]"
+  else
+    $FISHAMNIUM_HELPER bookmarks vscode-projects
+  end
+end
+
 function bookmark_show -d "Reads a bookmark"
   argparse -i --name=bookmark_show "y/copy" -- $argv
 
@@ -184,6 +192,17 @@ function bookmarks_export_to_env -d "Exports bookmarks as environment variables"
   source $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish
 end
 
+function bookmarks_export_to_vscode -d "Exports bookmarks as VS Code projects JSON file"
+  set output_directory "$HOME/.local/state/fishamnium"
+  mkdir -p "$output_directory"
+
+  if test (count $argv) -gt 0
+    $FISHAMNIUM_HELPER bookmarks vscode-projects "$argv[1]" > "$output_directory/vscode-projects.json"
+  else
+    $FISHAMNIUM_HELPER bookmarks vscode-projects > "$output_directory/vscode-projects.json"
+  end
+end
+
 alias l=bookmarks_list
 alias le=bookmarks_export_to_env
 alias b=bookmark_show
@@ -199,3 +218,4 @@ alias csz="bookmark_cd_select -z"
 alias os=bookmark_open_select
 
 bookmarks_export_to_env
+bookmarks_export_to_vscode

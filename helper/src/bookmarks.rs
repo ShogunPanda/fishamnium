@@ -28,12 +28,25 @@ pub struct Bookmark {
   pub name: String,
 }
 
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct VscodeProject {
+  name: String,
+  root_path: String,
+  paths: Vec<String>,
+  tags: Vec<String>,
+  enabled: bool,
+}
+
 impl Bookmark {
   pub fn handle(command: Option<&str>, payload: &[&str]) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
     Ok(match command {
       Some("list") => Arc::new(Self::to_table(&Self::list_filtered(payload.first().copied())?)?.into_bytes()),
       Some("list-raw") => Arc::new(Self::to_raw_list(&Self::list_filtered(payload.first().copied())?)?.into_bytes()),
       Some("tsv") => Arc::new(Self::to_tsv(&Self::list_filtered(payload.first().copied())?).into_bytes()),
+      Some("vscode-projects") => Arc::new(
+        Self::to_vscode_projects(&Self::list_filtered(payload.first().copied())?)?.into_bytes(),
+      ),
       Some("export") => Arc::new(
         Self::to_export(
           &Self::list_filtered(payload.first().copied())?,
@@ -178,6 +191,21 @@ impl Bookmark {
     }
 
     response
+  }
+
+  pub fn to_vscode_projects(bookmarks: &[Self]) -> Result<String, Box<dyn Error>> {
+    let projects = bookmarks
+      .iter()
+      .map(|bookmark| VscodeProject {
+        name: format!("{} ({})", bookmark.id, bookmark.name),
+        root_path: bookmark.path.replace("$HOME", "$home"),
+        paths: Vec::new(),
+        tags: Vec::new(),
+        enabled: true,
+      })
+      .collect::<Vec<_>>();
+
+    Ok(serde_json::to_string_pretty(&projects)?)
   }
 
   pub fn to_raw_list(bookmarks: &[Self]) -> Result<String, Box<dyn Error>> {
