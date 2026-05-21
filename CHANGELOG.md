@@ -1,3 +1,7 @@
+### 2026-05-21 / 12.7.0
+
+- feat: Improved VSCode support.
+
 ### 2026-05-21 / 12.6.0
 
 - feat: Added new project helpers.
