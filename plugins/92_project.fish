@@ -1,7 +1,8 @@
 function project_root
+  set fallback $PWD
   set destination $PWD
 
-  argparse -i --name=project_root "N/dry-run" "c/include-current" "y/copy" -- $argv
+  argparse -i --name=project_root "N/dry-run" "c/include-current" "f/fallback" "y/copy" -- $argv
 
   if ! set -q _flag_c
     set destination $(path dirname "$destination")
@@ -10,7 +11,7 @@ function project_root
   while test $destination != "/"
     set is_root 0
 
-    for file in package.json Cargo.toml Makefile go.mod README.md;
+    for file in package.json Makefile.toml Cargo.toml Makefile go.mod README.md;
       if test -e $destination/$file;
         set is_root 1
       end
@@ -24,11 +25,15 @@ function project_root
   end
 
   if test $destination = "/";
-    if ! set -q _flag_y
-      printf "%s%s--> No projects found.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
-    end
+    if set -q _flag_f
+      set destination $fallback
+    else
+      if ! set -q _flag_y
+        printf "%s%s--> No projects found.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
+      end
 
-    return 1
+      return 1
+    end
   end
 
   if set -q _flag_y
@@ -38,6 +43,111 @@ function project_root
   end
 end
 
+function project_type
+  set root $(project_root -c -f)
+
+  if test $status -ne 0
+    return 1
+  end
+
+  if test -e "$root/package.json"
+    echo javascript
+  else if test -e "$root/Makefile.toml"
+    echo makers
+  else if test -e "$root/Cargo.toml"
+    echo rust
+  else if test -e "$root/Makefile"
+    echo make
+  else
+    echo shell
+  end
+end
+
+function project_runner
+  set type $(project_type)
+
+  if test $status -ne 0
+    return 1
+  end
+
+  switch $type
+    case javascript
+      echo npm
+    case makers
+      echo makers
+    case rust
+      echo cargo
+    case make
+      echo make
+    case shell
+      echo bash
+  end
+end
+
+function project_build
+  set runner $(project_runner)
+
+  if test $status -ne 0
+    return 1
+  end
+
+  switch $runner
+    case npm
+      npm run build
+    case makers
+      makers build
+    case cargo
+      cargo build
+    case make
+      make build
+    case bash
+      bash build.sh
+  end
+end
+
+function project_test
+  set runner $(project_runner)
+
+  if test $status -ne 0
+    return 1
+  end
+
+  switch $runner
+    case npm
+      npm run test
+    case makers
+      makers test
+    case cargo
+      cargo test
+    case make
+      make test
+    case bash
+      bash test.sh
+  end
+end
+
+
+function project_deploy
+  set runner $(project_runner)
+
+  if test $status -ne 0
+    return 1
+  end
+
+  switch $runner
+    case npm
+      npm run deploy
+    case makers
+      makers deploy
+    case cargo
+      printf "%s%sDeploy is not supported for Rust projects.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
+      return 1
+    case make
+      make deploy
+    case bash
+      bash deploy.sh
+  end
+end
 
 function cd_project_root
   # Drop the copy flag
@@ -63,4 +173,9 @@ function cd_project_root
 end
 
 alias p=project_root
+alias pmt=project_type
+alias pmr=project_runner
+alias pb=project_build
+alias pt=project_test
+alias pd=project_deploy
 alias cdr=cd_project_root
