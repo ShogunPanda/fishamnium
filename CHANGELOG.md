@@ -1,3 +1,7 @@
+### 2026-05-21 / 12.6.0
+
+- feat: Added new project helpers.
+
 ### 2026-05-20 / 12.5.0
 
 - feat: Export bookmarks on load.
