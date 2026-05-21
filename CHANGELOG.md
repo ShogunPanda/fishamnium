@@ -1,3 +1,7 @@
+### 2026-05-21 / 12.8.0
+
+- feat: Multiselect support.
+
 ### 2026-05-21 / 12.7.0
 
 - feat: Improved VSCode support.
