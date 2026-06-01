@@ -37,8 +37,7 @@
   script_runner = "@duckscript"
   script = """
     if is_empty ${1}
-      exec cambi changelog
-      exec cambi update -o -t
+      exec cambi update -o -l -t
     else
       valid_tags = array major minor patch
       valid = array_contains ${valid_tags} ${1}
@@ -47,7 +46,7 @@
         trigger_error "Usage: makers version [type=major|minor|patch]"
       end
       
-      exec cambi update -o -t ${1}
+      exec cambi update -o -l -t ${1}
     end
   """
 
