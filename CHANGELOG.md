@@ -1,3 +1,7 @@
+### 2026-06-02 / 12.10.0
+
+- feat: Replaced zoxide with pushd.
+
 ### 2026-06-02 / 12.9.0
 
 - feat: New directory aliases.
