@@ -109,15 +109,15 @@ function bookmark_delete -d "Deletes a bookmark"
 end
 
 function bookmark_cd -d "Changes current directory to a saved bookmark"
-  argparse -i --name=bookmark_cd "z/zoxide" -- $argv
+  argparse -i --name=bookmark_cd "s/stack" -- $argv
 
   if ! set destination $(bookmark_show $argv 2>/dev/null)
     echo "$destination"
     return 1
   end
 
-  if set -q _flag_z
-    zoxide "$destination"
+  if set -q _flag_s
+    pushd "$destination"
   else
     cd "$destination"
   end
@@ -155,8 +155,8 @@ function bookmark_delete_select -d "Interactively deletes a bookmark"
   end
 end
 
-function bookmark_cd_select -d "Interactively deletes a bookmark"
-  argparse -i --name=bookmark_cd_select "z/zoxide" -- $argv
+function bookmark_cd_select -d "Interactively current directory to a saved bookmark"
+  argparse -i --name=bookmark_cd_select "s/stack" -- $argv
 
   set bookmarks $(bookmarks_names)
   set prompt "--> Which bookmark you want to move to?"
@@ -166,8 +166,8 @@ function bookmark_cd_select -d "Interactively deletes a bookmark"
   set destination $(__bookmarks_get_path "$choice")
 
   if test $status -eq 0
-    if set -q _flag_z
-      zoxide add -- "$destination"
+    if set -q _flag_s
+      pushd "$destination"
     else
       cd "$destination"
     end
@@ -210,12 +210,12 @@ alias y="bookmark_show -y"
 alias s=bookmark_save
 alias d=bookmark_delete
 alias c=bookmark_cd
-alias cz="bookmark_cd -z"
+alias cs="bookmark_cd -s"
 alias o=bookmark_open
 alias e=bookmark_edit
 alias ds=bookmark_delete_select
-alias cs="bookmark_cd_select"
-alias csz="bookmark_cd_select -z"
+alias ci="bookmark_cd_select"
+alias cis="bookmark_cd_select -s"
 alias os=bookmark_open_select
 
 bookmarks_export_to_env
