@@ -1,3 +1,7 @@
+### 2026-06-02 / 12.9.0
+
+- feat: New directory aliases.
+
 ### 2026-06-02 / 12.8.0
 
 - feat: New directory aliases.
