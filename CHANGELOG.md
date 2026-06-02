@@ -1,3 +1,7 @@
+### 2026-06-02 / 12.8.0
+
+- feat: New directory aliases.
+
 ### 2026-05-21 / 12.7.0
 
 - feat: Improved VSCode support.
