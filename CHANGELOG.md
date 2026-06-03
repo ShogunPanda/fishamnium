@@ -1,3 +1,7 @@
+### 2026-06-03 / 12.12.0
+
+- feat: Added more themes.
+
 ### 2026-06-03 / 12.11.1
 
 - fix: Fixed starship patching.
