@@ -1,9 +1,18 @@
+function __fishamnium_update_starship_config
+  set -l theme $FISHAMNIUM_THEME
+
+  if test -n "$COLUMNS"; and test $COLUMNS -lt $FISHAMNIUM_THEME_NARROW_THRESHOLD
+    set theme $FISHAMNIUM_THEME_NARROW
+  end
+
+  set -x -g STARSHIP_CONFIG ~/.local/share/fishamnium/themes/$theme.toml
+end
+
 # Set defaults
 set -x -g FISHAMNIUM_VERSION $(cat ~/.local/share/fishamnium/version)
 
 test $(count $FISHAMNIUM_PLUGINS) -eq 0; and set -x FISHAMNIUM_PLUGINS $(command ls ~/.local/share/fishamnium/plugins/*.fish | xargs -n1 basename)
 test $(count $FISHAMNIUM_COMPLETIONS) -eq 0; and set -x FISHAMNIUM_COMPLETIONS $(command ls ~/.local/share/fishamnium/completions/*.fish | xargs -n1 basename)
-test -n $FISHAMNIUM_THEME; and set -x FISHAMNIUM_THEME default
 
 # Load plugins files
 set -e -g FISHAMNIUM_LOADED_PLUGINS
@@ -28,5 +37,7 @@ for i in $(string split " " "$FISHAMNIUM_COMPLETIONS")
 end
 
 # Load theme using starship
-set -x -g STARSHIP_CONFIG ~/.local/share/fishamnium/themes/$FISHAMNIUM_THEME.toml
-starship init fish | source
+set -q FISHAMNIUM_THEME; or set -x -g FISHAMNIUM_THEME default
+set -q FISHAMNIUM_THEME_NARROW; or set -x -g FISHAMNIUM_THEME_NARROW compact
+set -q FISHAMNIUM_THEME_NARROW_THRESHOLD; or set -x -g FISHAMNIUM_THEME_NARROW_THRESHOLD 100
+starship init fish --print-full-init | string replace -r -a '^(\s*set STARSHIP_JOBS .*)$' '$1; __fishamnium_update_starship_config' | source
