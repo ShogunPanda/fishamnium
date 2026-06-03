@@ -213,3 +213,27 @@ pub fn theme() -> String {
 pub fn is_theme(value: &String) -> bool {
   value == &theme()
 }
+
+pub fn prompt() -> String {
+  "default".to_string()
+}
+
+pub fn is_prompt(value: &String) -> bool {
+  value == &prompt()
+}
+
+pub fn prompt_narrow() -> String {
+  "compact".to_string()
+}
+
+pub fn is_prompt_narrow(value: &String) -> bool {
+  value == &prompt_narrow()
+}
+
+pub fn prompt_narrow_threshold() -> u16 {
+  100
+}
+
+pub fn is_prompt_narrow_threshold(value: &u16) -> bool {
+  *value == prompt_narrow_threshold()
+}

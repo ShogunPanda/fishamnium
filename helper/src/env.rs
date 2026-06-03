@@ -45,11 +45,14 @@ impl Environment {
     let config = Config::load_current()?;
 
     Ok(format!(
-      "FISHAMNIUM_HOST={}\nFISHAMNIUM_ROOT={}\nFISHAMNIUM_CONFIG_ROOT={}\nFISHAMNIUM_CONFIG={}\nPATH={}\nEDITOR={}\nGEDITOR={}\n",
+      "FISHAMNIUM_HOST={}\nFISHAMNIUM_ROOT={}\nFISHAMNIUM_CONFIG_ROOT={}\nFISHAMNIUM_CONFIG={}\nFISHAMNIUM_THEME={}\nFISHAMNIUM_THEME_NARROW={}\nFISHAMNIUM_THEME_NARROW_THRESHOLD={}\nPATH={}\nEDITOR={}\nGEDITOR={}\n",
       Environment::quote_env_value(&self.hostname),
       Environment::quote_env_value(&self.root),
       Environment::quote_env_value(&self.config_root),
       Environment::quote_env_value(&self.config),
+      Environment::quote_env_value(&config.prompt),
+      Environment::quote_env_value(&config.prompt_narrow),
+      Environment::quote_env_value(&config.prompt_narrow_threshold.to_string()),
       Environment::quote_env_value(&paths.join(":")),
       Environment::quote_env_value(&config.editor.terminal),
       Environment::quote_env_value(&config.editor.graphical),
@@ -66,6 +69,17 @@ impl Environment {
     Self::push_fish_variable(&mut response, "FISHAMNIUM_ROOT", &[self.root.as_str()]);
     Self::push_fish_variable(&mut response, "FISHAMNIUM_CONFIG_ROOT", &[self.config_root.as_str()]);
     Self::push_fish_variable(&mut response, "FISHAMNIUM_CONFIG", &[self.config.as_str()]);
+    Self::push_fish_variable(&mut response, "FISHAMNIUM_THEME", &[config.prompt.as_str()]);
+    Self::push_fish_variable(
+      &mut response,
+      "FISHAMNIUM_THEME_NARROW",
+      &[config.prompt_narrow.as_str()],
+    );
+    Self::push_fish_variable(
+      &mut response,
+      "FISHAMNIUM_THEME_NARROW_THRESHOLD",
+      &[config.prompt_narrow_threshold.to_string().as_str()],
+    );
     Self::push_fish_variable(
       &mut response,
       "PATH",

@@ -162,6 +162,25 @@ pub struct Config {
   #[serde(default = "theme", skip_serializing_if = "is_theme")]
   pub theme: String,
 
+  #[serde(default = "prompt", skip_serializing_if = "is_prompt")]
+  pub prompt: String,
+
+  #[serde(
+    default = "prompt_narrow",
+    rename = "prompt_narrow",
+    alias = "promptNarrow",
+    skip_serializing_if = "is_prompt_narrow"
+  )]
+  pub prompt_narrow: String,
+
+  #[serde(
+    default = "prompt_narrow_threshold",
+    rename = "prompt_narrow_threshold",
+    alias = "promptNarrowThreshold",
+    skip_serializing_if = "is_prompt_narrow_threshold"
+  )]
+  pub prompt_narrow_threshold: u16,
+
   #[serde(default, skip_serializing_if = "is_colors_config")]
   pub colors: ColorsConfig,
 }
@@ -304,6 +323,17 @@ impl Config {
       serde_yaml::to_value(&self.editor.graphical)?,
     );
     Self::insert_value(&mut value, &["theme"], serde_yaml::to_value(&self.theme)?);
+    Self::insert_value(&mut value, &["prompt"], serde_yaml::to_value(&self.prompt)?);
+    Self::insert_value(
+      &mut value,
+      &["prompt_narrow"],
+      serde_yaml::to_value(&self.prompt_narrow)?,
+    );
+    Self::insert_value(
+      &mut value,
+      &["prompt_narrow_threshold"],
+      serde_yaml::to_value(self.prompt_narrow_threshold)?,
+    );
     Self::insert_value(&mut value, &["colors"], serde_yaml::to_value(&self.colors)?);
     Self::insert_value(
       &mut value,
@@ -381,6 +411,9 @@ impl Default for Config {
       node: NodeConfig::default(),
       editor: EditorConfig::default(),
       theme: theme(),
+      prompt: prompt(),
+      prompt_narrow: prompt_narrow(),
+      prompt_narrow_threshold: prompt_narrow_threshold(),
       colors: ColorsConfig::default(),
     }
   }

@@ -37,7 +37,4 @@ for i in $(string split " " "$FISHAMNIUM_COMPLETIONS")
 end
 
 # Load theme using starship
-set -q FISHAMNIUM_THEME; or set -x -g FISHAMNIUM_THEME default
-set -q FISHAMNIUM_THEME_NARROW; or set -x -g FISHAMNIUM_THEME_NARROW compact
-set -q FISHAMNIUM_THEME_NARROW_THRESHOLD; or set -x -g FISHAMNIUM_THEME_NARROW_THRESHOLD 100
 starship init fish --print-full-init | string replace -r -a '^(\s*set STARSHIP_DURATION .*)$' '$1; __fishamnium_update_starship_config' | source
