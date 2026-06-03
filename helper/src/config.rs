@@ -2,9 +2,12 @@ use serde::{Deserialize, Serialize};
 use serde_yaml::Value;
 use std::collections::BTreeMap;
 use std::error::Error;
-use std::fs;
+use std::fs::{self, File};
+use std::io::Write;
 use std::path::Path;
+use std::process::id;
 use std::sync::{Arc, OnceLock};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::bookmarks::BookmarkConfig;
 use crate::defaults::*;
@@ -110,6 +113,9 @@ pub struct ColorThemeConfig {
   #[serde(default = "colors_lightgray")]
   pub lightgray: String,
 
+  #[serde(default = "colors_orange")]
+  pub orange: String,
+
   #[serde(default = "colors_light_red")]
   pub red: String,
 
@@ -177,20 +183,23 @@ impl Config {
     Ok(serde_yaml::from_str(&fs::read_to_string(path)?)?)
   }
 
-  pub fn save(&self, path: &Path) -> Result<(), Box<dyn Error>> {
-    if let Some(parent) = path.parent() {
-      fs::create_dir_all(parent)?;
+  pub fn save_theme(path: &Path, theme: &str) -> Result<(), Box<dyn Error>> {
+    let mut value = Self::load_value(path)?;
+    Self::insert_value(&mut value, &["theme"], serde_yaml::to_value(theme)?);
+    Self::write(path, &serde_yaml::to_string(&value)?)?;
+    Ok(())
+  }
+
+  pub fn save_bookmarks(path: &Path, bookmarks: &BTreeMap<String, BookmarkConfig>) -> Result<(), Box<dyn Error>> {
+    let mut value = Self::load_value(path)?;
+
+    if bookmarks.is_empty() {
+      Self::remove_value(&mut value, "bookmarks");
+    } else {
+      Self::insert_value(&mut value, &["bookmarks"], serde_yaml::to_value(bookmarks)?);
     }
 
-    let serialized = serde_yaml::to_value(self)?;
-    let output = if path.is_file() {
-      let existing = serde_yaml::from_str(&fs::read_to_string(path)?)?;
-      Self::merge_save_value(existing, serialized)
-    } else {
-      serialized
-    };
-
-    fs::write(path, serde_yaml::to_string(&output)?)?;
+    Self::write(path, &serde_yaml::to_string(&value)?)?;
     Ok(())
   }
 
@@ -331,30 +340,34 @@ impl Config {
     }
   }
 
-  fn merge_save_value(existing: Value, serialized: Value) -> Value {
-    match (existing, serialized) {
-      (Value::Mapping(mut existing), Value::Mapping(serialized)) => {
-        for key in [
-          "hosts",
-          "git",
-          "bookmarks",
-          "bookmarksExportPrefix",
-          "node",
-          "editor",
-          "theme",
-          "colors",
-        ] {
-          existing.remove(Value::String(key.to_string()));
-        }
+  fn remove_value(root: &mut Value, key: &str) {
+    let Value::Mapping(mapping) = root else {
+      return;
+    };
 
-        for (key, value) in serialized {
-          existing.insert(key, value);
-        }
+    mapping.remove(Value::String(key.to_string()));
+  }
 
-        Value::Mapping(existing)
-      }
-      (_, serialized) => serialized,
+  fn load_value(path: &Path) -> Result<Value, Box<dyn Error>> {
+    if !path.is_file() {
+      return Ok(Value::Mapping(Default::default()));
     }
+
+    Ok(serde_yaml::from_str(&fs::read_to_string(path)?)?)
+  }
+
+  fn write(path: &Path, output: &str) -> Result<(), Box<dyn Error>> {
+    if let Some(parent) = path.parent() {
+      fs::create_dir_all(parent)?;
+    }
+
+    let now = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
+    let temporary = path.with_extension(format!("tmp.{}.{}", id(), now));
+    let mut file = File::create(&temporary)?;
+    file.write_all(output.as_bytes())?;
+    file.sync_all()?;
+    fs::rename(temporary, path)?;
+    Ok(())
   }
 }
 
@@ -425,6 +438,7 @@ impl Default for ColorThemeConfig {
       blue: colors_blue(),
       gray: colors_gray(),
       lightgray: colors_lightgray(),
+      orange: colors_orange(),
       red: colors_light_red(),
       green: colors_light_green(),
       cyan: colors_light_cyan(),
@@ -446,6 +460,7 @@ impl ColorThemeConfig {
       blue: colors_blue(),
       gray: colors_gray(),
       lightgray: colors_lightgray(),
+      orange: colors_orange(),
       red: colors_dark_red(),
       green: colors_dark_green(),
       cyan: colors_dark_cyan(),

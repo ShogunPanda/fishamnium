@@ -373,7 +373,7 @@ impl Bookmark {
     let mut config = Config::load(Path::new(&path))?;
 
     Self::save(&mut config, id, name.as_deref())?;
-    config.save(Path::new(&path))
+    Config::save_bookmarks(Path::new(&path), &config.bookmarks)
   }
 
   fn delete_current(id: &str) -> Result<(), Box<dyn Error>> {
@@ -381,7 +381,7 @@ impl Bookmark {
     let mut config = Config::load(Path::new(&path))?;
 
     Self::delete(&mut config, id)?;
-    config.save(Path::new(&path))
+    Config::save_bookmarks(Path::new(&path), &config.bookmarks)
   }
 
   fn name_from_payload(payload: &[&str]) -> Option<String> {

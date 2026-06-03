@@ -8,6 +8,7 @@ pub const COLORS_MAGENTA: &str = "C800E2";
 pub const COLORS_BLUE: &str = "005be4";
 pub const COLORS_GRAY: &str = "808080";
 pub const COLORS_LIGHTGRAY: &str = "C0C0C0";
+pub const COLORS_ORANGE: &str = "F83B19";
 pub const COLORS_LIGHT_RED: &str = "CC0000";
 pub const COLORS_LIGHT_GREEN: &str = "00CC00";
 pub const COLORS_LIGHT_CYAN: &str = "0088E2";
@@ -45,6 +46,10 @@ pub fn colors_gray() -> String {
 
 pub fn colors_lightgray() -> String {
   COLORS_LIGHTGRAY.to_string()
+}
+
+pub fn colors_orange() -> String {
+  COLORS_ORANGE.to_string()
 }
 
 pub fn colors_light_red() -> String {

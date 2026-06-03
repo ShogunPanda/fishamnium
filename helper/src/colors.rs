@@ -42,6 +42,7 @@ pub struct Palette {
   pub blue: String,
   pub gray: String,
   pub lightgray: String,
+  pub orange: String,
   // Variable colors
   pub red: String,
   pub green: String,
@@ -78,7 +79,7 @@ impl Colors {
 
         if save {
           config.theme = theme.clone();
-          config.save(config_path)?;
+          Config::save_theme(config_path, &theme)?;
         }
 
         theme
@@ -110,6 +111,7 @@ impl Colors {
       blue: Self::color(config, default, theme, "blue", COLORS_BLUE)?,
       gray: Self::color(config, default, theme, "gray", COLORS_GRAY)?,
       lightgray: Self::color(config, default, theme, "lightgray", COLORS_LIGHTGRAY)?,
+      orange: Self::color(config, default, theme, "orange", COLORS_ORANGE)?,
       red: Self::color(config, default, theme, "red", fallback.red)?,
       green: Self::color(config, default, theme, "green", fallback.green)?,
       cyan: Self::color(config, default, theme, "cyan", fallback.cyan)?,
@@ -213,6 +215,7 @@ impl Colors {
       ("CYAN", self.palette.cyan.as_str()),
       ("GRAY", self.palette.gray.as_str()),
       ("LIGHTGRAY", self.palette.lightgray.as_str()),
+      ("ORANGE", self.palette.orange.as_str()),
       ("FOREGROUND", self.palette.foreground.as_str()),
       ("PRIMARY", self.palette.primary.as_str()),
       ("SECONDARY", self.palette.secondary.as_str()),
