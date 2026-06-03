@@ -1,3 +1,8 @@
+### 2026-06-03 / 12.11.0
+
+- feat: Add support for narrow themes.
+- feat: Added orange.
+
 ### 2026-06-02 / 12.10.0
 
 - feat: Replaced zoxide with pushd.
