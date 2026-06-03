@@ -1,3 +1,7 @@
+### 2026-06-03 / 12.11.1
+
+- fix: Fixed starship patching.
+
 ### 2026-06-03 / 12.11.0
 
 - feat: Add support for narrow themes.
