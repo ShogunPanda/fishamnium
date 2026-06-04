@@ -19,6 +19,7 @@ use std::backtrace::Backtrace;
 use std::error::Error;
 use std::io::{Error as IoError, ErrorKind};
 use std::panic;
+use std::path::Path;
 use std::process::id;
 use std::sync::Arc;
 use std::sync::mpsc::Sender;
@@ -73,6 +74,25 @@ fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) ->
     "fzf-theme" => Ok(Arc::new(Colors::for_theme(first_arg)?.fzf_theme().into_bytes())),
     "configuration-file" => Ok(Arc::new(Config::current_path()?.into_bytes())),
     "config" | "configuration" => {
+      if first_arg == Some("format") {
+        if payload.len() != 2 {
+          return Err(IoError::new(ErrorKind::InvalidInput, "Config format accepts exactly one config path").into());
+        }
+
+        let path = Path::new(&payload[1]);
+        if !path.is_file() {
+          return Err(
+            IoError::new(
+              ErrorKind::NotFound,
+              format!("Config file {} does not exist", path.display()),
+            )
+            .into(),
+          );
+        }
+
+        return Ok(Arc::new(serde_yaml::to_string(&Config::load(path)?)?.into_bytes()));
+      }
+
       if payload.len() > 2 {
         return Err(IoError::new(ErrorKind::InvalidInput, "Config accepts at most one fallback argument").into());
       }
