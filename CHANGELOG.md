@@ -1,3 +1,7 @@
+### 2026-06-04 / 12.13.0
+
+- feat: Updated themes.
+
 ### 2026-06-03 / 12.12.0
 
 - feat: Added more themes.
