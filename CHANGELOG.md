@@ -1,3 +1,8 @@
+### 2026-06-04 / 12.14.0
+
+- feat: Added formatting utility.
+- feat: Updated themes.
+
 ### 2026-06-04 / 12.13.0
 
 - feat: Updated themes.
