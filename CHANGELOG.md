@@ -1,3 +1,7 @@
+### 2026-06-09 / 12.15.0
+
+- feat: Improved project directory hook.
+
 ### 2026-06-04 / 12.14.0
 
 - feat: Added formatting utility.
