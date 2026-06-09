@@ -9,8 +9,7 @@ command_timeout = 500
 format = """
 
 $time$directory$git_branch$git_commit$git_status[\ue0b4](fg:#0088E2)
-$username$hostname[\ue0b0](bold fg:#ffdf00)
-"""
+$username$hostname[\ue0b0](bold fg:#ffdf00)"""
 
 [time]
   format      = "[\ue0b6](bold fg:#013482)[ \ue385 $time ](bold fg:#ffffff bg:#013482)"

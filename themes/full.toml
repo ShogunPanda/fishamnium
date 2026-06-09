@@ -8,8 +8,7 @@ command_timeout = 500
 # user @host version:number version:number >
 format = """
 $time$directory$git_branch$git_commit[\ue0b4](fg:#005be4) $git_status
-$username$hostname($nodejs$rust$ruby$golang)[ ](fg:#000000 bg:#ffdf00)[\ue0b0 ](bold fg:#ffdf00)
-"""
+$username$hostname($nodejs$rust$ruby$golang)[ ](fg:#000000 bg:#ffdf00)[\ue0b0 ](bold fg:#ffdf00)"""
 
 [time]
   format      = "[\ue0b6](bold fg:#013482)[ \uf64f $time ](bold fg:#ffffff bg:#013482)"
