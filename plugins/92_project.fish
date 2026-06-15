@@ -2,7 +2,7 @@ function project_root
   set fallback $PWD
   set destination $PWD
 
-  argparse -i --name=project_root "N/dry-run" "c/include-current" "f/fallback" "y/copy" -- $argv
+  argparse -i --name=project_root "N/dry-run" "c/include-current" "f/fallback" "q/quiet" "y/copy" -- $argv
 
   if ! set -q _flag_c
     set destination $(path dirname "$destination")
@@ -28,7 +28,7 @@ function project_root
     if set -q _flag_f
       set destination $fallback
     else
-      if ! set -q _flag_y
+      if ! set -q _flag_q; and ! set -q _flag_y
         printf "%s%s--> No projects found.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
       end
 
@@ -43,11 +43,57 @@ function project_root
   end
 end
 
-function project_type
-  set root $(project_root -c -f)
+function project_roots
+  set destination $PWD
 
-  if test $status -ne 0
+  argparse -i --name=project_roots "c/include-current" "q/quiet" "y/copy" -- $argv
+
+  if ! set -q _flag_c
+    set destination $(path dirname "$destination")
+  end
+
+  set roots
+
+  while test $destination != "/"
+    set is_root 0
+
+    for file in package.json Makefile.toml Cargo.toml Makefile go.mod README.md;
+      if test -e $destination/$file;
+        set is_root 1
+      end
+    end
+
+    if test $is_root -eq 1;
+      set roots $roots $destination
+    end
+
+    set destination $(path dirname "$destination")
+  end
+
+  if test (count $roots) -eq 0
+    if ! set -q _flag_q; and ! set -q _flag_y
+      printf "%s%s--> No projects found.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
+    end
+
     return 1
+  end
+
+  if set -q _flag_y
+    printf "%s\n" $roots | fish_clipboard_copy
+  else
+    printf "%s\n" $roots
+  end
+end
+
+function project_type
+  set root $argv[1]
+
+  if test -z "$root"
+    set root $(project_root -c -f)
+
+    if test $status -ne 0
+      return 1
+    end
   end
 
   if test -e "$root/package.json"
@@ -64,7 +110,7 @@ function project_type
 end
 
 function project_runner
-  set type $(project_type)
+  set type $(project_type $argv[1])
 
   if test $status -ne 0
     return 1
@@ -85,7 +131,7 @@ function project_runner
 end
 
 function project_build
-  set runner $(project_runner)
+  set runner $(project_runner $argv[1])
 
   if test $status -ne 0
     return 1
@@ -106,7 +152,7 @@ function project_build
 end
 
 function project_test
-  set runner $(project_runner)
+  set runner $(project_runner $argv[1])
 
   if test $status -ne 0
     return 1

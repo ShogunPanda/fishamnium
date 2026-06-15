@@ -72,16 +72,11 @@ function fishamnium_dirhook_alias --description 'Create an alias for the current
 end
 
 function __fishamnium_project_hook_resolve_root
-  if test -x "$PWD/.fishamnium.fish"
-    echo $PWD
-    return
-  end
-
-  set -l root (project_root -c)
-
-  if test $status -eq 0; and test -x "$root/.fishamnium.fish"
-    echo $root
-    return
+  for root in (project_roots -c -q)
+    if test -x "$root/.fishamnium.fish"
+      echo $root
+      return
+    end
   end
 
   return 1
