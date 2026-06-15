@@ -65,7 +65,7 @@ end
 # Create an alias on enter and erase it on leave.
 function fishamnium_dirhook_alias --description 'Create an alias for the current dirhook project' --argument-names name
   if fishamnium_dirhook_is_enter
-    alias $name="$argv"
+    alias $name="$argv[2..]"
   else if fishamnium_dirhook_is_leave
     functions --erase $name
   end
