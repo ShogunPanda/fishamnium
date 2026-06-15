@@ -1,3 +1,7 @@
+### 2026-06-15 / 12.16.2
+
+- fix: Fixed aliasing.
+
 ### 2026-06-15 / 12.16.1
 
 - fix: Improved project detection.
