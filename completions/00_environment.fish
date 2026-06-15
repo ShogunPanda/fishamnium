@@ -1,5 +1,5 @@
 # Remove completions for internal commands
-for i in fishamnium_reload __fishamnium_print_error __fishamnium_find_configuration_file __fishamnium_get_configuration
+for i in fishamnium fishamnium_reload __fishamnium_print_error __fishamnium_find_configuration_file __fishamnium_get_configuration
   complete -c $i -e
   complete -c $i -x -a ""
 end
@@ -13,3 +13,5 @@ for i in __g_refresh __g_finish __g_pull_request
   complete -c $i -e
   complete -c $i -x -a ""
 end
+
+fishamnium completions | source

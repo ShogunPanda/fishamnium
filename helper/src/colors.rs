@@ -182,6 +182,38 @@ impl Colors {
     )
   }
 
+  pub fn vscode_theme(&self) -> Result<String, Box<dyn Error>> {
+    Ok(serde_json::to_string_pretty(&serde_json::json!({
+      "terminal.foreground": self.vscode_color(&self.palette.foreground),
+      "terminalCursor.background": self.vscode_color(&self.palette.black),
+      "terminalCursor.foreground": self.vscode_color(&self.palette.primary),
+      "terminal.selectionBackground": self.vscode_color(&self.palette.gray),
+      "terminal.selectionForeground": self.vscode_color(&self.palette.white),
+      "terminal.findMatchBackground": self.vscode_color(&self.palette.primary),
+      "terminal.findMatchHighlightBackground": self.vscode_color(&self.palette.secondary),
+      "terminal.ansiBlack": self.vscode_color(&self.palette.black),
+      "terminal.ansiRed": self.vscode_color(&self.palette.red),
+      "terminal.ansiGreen": self.vscode_color(&self.palette.green),
+      "terminal.ansiYellow": self.vscode_color(&self.palette.yellow),
+      "terminal.ansiBlue": self.vscode_color(&self.palette.blue),
+      "terminal.ansiMagenta": self.vscode_color(&self.palette.magenta),
+      "terminal.ansiCyan": self.vscode_color(&self.palette.cyan),
+      "terminal.ansiWhite": self.vscode_color(&self.palette.white),
+      "terminal.ansiBrightBlack": self.vscode_color(&self.palette.gray),
+      "terminal.ansiBrightRed": self.vscode_color(&self.palette.red),
+      "terminal.ansiBrightGreen": self.vscode_color(&self.palette.lightgreen),
+      "terminal.ansiBrightYellow": self.vscode_color(&self.palette.yellow),
+      "terminal.ansiBrightBlue": self.vscode_color(&self.palette.blue),
+      "terminal.ansiBrightMagenta": self.vscode_color(&self.palette.magenta),
+      "terminal.ansiBrightCyan": self.vscode_color(&self.palette.cyan),
+      "terminal.ansiBrightWhite": self.vscode_color(&self.palette.lightgray)
+    }))?)
+  }
+
+  fn vscode_color(&self, color: &str) -> String {
+    format!("#{color}")
+  }
+
   fn push_variables(&self, response: &mut String, mut push: impl FnMut(&mut String, &str, &str)) {
     push(response, "FISHAMNIUM_COLOR_THEME", &self.theme);
     push(response, "FISHAMNIUM_COLOR_RESET", "\x1b[0m");
