@@ -1,3 +1,8 @@
+### 2026-06-15 / 12.16.0
+
+- feat: Added autocompletion.
+- fix: Build the helpers before releasing.
+
 ### 2026-06-09 / 12.15.0
 
 - feat: Improved project directory hook.
