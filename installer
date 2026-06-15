@@ -29,6 +29,7 @@ end
 # Set global parameters
 argparse "l/local" "u/ininstall" -- $argv
 
+set os (test (uname) = Darwin; and echo macos; or echo linux)
 set origPwd $PWD
 set repo ShogunPanda/fishamnium
 set target ~/.local/share/fishamnium
@@ -58,10 +59,9 @@ if ! set -q _flag_u
 
     command mkdir -p $source; or exit 1
     command curl -sSL -o $source/fishamnium.tar.gz https://github.com/$repo/releases/latest/download/fishamnium.tar.gz
+    command curl -sSL -o $source/fishamnium-$os https://github.com/$repo/releases/latest/download/fishamnium-$os
     cd "$source"
     command tar -zxf $source/fishamnium.tar.gz; or exit 1
-  else
-    command rm -rf helper/target; or exit 1
   end
 
   # Remove previous installations
@@ -74,26 +74,29 @@ if ! set -q _flag_u
 
   # Copy files
   printf "%s--> Copying fishamnium in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$target" "$C_PRIMARY" "$C_RESET"
-  command cp -av completions data default.yml helper installer plugins themes version "$target" | sort; or exit 1
+  command cp -av completions data default.yml installer plugins themes version "$target" | sort; or exit 1
 
   printf "%s--> Copying loader file in %s%s%s ...%s\n" "$C_PRIMARY" "$C_RESET" "$loader" "$C_PRIMARY" "$C_RESET"
   command cp -av loader.fish "$loader"; or exit 1
 
-  # Build helper
-  printf "%s--> Building optimized fishamnium helper ...%s\n" "$C_PRIMARY" "$C_RESET"
+  # Install helper
+  printf "%s--> Installing optimized fishamnium helper ...%s\n" "$C_PRIMARY" "$C_RESET"
 
-  set cargo $(which cargo 2>/dev/null)
-  if ! test -x "$cargo"
-    printf "%sFishamnium requires cargo to build the helper.%s\n" "$C_ERROR" "$C_RESET"
+  if set -q _flag_l
+    set helperSource dist/fishamnium-$os
+  else
+    set helperSource $source/fishamnium-$os
+  end
+
+  if ! test -f "$helperSource"
+    printf "%sMissing fishamnium helper binary for %s%s%s at %s%s%s.%s\n" "$C_ERROR" "$C_RESET" "$os" "$C_ERROR" "$C_RESET" "$helperSource" "$C_ERROR" "$C_RESET"
     exit 1
   end
 
-  cd $target/helper; or exit 1
-  command mkdir ../bin; or exit 1
-  command $cargo build --target-dir /tmp/fishamnium-helper-build-$USER --release; or exit 1
-  command cp -av /tmp/fishamnium-helper-build-$USER/release/fishamnium "../bin/fishamnium"; or exit 1
-  command rm -rf target; or exit 1
-
+  command mkdir -p "$target/bin"; or exit 1
+  command cp -av "$helperSource" "$target/bin/fishamnium"; or exit 1
+  command chmod +x "$target/bin/fishamnium"; or exit 1
+  
   # Ensure permissions
   printf "%s--> Fixing file permissions ...%s\n" "$C_PRIMARY" "$C_RESET"
   command chmod -R a+x "$target" "$loader"; or exit 1

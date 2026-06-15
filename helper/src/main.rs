@@ -150,8 +150,17 @@ fn handle_client_response(response: &[u8]) -> ! {
 
 fn run() -> Result<(), Box<dyn Error>> {
   let arguments = Arguments::parse();
-  let application = Application::new("fishamnium", 40_000, Some(handle_request))?;
   let reload = arguments.command.as_deref() == Some("reload");
+
+  if arguments.client.is_none() && arguments.command.as_deref() == Some("completions") {
+    print!(
+      "{}",
+      String::from_utf8_lossy(&Completions::to_fish_response(&arguments.payload)?)
+    );
+    return Ok(());
+  }
+
+  let application = Application::new("fishamnium", 40_000, Some(handle_request))?;
 
   if reload && arguments.client.is_some() {
     return Err(IoError::new(ErrorKind::InvalidInput, "Reload cannot be used with --client").into());

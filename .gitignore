@@ -1,2 +1,4 @@
 raycast-env.d.ts
+dist/
+fishamnium.tar.gz
 target/
