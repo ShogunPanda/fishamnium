@@ -1,3 +1,7 @@
+### 2026-06-15 / 12.16.1
+
+- fix: Improved project detection.
+
 ### 2026-06-15 / 12.16.0
 
 - feat: Added autocompletion.
