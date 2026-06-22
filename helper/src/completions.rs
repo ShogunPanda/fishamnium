@@ -92,6 +92,7 @@ complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a config
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a config -d "Read configuration values"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a configuration -d "Read configuration values"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a bookmarks -d "Manage bookmarks"
+complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a tmux -d "Manage tmux sessions"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a exit -d "Terminate the helper server"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a quit -d "Terminate the helper server"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a completions -d "Print fish completions"
@@ -106,6 +107,8 @@ complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a show -d "Print bookmark path"
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a save -d "Save current directory as bookmark"
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a delete -d "Delete bookmark"
+
+complete -c fishamnium -n "__fishamnium_helper_using_command tmux; and test (__fishamnium_helper_argument_index tmux) -eq 0" -a next-session -d "Print next available tmux session name"
 
 complete -c fishamnium -n "__fishamnium_helper_using_command colors; and test (__fishamnium_helper_argument_index colors) -eq 0" -a light -d "Light theme"
 complete -c fishamnium -n "__fishamnium_helper_using_command colors; and test (__fishamnium_helper_argument_index colors) -eq 0" -a dark -d "Dark theme"

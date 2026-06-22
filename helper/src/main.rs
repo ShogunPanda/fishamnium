@@ -7,6 +7,7 @@ mod config;
 mod defaults;
 mod env;
 mod protocol;
+mod tmux;
 
 use crate::application::*;
 use crate::bookmarks::*;
@@ -16,6 +17,7 @@ use crate::completions::*;
 use crate::config::*;
 use crate::env::*;
 use crate::protocol::*;
+use crate::tmux::*;
 use clap::Parser;
 use std::backtrace::Backtrace;
 use std::error::Error;
@@ -107,6 +109,7 @@ fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) ->
       ))
     }
     "bookmarks" => Bookmark::handle(first_arg, &command_arguments),
+    "tmux" => Ok(Arc::new(Tmux::handle(first_arg, &command_arguments)?)),
     "exit" | "quit" => quit(events.clone()),
     _ => Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into()),
   }
