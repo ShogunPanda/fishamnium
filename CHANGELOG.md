@@ -1,3 +1,7 @@
+### 2026-06-22 / 12.17.0
+
+- feat: Added OpenCode and tmux helpers.
+
 ### 2026-06-15 / 12.16.2
 
 - fix: Fixed aliasing.
