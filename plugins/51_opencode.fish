@@ -20,7 +20,8 @@ end
 
 alias oc="opencode"
 alias occ="opencode -c"
+alias ocs="opencode -s"
 alias oct="opencode_session_temporary"
-alias ocs="opencode session list"
+alias ocl="opencode session list"
 alias ocd="opencode session delete"
 alias ocds=opencode_session_delete_select
