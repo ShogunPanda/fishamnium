@@ -1,3 +1,7 @@
+### 2026-06-25 / 12.18.0
+
+- feat: New opencode command.
+
 ### 2026-06-22 / 12.17.0
 
 - feat: Added OpenCode and tmux helpers.
