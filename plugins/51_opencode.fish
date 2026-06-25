@@ -1,5 +1,5 @@
 
-function opencode_session_delete_select -d "Interactively delete opencode sessions"
+function opencode_session_delete_select -d "Interactively delete OpenCode sessions"
   set sessions $(opencode session list --format json | yq ".[].id")
   set prompt "--> Which sessions do you want to delete?"
   set height $(math $(count $sessions) + 3)
@@ -13,9 +13,13 @@ function opencode_session_delete_select -d "Interactively delete opencode sessio
   end
 end
 
-function opencode_session_temporary -d "Create a temporary opencode session and deletes upon exit"
-  opencode
+function opencode_session_delete_last -d "Delete last OpenCode session"
   opencode session delete (opencode session list -n --format json | yq ".[0].id")
+end
+
+function opencode_session_temporary -d "Create a temporary OpenCode session and deletes upon exit"
+  opencode
+  opencode_session_delete_last
 end
 
 alias oc="opencode"
@@ -24,4 +28,5 @@ alias ocs="opencode -s"
 alias oct="opencode_session_temporary"
 alias ocl="opencode session list"
 alias ocd="opencode session delete"
+alias ocdl=opencode_session_delete_last
 alias ocds=opencode_session_delete_select

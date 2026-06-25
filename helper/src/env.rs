@@ -150,6 +150,7 @@ impl Environment {
     let mut paths = Vec::new();
     let mut seen = HashSet::new();
 
+    let local = Bookmark::expand_home("~/.local").unwrap_or("/".into());
     let fishamnium = Bookmark::expand_home("~/.local/share/fishamnium").unwrap_or("/".into());
 
     for root in [
@@ -161,6 +162,7 @@ impl Environment {
       "/opt/homebrew",
       "/var",
       "/var/local",
+      &local,
       &fishamnium,
     ] {
       for directory in ["bin", "sbin"] {
