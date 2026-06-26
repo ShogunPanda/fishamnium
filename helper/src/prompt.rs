@@ -48,7 +48,9 @@ impl Prompt {
 
     Self::register_styles(theme)?;
     let template = Self::interpolate(&theme.template.render(), &Self::variables(options)?);
-    Ok(colorize_template(&Self::preprocess_tags(&template)))
+    Ok(Self::collapse_spaces(&colorize_template(&Self::preprocess_tags(
+      &template,
+    ))))
   }
 
   fn parse_options(payload: &[&str]) -> Result<PromptOptions, Box<dyn Error>> {
@@ -254,6 +256,15 @@ impl Prompt {
     template
       .replace("<bg_reset>", "\u{1b}[49m")
       .replace("<fg_reset>", "\u{1b}[39m")
+  }
+
+  fn collapse_spaces(prompt: &str) -> String {
+    static SPACE_MATCHER: OnceLock<Regex> = OnceLock::new();
+
+    SPACE_MATCHER
+      .get_or_init(|| Regex::new(r" {2,}").expect("Invalid prompt space regex"))
+      .replace_all(prompt, " ")
+      .into_owned()
   }
 
   fn git_info(path: &Path) -> Option<GitInfo> {

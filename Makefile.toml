@@ -38,7 +38,7 @@ cp helper/target/x86_64-unknown-linux-gnu/release/fishamnium dist/fishamnium-lin
   dependencies = ["build"]
   env          = { COPYFILE_DISABLE = "1" }
   command      = "tar"
-  args         = ["--no-xattrs", "--exclude='*/.*'", "--exclude='.*'", "--exclude=helper/target", "-czvf", "fishamnium.tar.gz", "completions", "default.yml", "installer", "LICENSE.md", "loader.fish", "plugins", "themes", "version"]
+  args         = ["--no-xattrs", "--exclude='*/.*'", "--exclude='.*'", "--exclude=helper/target", "-czvf", "fishamnium.tar.gz", "completions", "default.yml", "installer", "LICENSE.md", "loader.fish", "plugins", "version"]
 
 [tasks."version:bump"]
   script_runner = "@duckscript"
