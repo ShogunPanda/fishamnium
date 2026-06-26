@@ -1,3 +1,7 @@
+### 2026-06-26 / 13.0.1
+
+- fix: Minor fix.
+
 ### 2026-06-26 / 13.0.0
 
 - feat!: Full dependency-less rewrite.
