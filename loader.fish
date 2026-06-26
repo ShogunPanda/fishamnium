@@ -1,18 +1,8 @@
-function __fishamnium_update_starship_config
-  set -l theme $FISHAMNIUM_THEME
-
-  if test -n "$COLUMNS"; and test $COLUMNS -lt $FISHAMNIUM_THEME_NARROW_THRESHOLD
-    set theme $FISHAMNIUM_THEME_NARROW
-  end
-
-  set -x -g STARSHIP_CONFIG ~/.local/share/fishamnium/themes/$theme.toml
-end
-
 # Set defaults
-set -x -g FISHAMNIUM_VERSION $(cat ~/.local/share/fishamnium/version)
+set -x -g FISHAMNIUM_VERSION (string trim (string collect < ~/.local/share/fishamnium/version))
 
-test $(count $FISHAMNIUM_PLUGINS) -eq 0; and set -x FISHAMNIUM_PLUGINS $(command ls ~/.local/share/fishamnium/plugins/*.fish | xargs -n1 basename)
-test $(count $FISHAMNIUM_COMPLETIONS) -eq 0; and set -x FISHAMNIUM_COMPLETIONS $(command ls ~/.local/share/fishamnium/completions/*.fish | xargs -n1 basename)
+test $(count $FISHAMNIUM_PLUGINS) -eq 0; and set -x FISHAMNIUM_PLUGINS (path basename ~/.local/share/fishamnium/plugins/*.fish)
+test $(count $FISHAMNIUM_COMPLETIONS) -eq 0; and set -x FISHAMNIUM_COMPLETIONS (path basename ~/.local/share/fishamnium/completions/*.fish)
 
 # Load plugins files
 set -e -g FISHAMNIUM_LOADED_PLUGINS
@@ -36,5 +26,6 @@ for i in $(string split " " "$FISHAMNIUM_COMPLETIONS")
   end
 end
 
-# Load theme using starship
-starship init fish --print-full-init | string replace -r -a '^(\s*set STARSHIP_DURATION .*)$' '$1; __fishamnium_update_starship_config' | source
+function fish_prompt
+  $FISHAMNIUM_HELPER prompt --status "$status" --duration "$CMD_DURATION" --width "$COLUMNS" --path "$PWD"
+end

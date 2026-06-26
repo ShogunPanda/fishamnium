@@ -6,11 +6,17 @@
 [dependencies]
   clap       = { version = "4.5", features = ["derive"] }
   comfy-table = { version = "7.1", features = ["custom_styling"] }
+  crossterm  = { version = "0.28", features = ["use-dev-tty"] }
+  git2       = { version = "0.20", features = ["vendored-openssl"] }
+  jiff       = "0.2"
   nix        = { version = "0.29", features = ["fs", "hostname", "process", "signal", "user"] }
+  ratatui    = "0.29"
   regex      = "1.11"
+  rusqlite   = { version = "0.32", features = ["bundled"] }
   serde      = { version = "1.0", features = ["derive"] }
   serde_json = "1"
   serde_yaml = "0.9"
+  tempera    = "0.4"
   threadpool = "1.8"
 
 [profile.release]

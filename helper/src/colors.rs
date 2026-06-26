@@ -169,19 +169,6 @@ impl Colors {
     (red, green, blue)
   }
 
-  pub fn fzf_theme(&self) -> String {
-    format!(
-      "{},prompt:#{}:bold,bg+:-1,fg+:#{}:bold,pointer:#{}:bold,marker:#{}:bold,hl:#{}:underline,hl+:#{}:bold:underline",
-      self.theme,
-      self.palette.primary,
-      self.palette.foreground,
-      self.palette.primary,
-      self.palette.primary,
-      self.palette.foreground,
-      self.palette.primary,
-    )
-  }
-
   pub fn vscode_theme(&self) -> Result<String, Box<dyn Error>> {
     Ok(serde_json::to_string_pretty(&serde_json::json!({
       "terminal.foreground": self.vscode_color(&self.palette.foreground),

@@ -31,24 +31,6 @@ pub struct GitConfig {
   #[serde(default = "git_root", skip_serializing_if = "is_git_root")]
   pub root: String,
 
-  #[serde(default = "git_task_matchers", skip_serializing_if = "is_git_task_matchers")]
-  pub task_matchers: String,
-
-  #[serde(
-    default = "git_task_name_matchers",
-    skip_serializing_if = "is_git_task_name_matchers"
-  )]
-  pub task_name_matchers: String,
-
-  #[serde(default = "git_task_template", skip_serializing_if = "is_git_task_template")]
-  pub task_template: String,
-
-  #[serde(default = "git_open_path", skip_serializing_if = "is_git_open_path")]
-  pub open_path: String,
-
-  #[serde(default = "git_release_prefix", skip_serializing_if = "is_git_release_prefix")]
-  pub release_prefix: String,
-
   #[serde(default = "git_upstream_remote", skip_serializing_if = "is_git_upstream_remote")]
   pub upstream_remote: String,
 
@@ -135,6 +117,40 @@ pub struct ColorThemeConfig {
   pub secondary: String,
 }
 
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PromptThemeConfig {
+  pub user: PromptUserConfig,
+
+  #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+  pub styles: BTreeMap<String, String>,
+
+  pub template: PromptTemplate,
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(untagged)]
+pub enum PromptTemplate {
+  String(String),
+  Lines(Vec<String>),
+}
+
+impl PromptTemplate {
+  pub fn render(&self) -> String {
+    match self {
+      Self::String(template) => template.clone(),
+      Self::Lines(lines) => lines.join("\n"),
+    }
+  }
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PromptUserConfig {
+  pub regular: String,
+  pub root: String,
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
@@ -183,6 +199,9 @@ pub struct Config {
 
   #[serde(default, skip_serializing_if = "is_colors_config")]
   pub colors: ColorsConfig,
+
+  #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+  pub themes: BTreeMap<String, PromptThemeConfig>,
 }
 
 impl Config {
@@ -274,31 +293,6 @@ impl Config {
     Self::insert_value(&mut value, &["git", "root"], serde_yaml::to_value(&self.git.root)?);
     Self::insert_value(
       &mut value,
-      &["git", "taskMatchers"],
-      serde_yaml::to_value(&self.git.task_matchers)?,
-    );
-    Self::insert_value(
-      &mut value,
-      &["git", "taskNameMatchers"],
-      serde_yaml::to_value(&self.git.task_name_matchers)?,
-    );
-    Self::insert_value(
-      &mut value,
-      &["git", "taskTemplate"],
-      serde_yaml::to_value(&self.git.task_template)?,
-    );
-    Self::insert_value(
-      &mut value,
-      &["git", "openPath"],
-      serde_yaml::to_value(&self.git.open_path)?,
-    );
-    Self::insert_value(
-      &mut value,
-      &["git", "releasePrefix"],
-      serde_yaml::to_value(&self.git.release_prefix)?,
-    );
-    Self::insert_value(
-      &mut value,
       &["git", "upstreamRemote"],
       serde_yaml::to_value(&self.git.upstream_remote)?,
     );
@@ -335,6 +329,7 @@ impl Config {
       serde_yaml::to_value(self.prompt_narrow_threshold)?,
     );
     Self::insert_value(&mut value, &["colors"], serde_yaml::to_value(&self.colors)?);
+    Self::insert_value(&mut value, &["themes"], serde_yaml::to_value(&self.themes)?);
     Self::insert_value(
       &mut value,
       &["bookmarksExportPrefix"],
@@ -415,6 +410,7 @@ impl Default for Config {
       prompt_narrow: prompt_narrow(),
       prompt_narrow_threshold: prompt_narrow_threshold(),
       colors: ColorsConfig::default(),
+      themes: prompt_themes(),
     }
   }
 }
@@ -425,11 +421,6 @@ impl Default for GitConfig {
       branch: git_branch(),
       remote: git_remote(),
       root: git_root(),
-      task_matchers: git_task_matchers(),
-      task_name_matchers: git_task_name_matchers(),
-      task_template: git_task_template(),
-      open_path: git_open_path(),
-      release_prefix: git_release_prefix(),
       upstream_remote: git_upstream_remote(),
       approval_message: git_approval_message(),
     }

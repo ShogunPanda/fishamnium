@@ -7,21 +7,14 @@ Some useful shell extension for fish shell.
 
 https://sw.cowtech.it/fishamnium
 
-## Dependencies
+## Optional dependencies
 
-Fishamnium requires the following dependencies:
+Fishamnium uses [Nerd Fonts](https://www.nerdfonts.com/) for its prompt. While not strictly required, we suggest to use it.
 
-| Name                | Description                                                                  | URL                              | Installation guide                                                |
-| ------------------- | ---------------------------------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------- |
-| yq                  | Lightweight and portable command-line YAML, JSON and XML processor.          | https://mikefarah.gitbook.io/yq  | https://mikefarah.gitbook.io/yq#install                           |
-| starship            | The minimal, blazing-fast, and infinitely customizable prompt for any shell! | https://starship.rs/guide/       | https://starship.rs/guide/#🚀-installation                        |
-| fzf                 | A command-line fuzzy finder                                                  | https://github.com/junegunn/fzf  | https://github.com/junegunn/fzf#installation                      |
-| Fira Code Nerd Font | An amazing looking font with icons                                           | https://www.nerdfonts.com/       | N/A                                                               |
-
-If you are using Homebrew on MacOS, you can install them easily by using:
+For instance, to install _Fira Code Nerd Font_ if you are using Homebrew on MacOS, you can install it easily by using:
 
 ```bash
-brew install starship yq fzf font-fira-code-nerd-font
+brew install font-fira-code-nerd-font
 ```
 
 ## Install
@@ -29,7 +22,7 @@ brew install starship yq fzf font-fira-code-nerd-font
 Type the following inside a fish shell and you're done!
 
 ```bash
-curl -sL https://sw.cowtech.it/fishamnium/installer | fish
+curl -sSL https://sw.cowtech.it/fishamnium/installer | fish
 ```
 
 ## Uninstall

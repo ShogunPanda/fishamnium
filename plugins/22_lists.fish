@@ -1,3 +1,5 @@
+# ----- Writing functions -----
+
 function execute_on_list
   set orig_pwd $PWD
   argparse -i --name=execute_on_list "l/list" "x/execute" "c/continue" -- $argv
@@ -7,7 +9,7 @@ function execute_on_list
   else if set -q _flag_x
     set list $(eval $argv[1])
   else
-    set list $(cat $argv[1])
+    set list (string split \n (string collect < $argv[1]))
   end
 
   for item in $list

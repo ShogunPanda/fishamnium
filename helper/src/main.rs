@@ -1,3 +1,4 @@
+mod agents;
 mod application;
 mod bookmarks;
 mod cli;
@@ -6,9 +7,14 @@ mod completions;
 mod config;
 mod defaults;
 mod env;
+mod git;
+mod node;
+mod prompt;
 mod protocol;
+mod select;
 mod tmux;
 
+use crate::agents::*;
 use crate::application::*;
 use crate::bookmarks::*;
 use crate::cli::*;
@@ -16,7 +22,11 @@ use crate::colors::*;
 use crate::completions::*;
 use crate::config::*;
 use crate::env::*;
+use crate::git::*;
+use crate::node::*;
+use crate::prompt::*;
 use crate::protocol::*;
+use crate::select::*;
 use crate::tmux::*;
 use clap::Parser;
 use std::backtrace::Backtrace;
@@ -75,7 +85,6 @@ fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) ->
     "env" => Ok(Arc::new(Environment::new()?.to_response(first_arg)?)),
     "shell-environment" => Ok(Arc::new(Environment::to_shell_response(first_arg, second_arg)?)),
     "colors" => Ok(Arc::new(Colors::new(first_arg)?.to_response())),
-    "fzf-theme" => Ok(Arc::new(Colors::for_theme(first_arg)?.fzf_theme().into_bytes())),
     "vscode-theme" => Ok(Arc::new(Colors::for_theme(first_arg)?.vscode_theme()?.into_bytes())),
     "completions" => Ok(Arc::new(Completions::to_fish_response(payload)?)),
     "configuration-file" => Ok(Arc::new(Config::current_path()?.into_bytes())),
@@ -108,7 +117,11 @@ fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) ->
         Config::load_current()?.get(first_arg, &fallback)?.into_bytes(),
       ))
     }
+    "agents" => Agents::handle(first_arg, &command_arguments),
     "bookmarks" => Bookmark::handle(first_arg, &command_arguments),
+    "git" => Git::handle(first_arg, &command_arguments),
+    "node" => Node::handle(first_arg, &command_arguments),
+    "prompt" => Prompt::handle(&payload.iter().map(String::as_str).collect::<Vec<_>>()),
     "tmux" => Ok(Arc::new(Tmux::handle(first_arg, &command_arguments)?)),
     "exit" | "quit" => quit(events.clone()),
     _ => Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into()),
@@ -151,16 +164,39 @@ fn handle_client_response(response: &[u8]) -> ! {
   }
 }
 
+fn dispatch_local_command(command: Option<&str>, payload: &[String]) -> Result<Option<Vec<u8>>, Box<dyn Error>> {
+  let first_arg = payload.first().map(String::as_str);
+  let command_arguments = payload
+    .get(1..)
+    .unwrap_or(&[])
+    .iter()
+    .map(String::as_str)
+    .collect::<Vec<_>>();
+
+  Ok(match command {
+    Some("select") => Some(Select::from_stdin(payload)?.into_bytes()),
+    Some("agents") => Some(Agents::handle(first_arg, &command_arguments)?.as_ref().clone()),
+    Some("git") => Some(Git::handle(first_arg, &command_arguments)?.as_ref().clone()),
+    Some("node") => Some(Node::handle(first_arg, &command_arguments)?.as_ref().clone()),
+    Some("prompt") => Some(
+      Prompt::handle(&payload.iter().map(String::as_str).collect::<Vec<_>>())?
+        .as_ref()
+        .clone(),
+    ),
+    Some("completions") => Some(Completions::to_fish_response(payload)?),
+    _ => None,
+  })
+}
+
 fn run() -> Result<(), Box<dyn Error>> {
   let arguments = Arguments::parse();
   let reload = arguments.command.as_deref() == Some("reload");
 
-  if arguments.client.is_none() && arguments.command.as_deref() == Some("completions") {
-    print!(
-      "{}",
-      String::from_utf8_lossy(&Completions::to_fish_response(&arguments.payload)?)
-    );
-    return Ok(());
+  if arguments.client.is_none() && !reload {
+    if let Some(response) = dispatch_local_command(arguments.command.as_deref(), &arguments.payload)? {
+      print!("{}", String::from_utf8_lossy(&response));
+      return Ok(());
+    }
   }
 
   let application = Application::new("fishamnium", 40_000, Some(handle_request))?;

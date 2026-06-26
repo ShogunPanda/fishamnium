@@ -1,12 +1,5 @@
-# Coalesces:
-# - plugins/00_boot.fish
-# - plugins/01_colors.fish
-# - plugins/02_logging.fish
-# - plugins/10_environment.fish
-# - plugins/11_compatibility.fish
-# - plugins/12_configuration.fish
+# ----- Internal functions -----
 
-# Internal functions
 set -g FISHAMNIUM_HELPER "$HOME/.local/share/fishamnium/bin/fishamnium"
 
 function __fishamnium_print_success
@@ -46,23 +39,20 @@ end
 
 function __fishamnium_select
   set -l prompt "$argv[1]"
-  set -l height "$argv[2]"
-  set -l colors $($FISHAMNIUM_HELPER fzf-theme)
 
-  fzf --read0 --print0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors | string split0
+  $FISHAMNIUM_HELPER select --prompt "$prompt"
   return $pipestatus[1]
 end
 
 function __fishamnium_multiselect
   set -l prompt "$argv[1]"
-  set -l height "$argv[2]"
-  set -l colors $($FISHAMNIUM_HELPER fzf-theme)
 
-  fzf --read0 --print0 -e --prompt "$prompt " --info=hidden --preview-window=hidden --height $height --reverse --color $colors -m --marker="* " | string split0
+  $FISHAMNIUM_HELPER select --prompt "$prompt" --multi
   return $pipestatus[1]
 end
 
-# Public functions
+# ----- Public functions -----
+
 function fishamnium_update_colors -d "Updates fishamnium color settings"
   set -l existing_path (string join : $PATH)
 
@@ -111,28 +101,37 @@ end
 
 function fishamnium_update -d "Updates Fishamnium"
   rm -rf ~/.local/share/fishamnium ~/.config/fish/conf.d/fishamnium.fish
-  curl -sL https://sw.cowtech.it/fishamnium/installer | fish
+  curl -sSL https://sw.cowtech.it/fishamnium/installer | fish
 
   bookmarks_export_to_env
   fishamnium_forced_reload
 end
 
-# Bash compatibility
-function export
-  set command $(echo $argv | tr '=' ' ')
-  eval "set -x -g $command"
+function fish_user_key_bindings
+  bind \e\[1\;5A history-token-search-backward
+  bind \e\[1\;5B history-token-search-forward
+  bind \e\[1\;5C forward-word
+  bind \e\[1\;5D backward-word
+  bind \eB backward-word
+  bind \eF forward-word
 end
 
-# Basic environment
+# ----- Bash compatibility -----
+
+function export
+  for item in $argv
+    set parts (string split -m 1 = -- $item)
+    test (count $parts) -eq 2; and set -x -g $parts[1] $parts[2]
+  end
+end
+
+# ----- Bootstrap -----
+
 set -l __fishamnium_existing_path (string join : $PATH)
 __fishamnium_shell_environment shell-environment "$__fishamnium_existing_path"
 
-# The environment variable is sent to inherit in SSH.
 fish_config theme choose None
 fishamnium_update_colors $FISHAMNIUM_COLOR_THEME
-
 set -x -g fish_greeting
 
-# Direnv
-which direnv > /dev/null
-test $status -eq 0; and direnv hook fish | source
+command -q direnv; and direnv hook fish | source

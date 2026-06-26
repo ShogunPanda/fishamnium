@@ -1,3 +1,5 @@
+# ----- Internal functions -----
+
 function __bookmarks_list
   if test (count $argv) -gt 0
     $FISHAMNIUM_HELPER bookmarks tsv "$argv[1]"
@@ -10,6 +12,7 @@ function __bookmarks_get_path
   $FISHAMNIUM_HELPER bookmarks show "$argv[1]"
 end
 
+# ----- Reading functions -----
 function bookmarks_list -d "Lists all bookmarks"
   set query ".+"
 
@@ -84,30 +87,6 @@ function bookmark_show -d "Reads a bookmark"
   echo "$destination"
 end
 
-function bookmark_save -d "Writes a bookmark"
-  set bookmark $argv[1]
-  set name $argv[2]
-
-  if test -z "$bookmark"
-    __fishamnium_print_error "Please provide a bookmark name."
-    return 1
-  end
-
-  test -z "$name"; and set name $bookmark
-  $FISHAMNIUM_HELPER bookmarks save "$bookmark" "$name"
-end
-
-function bookmark_delete -d "Deletes a bookmark"
-  set bookmark $argv[1]
-
-  if test -z "$bookmark"
-    __fishamnium_print_error "Please provide a bookmark name."
-    return 1
-  end
-
-  $FISHAMNIUM_HELPER bookmarks delete "$bookmark"
-end
-
 function bookmark_cd -d "Changes current directory to a saved bookmark"
   argparse -i --name=bookmark_cd "s/stack" -- $argv
 
@@ -132,60 +111,6 @@ function bookmark_open -d "Edits a bookmark using the current editor"
   $GEDITOR "$destination"
 end
 
-function bookmark_edit -d "Edits a bookmark using the current terminal editor"
-  if ! set destination $(bookmark_show $argv 2>/dev/null)
-    echo $destination
-    return 1
-  end
-
-  $EDITOR "$destination"
-end
-
-function bookmark_delete_select -d "Interactively deletes a bookmark"
-  set bookmarks $(bookmarks_names)
-  set prompt "--> Which bookmark you want to delete?"
-  set height $(math $(count $bookmarks) + 1)
-
-  set choices $(string join0 $bookmarks | __fishamnium_multiselect "$prompt" "$height")
-
-  if test $status -eq 0
-    for choice in $choices
-      bookmark_delete "$choice"
-    end
-  end
-end
-
-function bookmark_cd_select -d "Interactively current directory to a saved bookmark"
-  argparse -i --name=bookmark_cd_select "s/stack" -- $argv
-
-  set bookmarks $(bookmarks_names)
-  set prompt "--> Which bookmark you want to move to?"
-  set height $(math $(count $bookmarks) + 1)
-
-  set choice $(string join0 $bookmarks | __fishamnium_select "$prompt" "$height")
-  set destination $(__bookmarks_get_path "$choice")
-
-  if test $status -eq 0
-    if set -q _flag_s
-      pushd "$destination"
-    else
-      cd "$destination"
-    end
-  end
-end
-
-function bookmark_open_select -d "Interactively edits a bookmark using the current editor"
-  set bookmarks $(bookmarks_names)
-  set prompt "--> Which bookmark you want to open?"
-  set height $(math $(count $bookmarks) + 1)
-
-  set choice $(string join0 $bookmarks | __fishamnium_select "$prompt" "$height")
-  set destination $(__bookmarks_get_path "$choice")
-  if test $status -eq 0
-    $GEDITOR "$destination"
-  end
-end
-
 function bookmarks_export_to_env -d "Exports bookmarks as environment variables"
   bookmarks_list -e > $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish
   chmod a+x $FISHAMNIUM_ROOT/plugins/21_bookmarks.fish
@@ -203,6 +128,93 @@ function bookmarks_export_to_vscode -d "Exports bookmarks as VS Code projects JS
   end
 end
 
+# ----- Writing functions -----
+
+function bookmark_save -d "Writes a bookmark"
+  set bookmark $argv[1]
+  set name $argv[2]
+
+  if test -z "$bookmark"
+    __fishamnium_print_error "Please provide a bookmark name."
+    return 1
+  end
+
+  test -z "$name"; and set name $bookmark
+  $FISHAMNIUM_HELPER bookmarks save "$bookmark" "$name"
+end
+
+function bookmark_delete -d "Deletes a bookmark"
+  set bookmark $argv[1]
+
+  if test -z "$bookmark"
+    __fishamnium_print_error "Please provide a bookmark name."
+    return 1
+  end
+
+  $FISHAMNIUM_HELPER bookmarks delete "$bookmark"
+end
+
+function bookmark_edit -d "Edits a bookmark using the current terminal editor"
+  if ! set destination $(bookmark_show $argv 2>/dev/null)
+    echo $destination
+    return 1
+  end
+
+  $EDITOR "$destination"
+end
+
+# ----- Interactive functions -----
+
+function bookmark_delete_select -d "Interactively deletes a bookmark"
+  set choices $(__bookmarks_list | $FISHAMNIUM_HELPER select --prompt "Which bookmark you want to delete" --multi)
+
+  if test $status -eq 0
+    for choice in $choices
+      bookmark_delete "$choice"
+    end
+  end
+end
+
+function bookmark_cd_select -d "Interactively current directory to a saved bookmark"
+  argparse -i --name=bookmark_cd_select "s/stack" -- $argv
+
+  if ! set choice $(__bookmarks_list | $FISHAMNIUM_HELPER select --prompt "Which bookmark you want to move to")
+    return 1
+  end
+
+  if test -z "$choice"
+    return 1
+  end
+
+  if ! set destination $(__bookmarks_get_path "$choice")
+    return 1
+  end
+
+  if set -q _flag_s
+    pushd "$destination"
+  else
+    cd "$destination"
+  end
+end
+
+function bookmark_open_select -d "Interactively edits a bookmark using the current editor"
+  if ! set choice $(__bookmarks_list | $FISHAMNIUM_HELPER select --prompt "Which bookmark you want to open")
+    return 1
+  end
+
+  if test -z "$choice"
+    return 1
+  end
+
+  if ! set destination $(__bookmarks_get_path "$choice")
+    return 1
+  end
+
+  $GEDITOR "$destination"
+end
+
+# ----- Aliases -----
+
 alias l=bookmarks_list
 alias le=bookmarks_export_to_env
 alias b=bookmark_show
@@ -218,5 +230,6 @@ alias ci="bookmark_cd_select"
 alias cis="bookmark_cd_select -s"
 alias os=bookmark_open_select
 
+# ---- Bootstrap -----
 bookmarks_export_to_env
 bookmarks_export_to_vscode

@@ -1,3 +1,5 @@
+# ----- Aliases -----
+
 alias clcd='clear; cd'
 alias clf='printf "\033c"'
 alias cdc='cd $(pwd)'

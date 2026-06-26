@@ -1,4 +1,5 @@
-use crate::config::{EditorConfig, GitConfig, NodeConfig};
+use crate::config::{EditorConfig, GitConfig, NodeConfig, PromptTemplate, PromptThemeConfig, PromptUserConfig};
+use std::collections::BTreeMap;
 
 pub const COLORS_WHITE: &str = "FFFFFF";
 pub const COLORS_BLACK: &str = "000000";
@@ -100,52 +101,6 @@ pub fn is_git_root(value: &String) -> bool {
   value == &git_root()
 }
 
-pub fn git_task_matchers() -> String {
-  [
-    r"git@github\.com:(?<repo>.+)\.git https://github.com/@repo@/compare/@base@...@branch@?expand=1",
-    r"https://github\.com/(?<repo>.+)\.git https://github.com/@repo@/compare/@base@...@branch@?expand=1",
-    r"git@gitlab\.com:(?<repo>.+)\.git https://gitlab.com/@repo@/merge_requests/new?merge_request%5Btarget_branch%5D=@base@&merge_request%5Bsource_branch%5D=@branch@",
-    r"https://gitlab\.com/(?<repo>.+)\.git https://gitlab.com/@repo@/merge_requests/new?merge_request%5Btarget_branch%5D=@base@&merge_request%5Bsource_branch%5D=@branch@",
-  ]
-  .join("\n")
-}
-
-pub fn is_git_task_matchers(value: &String) -> bool {
-  value == &git_task_matchers()
-}
-
-pub fn git_task_name_matchers() -> String {
-  r"$GIT_TASK_MATCHERS ^(?<task>[a-z0-9]*-?\d+)-{1,2} -{1,2}(?<task>[a-z0-9]*-?\d+)$".to_string()
-}
-
-pub fn is_git_task_name_matchers(value: &String) -> bool {
-  value == &git_task_name_matchers()
-}
-
-pub fn git_task_template() -> String {
-  "@message@ [#@task@]".to_string()
-}
-
-pub fn is_git_task_template(value: &String) -> bool {
-  value == &git_task_template()
-}
-
-pub fn git_open_path() -> String {
-  "/usr/bin/open".to_string()
-}
-
-pub fn is_git_open_path(value: &String) -> bool {
-  value == &git_open_path()
-}
-
-pub fn git_release_prefix() -> String {
-  "release-".to_string()
-}
-
-pub fn is_git_release_prefix(value: &String) -> bool {
-  value == &git_release_prefix()
-}
-
 pub fn git_upstream_remote() -> String {
   "upstream".to_string()
 }
@@ -236,4 +191,60 @@ pub fn prompt_narrow_threshold() -> u16 {
 
 pub fn is_prompt_narrow_threshold(value: &u16) -> bool {
   *value == prompt_narrow_threshold()
+}
+
+pub fn prompt_themes() -> BTreeMap<String, PromptThemeConfig> {
+  [
+    (
+      "minimal",
+      "<user>\u{E0B6}</><user_text> \u{F007} </><main> \u{EF09} {host} {git_status} </><end>\u{E0B0} </>",
+    ),
+    (
+      "compact",
+      "<user>\u{E0B6}</><user_text> \u{F007} {user} </><main> \u{EF09} {host} {git_status} </><end>\u{E0B0} </>",
+    ),
+    (
+      "default",
+      "<user>\u{E0B6}</><user_text> \u{F007} {user} </><main> \u{EF09} {host} \u{F07B} {path} \u{E0A0} {git_branch} {git_status} </><end>\u{E0B0} </>",
+    ),
+    (
+      "extended",
+      "<time>\u{E0B6} \u{E384} {time} </><path>\u{E0B0} \u{F07B} {full_path} \u{E0A0} {git_branch} {git_hash} {git_status} </><path_end>\u{E0B4}</>\n<user>\u{E0B6}</><user_text> \u{F007} {user} </><main> \u{EF09} {host} </><end>\u{E0B0} </>",
+    ),
+    (
+      "full",
+      "<time>\u{E0B6} \u{F073} {date_time} </><path_full>\u{E0B0} \u{F07B} {full_path} \u{E0A0} {git_branch} {git_hash} </><path_full_end>\u{E0B4}</> {git_status}\n<user>\u{E0B6}</><user_text> \u{F007} {user} </><main> \u{EF09} {host}{node}{rust}{ruby}{go} </><end>\u{E0B0} </>",
+    ),
+  ]
+  .into_iter()
+  .map(|(name, template)| {
+    (
+      name.to_string(),
+      PromptThemeConfig {
+        user: PromptUserConfig {
+          regular: "hex:#008800 bold".to_string(),
+          root: "hex:#cc0000 bold".to_string(),
+        },
+        styles: prompt_theme_styles(),
+        template: PromptTemplate::String(template.to_string()),
+      },
+    )
+  })
+  .collect()
+}
+
+fn prompt_theme_styles() -> BTreeMap<String, String> {
+  [
+    ("user_text", "hex:#ffffff bg_hex:008800 bold"),
+    ("main", "hex:#000000 bg_hex:ffdf00 bold"),
+    ("end", "hex:#ffdf00 bold"),
+    ("time", "hex:#ffffff bg_hex:013482 bold"),
+    ("path", "hex:#ffffff bg_hex:0088e2 bold"),
+    ("path_end", "hex:#0088e2"),
+    ("path_full", "hex:#ffffff bg_hex:005be4 bold"),
+    ("path_full_end", "hex:#005be4"),
+  ]
+  .into_iter()
+  .map(|(name, styles)| (name.to_string(), styles.to_string()))
+  .collect()
 }

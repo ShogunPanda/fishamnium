@@ -88,3 +88,40 @@ alias grhh='git reset HEAD --hard'
 
 # Finding
 alias gf='git ls-files | grep'
+
+# Github
+alias gho='gh repo view --web'
+alias ghpr='gh pr list -H (git branch --show-current) --json number -q ".[0].number"'
+alias ghprb=gh_pr_branch
+alias ghpra=gh_pr_approve
+alias ghprm='gh pr merge'
+alias ghra=gh_remote_add
+
+# Read commands
+alias gir=g_is_repository
+alias gis=g_is_dirty
+alias gls=g_summary
+alias glr=g_remotes
+alias glra=g_remotes_autocomplete
+alias gbn=g_branch_name
+alias gfbn=g_full_branch_name
+alias gi=g_sha
+alias gfi=g_full_sha
+alias gpru=g_pull_request_url
+
+# Write commands
+alias gbs=g_switch
+alias gbds=g_branch_delete_select
+alias gp=g_push
+alias gu=g_update
+alias gre=g_reset
+alias grd=g_delete
+alias grc=g_cleanup
+
+# Workflow
+alias gws=g_start
+alias gwr=g_refresh
+alias gwrm='g_refresh -m'
+alias gwpr=g_pull_request
+alias gwfpr=g_fast_pull_request
+alias gwy=g_sync

@@ -17,58 +17,12 @@
 # These variables are only valid while .fishamnium.fish is being sourced.
 # Prefer the fishamnium_dirhook_* helpers below in project files.
 
+# ----- Internal functions -----
+
 function __fishamnium_project_hook_clear_context
   set -e FISHAMNIUM_DIRHOOK_OPERATION
   set -e FISHAMNIUM_DIRHOOK_PROJECT_CURRENT
   set -e FISHAMNIUM_DIRHOOK_PROJECT_OTHER
-end
-
-# Print the current dirhook operation: "enter" or "leave".
-function fishamnium_dirhook_operation --description 'Print the current dirhook operation'
-  echo $FISHAMNIUM_DIRHOOK_OPERATION
-end
-
-# Print the project root affected by the current operation.
-function fishamnium_dirhook_project_current --description 'Print the current dirhook project root'
-  echo $FISHAMNIUM_DIRHOOK_PROJECT_CURRENT
-end
-
-# Print the other project root in a project-to-project transition, if any.
-function fishamnium_dirhook_project_other --description 'Print the other dirhook project root'
-  echo $FISHAMNIUM_DIRHOOK_PROJECT_OTHER
-end
-
-# Return success when the current operation is "enter".
-function fishamnium_dirhook_is_enter --description 'Test whether the current dirhook operation is enter'
-  test "$FISHAMNIUM_DIRHOOK_OPERATION" = enter
-end
-
-# Return success when the current operation is "leave".
-function fishamnium_dirhook_is_leave --description 'Test whether the current dirhook operation is leave'
-  test "$FISHAMNIUM_DIRHOOK_OPERATION" = leave
-end
-
-# Join arguments with the current project root.
-function fishamnium_dirhook_project_path --description 'Join paths with the current dirhook project root'
-  path join "$FISHAMNIUM_DIRHOOK_PROJECT_CURRENT" $argv
-end
-
-# Export a variable on enter and erase it on leave.
-function fishamnium_dirhook_export --description 'Export a variable for the current dirhook project' --argument-names name
-  if fishamnium_dirhook_is_enter
-    set -gx $name $argv
-  else if fishamnium_dirhook_is_leave
-    set -e $name
-  end
-end
-
-# Create an alias on enter and erase it on leave.
-function fishamnium_dirhook_alias --description 'Create an alias for the current dirhook project' --argument-names name
-  if fishamnium_dirhook_is_enter
-    alias $name="$argv[2..]"
-  else if fishamnium_dirhook_is_leave
-    functions --erase $name
-  end
 end
 
 function __fishamnium_project_hook_resolve_root
@@ -118,6 +72,60 @@ function __fishamnium_project_hook --on-variable PWD
 
   __fishamnium_project_hook_clear_context
 end
+
+# ----- Reading functions -----
+
+# Print the current dirhook operation: "enter" or "leave".
+function fishamnium_dirhook_operation --description 'Print the current dirhook operation'
+  echo $FISHAMNIUM_DIRHOOK_OPERATION
+end
+
+# Print the project root affected by the current operation.
+function fishamnium_dirhook_project_current --description 'Print the current dirhook project root'
+  echo $FISHAMNIUM_DIRHOOK_PROJECT_CURRENT
+end
+
+# Print the other project root in a project-to-project transition, if any.
+function fishamnium_dirhook_project_other --description 'Print the other dirhook project root'
+  echo $FISHAMNIUM_DIRHOOK_PROJECT_OTHER
+end
+
+# Return success when the current operation is "enter".
+function fishamnium_dirhook_is_enter --description 'Test whether the current dirhook operation is enter'
+  test "$FISHAMNIUM_DIRHOOK_OPERATION" = enter
+end
+
+# Return success when the current operation is "leave".
+function fishamnium_dirhook_is_leave --description 'Test whether the current dirhook operation is leave'
+  test "$FISHAMNIUM_DIRHOOK_OPERATION" = leave
+end
+
+# Join arguments with the current project root.
+function fishamnium_dirhook_project_path --description 'Join paths with the current dirhook project root'
+  path join "$FISHAMNIUM_DIRHOOK_PROJECT_CURRENT" $argv
+end
+
+# ----- Writing functions -----
+
+# Export a variable on enter and erase it on leave.
+function fishamnium_dirhook_export --description 'Export a variable for the current dirhook project' --argument-names name
+  if fishamnium_dirhook_is_enter
+    set -gx $name $argv
+  else if fishamnium_dirhook_is_leave
+    set -e $name
+  end
+end
+
+# Create an alias on enter and erase it on leave.
+function fishamnium_dirhook_alias --description 'Create an alias for the current dirhook project' --argument-names name
+  if fishamnium_dirhook_is_enter
+    alias $name="$argv[2..]"
+  else if fishamnium_dirhook_is_leave
+    functions --erase $name
+  end
+end
+
+# ----- Bootstrap -----
 
 for file in $HOME/.config/fishamnium/*.fish
   test -x "$file"; and source "$file"

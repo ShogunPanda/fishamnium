@@ -86,16 +86,39 @@ complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a pid -d
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a env -d "Print shell environment variables"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a shell-environment -d "Print fish environment variables"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a colors -d "Print color variables"
-complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a fzf-theme -d "Print fzf theme colors"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a vscode-theme -d "Print VS Code terminal colors"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a configuration-file -d "Print active configuration file"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a config -d "Read configuration values"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a configuration -d "Read configuration values"
+complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a agents -d "Manage agent sessions"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a bookmarks -d "Manage bookmarks"
+complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a git -d "Git helpers"
+complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a node -d "Node helpers"
+complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a prompt -d "Print shell prompt"
+complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a select -d "Select a row from stdin"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a tmux -d "Manage tmux sessions"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a exit -d "Terminate the helper server"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a quit -d "Terminate the helper server"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a completions -d "Print fish completions"
+
+complete -c fishamnium -n "__fishamnium_helper_using_command select" -l prompt -r -d "Selection prompt"
+complete -c fishamnium -n "__fishamnium_helper_using_command select" -l multi -d "Enable multi-select"
+complete -c fishamnium -n "__fishamnium_helper_using_command select" -l raw -d "Return full selected rows"
+
+complete -c fishamnium -n "__fishamnium_helper_using_command agents; and test (__fishamnium_helper_argument_index agents) -eq 0" -a opencode -d "Manage OpenCode sessions"
+complete -c fishamnium -n "__fishamnium_helper_using_command agents; and test (__fishamnium_helper_argument_index agents) -eq 1" -a list -d "List sessions"
+complete -c fishamnium -n "__fishamnium_helper_using_command agents; and test (__fishamnium_helper_argument_index agents) -eq 1" -a last -d "Print last session"
+
+complete -c fishamnium -n "__fishamnium_helper_using_command git; and test (__fishamnium_helper_argument_index git) -eq 0" -a remotes -d "Print Git remotes JSON"
+complete -c fishamnium -n "__fishamnium_helper_using_command git; and test (__fishamnium_helper_argument_index git) -eq 0" -a worktrees -d "List Git worktrees"
+
+complete -c fishamnium -n "__fishamnium_helper_using_command node; and test (__fishamnium_helper_argument_index node) -eq 0" -a scripts -d "Print package scripts"
+
+complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l status -r -d "Previous command status"
+complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l pipestatus -r -d "Previous pipeline status"
+complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l duration -r -d "Previous command duration"
+complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l width -r -d "Terminal width"
+complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l path -r -d "Current path"
 
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a list -d "List bookmarks"
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a list-raw -d "List raw bookmarks"
@@ -112,8 +135,6 @@ complete -c fishamnium -n "__fishamnium_helper_using_command tmux; and test (__f
 
 complete -c fishamnium -n "__fishamnium_helper_using_command colors; and test (__fishamnium_helper_argument_index colors) -eq 0" -a light -d "Light theme"
 complete -c fishamnium -n "__fishamnium_helper_using_command colors; and test (__fishamnium_helper_argument_index colors) -eq 0" -a dark -d "Dark theme"
-complete -c fishamnium -n "__fishamnium_helper_using_command fzf-theme; and test (__fishamnium_helper_argument_index fzf-theme) -eq 0" -a light -d "Light theme"
-complete -c fishamnium -n "__fishamnium_helper_using_command fzf-theme; and test (__fishamnium_helper_argument_index fzf-theme) -eq 0" -a dark -d "Dark theme"
 complete -c fishamnium -n "__fishamnium_helper_using_command vscode-theme; and test (__fishamnium_helper_argument_index vscode-theme) -eq 0" -a light -d "Light theme"
 complete -c fishamnium -n "__fishamnium_helper_using_command vscode-theme; and test (__fishamnium_helper_argument_index vscode-theme) -eq 0" -a dark -d "Dark theme"
 complete -c fishamnium -n "__fishamnium_helper_using_command shell-environment; and test (__fishamnium_helper_argument_index shell-environment) -eq 1" -a light -d "Light theme"
@@ -128,15 +149,11 @@ for selector in \
   .prompt \
   .prompt_narrow \
   .prompt_narrow_threshold \
+  .themes \
   .bookmarksExportPrefix \
   .git.branch \
   .git.remote \
   .git.root \
-  .git.taskMatchers \
-  .git.taskNameMatchers \
-  .git.taskTemplate \
-  .git.openPath \
-  .git.releasePrefix \
   .git.upstreamRemote \
   .git.approvalMessage \
   .node.runner \

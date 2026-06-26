@@ -1,3 +1,7 @@
+### 2026-06-26 / 13.0.0
+
+- feat!: Full dependency-less rewrite.
+
 ### 2026-06-25 / 12.18.0
 
 - feat: New opencode command.
