@@ -1,3 +1,7 @@
+### 2026-06-28 / 14.0.0
+
+- feat!: Enhance prompt customization.
+
 ### 2026-06-26 / 13.0.2
 
 - fix: Minor fix.
