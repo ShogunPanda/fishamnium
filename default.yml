@@ -1,5 +1,4 @@
 theme: light
-
 prompt: default
 prompt_narrow: compact
 prompt_narrow_threshold: 100
@@ -39,38 +38,51 @@ colors:
     primary: "FFDF00"
     secondary: "5EBBF9"
 
-themes:
+prompts:
   minimal:
-    user:
-      regular: "hex:008800"
-      root: "hex:cc0000"
-    template: "<bold user_fg>\uE0B6<user_bg hex:ffffff> \uEF09 {host} {git_status} <bg_reset><user_fg>\uE0B0 "
+    colors:
+      user:
+        regular: "008800"
+        root: "cc0000"
+    template: "<bold user_fg>\uE0B6<user_bg user_text> \uEF09 {host} {git_status} <bg_reset><user_fg>\uE0B0 "
   compact:
-    user:
-      regular: "hex:008800"
-      root: "hex:cc0000"
-    template: "<bold user_fg>\uE0B6<user_bg hex:ffffff> \uF007 {user} <bg_hex:ffdf00 user_fg>\uE0B4<hex:000000> \uEF09 {host} {git_status} <bg_reset><hex:ffdf00>\uE0B0 "
+    colors:
+      user:
+        regular: "008800"
+        root: "cc0000"
+      host: "ffdf00"
+    template: "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} {git_status} <bg_reset><host_fg>\uE0B0 "
   default:
-    user:
-      regular: "hex:008800 bold"
-      root: "hex:cc0000 bold"
-    template: "<bold user_fg>\uE0B6<user_bg hex:ffffff> \uF007 {user} <bg_hex:ffdf00 user_fg>\uE0B4<hex:000000> \uEF09 {host} \uF114 {path} \uE0A0 {git_branch} {git_status}<bg_reset><hex:ffdf00>\uE0B0 "
+    colors:
+      user:
+        regular: "008800"
+        root: "cc0000"
+      host: "ffdf00"
+    template: "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} \uF114 {path} \uE0A0 {git_branch} {git_status}<bg_reset><host_fg>\uE0B0 "
   extended:
-    user:
-      regular: "hex:008800 bold"
-      root: "hex:cc0000 bold"
+    colors:
+      user:
+        regular: "008800"
+        root: "cc0000"
+      host: "ffdf00"
+      path: "0088e2"
+      time: "013482"
     template:
       - ""
-      - "<bold hex:013482>\uE0B6<hex:ffffff bg_hex:013482> \uE384 {time} <bg_hex:0088e2 hex:013482>\uE0B4<hex:ffffff> \uF114 {path} \uE0A0 {git_branch} {git_hash} {git_status}<bg_reset><hex:0088e2>\uE0B4"
-      - "<bold user_fg>\uE0B6<user_bg hex:ffffff> \uF007 {user} <bg_hex:ffdf00 user_fg>\uE0B4<hex:000000> \uEF09 {host} <bg_reset><hex:ffdf00>\uE0B0 "
+      - "<bold time_fg>\uE0B6<time_bg time_text> \uE384 {time} <path_bg time_fg>\uE0B4<path_text> \uF114 {path} \uE0A0 {git_branch} {git_hash} {git_status}<bg_reset><path_fg>\uE0B4"
+      - "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} <bg_reset><host_fg>\uE0B0 "
   full:
-    user:
-      regular: "hex:008800 bold"
-      root: "hex:cc0000 bold"
+    colors:
+      user:
+        regular: "008800"
+        root: "cc0000"
+      host: "ffdf00"
+      path: "0088e2"
+      time: "013482"
     template:
       - ""
-      - "<bold hex:013482>\uE0B6<hex:ffffff bg_hex:013482> \uE384 {time} <bg_hex:0088e2 hex:013482>\uE0B4<hex:ffffff> \uF114 {path} \uE0A0 {git_branch} {git_hash} {git_status}<bg_reset><hex:0088e2>\uE0B4"
-      - "<bold user_fg>\uE0B6<user_bg hex:ffffff> \uF007 {user} <bg_hex:ffdf00 user_fg>\uE0B4<hex:000000> \uEF09 {host}{app: \uF013}{node}{rust}{ruby}{go} <bg_reset><hex:ffdf00>\uE0B0 "
+      - "<bold time_fg>\uE0B6<time_bg time_text> \uE384 {time} <path_bg time_fg>\uE0B4<path_text> \uF114 {path} \uE0A0 {git_branch} {git_hash} {git_status}<bg_reset><path_fg>\uE0B4"
+      - "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host}{app: \uF013}{node}{rust}{ruby}{go} <bg_reset><host_fg>\uE0B0 "
 
 # Flexoki
 # colors:

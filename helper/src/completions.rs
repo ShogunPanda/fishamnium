@@ -117,6 +117,7 @@ complete -c fishamnium -n "__fishamnium_helper_using_command node; and test (__f
 complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l status -r -d "Previous command status"
 complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l pipestatus -r -d "Previous pipeline status"
 complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l duration -r -d "Previous command duration"
+complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l theme -r -d "Prompt theme"
 complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l width -r -d "Terminal width"
 complete -c fishamnium -n "__fishamnium_helper_using_command prompt" -l path -r -d "Current path"
 
@@ -147,9 +148,10 @@ for selector in \
   .hosts \
   .theme \
   .prompt \
+  .prompt_overrides \
   .prompt_narrow \
   .prompt_narrow_threshold \
-  .themes \
+  .prompts \
   .bookmarksExportPrefix \
   .git.branch \
   .git.remote \

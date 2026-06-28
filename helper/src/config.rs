@@ -120,12 +120,32 @@ pub struct ColorThemeConfig {
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PromptThemeConfig {
-  pub user: PromptUserConfig,
+  #[serde(default, skip_serializing_if = "PromptColorsConfig::is_empty")]
+  pub colors: PromptColorsConfig,
 
   #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
   pub styles: BTreeMap<String, String>,
 
   pub template: PromptTemplate,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PromptThemeOverrideConfig {
+  #[serde(default, skip_serializing_if = "PromptColorOverridesConfig::is_empty")]
+  pub colors: PromptColorOverridesConfig,
+
+  #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+  pub styles: BTreeMap<String, String>,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub template: Option<PromptTemplate>,
+}
+
+impl PromptThemeOverrideConfig {
+  pub fn is_empty(&self) -> bool {
+    self.colors.is_empty() && self.styles.is_empty() && self.template.is_none()
+  }
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
@@ -144,11 +164,67 @@ impl PromptTemplate {
   }
 }
 
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PromptColorsConfig {
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub user: Option<PromptUserColorConfig>,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub host: Option<String>,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub time: Option<String>,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub path: Option<String>,
+}
+
+impl PromptColorsConfig {
+  pub fn is_empty(&self) -> bool {
+    self.user.is_none() && self.host.is_none() && self.time.is_none() && self.path.is_none()
+  }
+}
+
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PromptColorOverridesConfig {
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub user: Option<PromptUserColorOverrideConfig>,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub host: Option<String>,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub time: Option<String>,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub path: Option<String>,
+}
+
+impl PromptColorOverridesConfig {
+  pub fn is_empty(&self) -> bool {
+    self.user.is_none() && self.host.is_none() && self.time.is_none() && self.path.is_none()
+  }
+}
+
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PromptUserConfig {
+pub struct PromptUserColorConfig {
   pub regular: String,
-  pub root: String,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub root: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PromptUserColorOverrideConfig {
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub regular: Option<String>,
+
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub root: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -201,7 +277,15 @@ pub struct Config {
   pub colors: ColorsConfig,
 
   #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
-  pub themes: BTreeMap<String, PromptThemeConfig>,
+  pub prompts: BTreeMap<String, PromptThemeConfig>,
+
+  #[serde(
+    default,
+    rename = "prompt_overrides",
+    alias = "promptOverrides",
+    skip_serializing_if = "PromptThemeOverrideConfig::is_empty"
+  )]
+  pub prompt_overrides: PromptThemeOverrideConfig,
 }
 
 impl Config {
@@ -329,7 +413,12 @@ impl Config {
       serde_yaml::to_value(self.prompt_narrow_threshold)?,
     );
     Self::insert_value(&mut value, &["colors"], serde_yaml::to_value(&self.colors)?);
-    Self::insert_value(&mut value, &["themes"], serde_yaml::to_value(&self.themes)?);
+    Self::insert_value(&mut value, &["prompts"], serde_yaml::to_value(&self.prompts)?);
+    Self::insert_value(
+      &mut value,
+      &["prompt_overrides"],
+      serde_yaml::to_value(&self.prompt_overrides)?,
+    );
     Self::insert_value(
       &mut value,
       &["bookmarksExportPrefix"],
@@ -410,7 +499,8 @@ impl Default for Config {
       prompt_narrow: prompt_narrow(),
       prompt_narrow_threshold: prompt_narrow_threshold(),
       colors: ColorsConfig::default(),
-      themes: prompt_themes(),
+      prompts: prompt_themes(),
+      prompt_overrides: PromptThemeOverrideConfig::default(),
     }
   }
 }

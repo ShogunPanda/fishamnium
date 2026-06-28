@@ -1,5 +1,12 @@
-use crate::config::{EditorConfig, GitConfig, NodeConfig, PromptTemplate, PromptThemeConfig, PromptUserConfig};
+use crate::config::{EditorConfig, GitConfig, NodeConfig, PromptColorsConfig, PromptTemplate, PromptThemeConfig};
+use serde::Deserialize;
 use std::collections::BTreeMap;
+use std::sync::OnceLock;
+
+#[derive(Deserialize)]
+struct DefaultConfig {
+  prompts: BTreeMap<String, PromptThemeConfig>,
+}
 
 pub const COLORS_WHITE: &str = "FFFFFF";
 pub const COLORS_BLACK: &str = "000000";
@@ -194,57 +201,26 @@ pub fn is_prompt_narrow_threshold(value: &u16) -> bool {
 }
 
 pub fn prompt_themes() -> BTreeMap<String, PromptThemeConfig> {
-  [
-    (
-      "minimal",
-      "<user>\u{E0B6}</><user_text> \u{F007} </><main> \u{EF09} {host} {git_status} </><end>\u{E0B0} </>",
-    ),
-    (
-      "compact",
-      "<user>\u{E0B6}</><user_text> \u{F007} {user} </><main> \u{EF09} {host} {git_status} </><end>\u{E0B0} </>",
-    ),
-    (
-      "default",
-      "<user>\u{E0B6}</><user_text> \u{F007} {user} </><main> \u{EF09} {host} \u{F07B} {path} \u{E0A0} {git_branch} {git_status} </><end>\u{E0B0} </>",
-    ),
-    (
-      "extended",
-      "<time>\u{E0B6} \u{E384} {time} </><path>\u{E0B0} \u{F07B} {full_path} \u{E0A0} {git_branch} {git_hash} {git_status} </><path_end>\u{E0B4}</>\n<user>\u{E0B6}</><user_text> \u{F007} {user} </><main> \u{EF09} {host} </><end>\u{E0B0} </>",
-    ),
-    (
-      "full",
-      "<time>\u{E0B6} \u{F073} {date_time} </><path_full>\u{E0B0} \u{F07B} {full_path} \u{E0A0} {git_branch} {git_hash} </><path_full_end>\u{E0B4}</> {git_status}\n<user>\u{E0B6}</><user_text> \u{F007} {user} </><main> \u{EF09} {host}{node}{rust}{ruby}{go} </><end>\u{E0B0} </>",
-    ),
-  ]
+  [(
+    "default".to_string(),
+    PromptThemeConfig {
+      colors: PromptColorsConfig::default(),
+      styles: BTreeMap::new(),
+      template: PromptTemplate::String("{user}@{host} $>".to_string()),
+    },
+  )]
   .into_iter()
-  .map(|(name, template)| {
-    (
-      name.to_string(),
-      PromptThemeConfig {
-        user: PromptUserConfig {
-          regular: "hex:#008800 bold".to_string(),
-          root: "hex:#cc0000 bold".to_string(),
-        },
-        styles: prompt_theme_styles(),
-        template: PromptTemplate::String(template.to_string()),
-      },
-    )
-  })
   .collect()
 }
 
-fn prompt_theme_styles() -> BTreeMap<String, String> {
-  [
-    ("user_text", "hex:#ffffff bg_hex:008800 bold"),
-    ("main", "hex:#000000 bg_hex:ffdf00 bold"),
-    ("end", "hex:#ffdf00 bold"),
-    ("time", "hex:#ffffff bg_hex:013482 bold"),
-    ("path", "hex:#ffffff bg_hex:0088e2 bold"),
-    ("path_end", "hex:#0088e2"),
-    ("path_full", "hex:#ffffff bg_hex:005be4 bold"),
-    ("path_full_end", "hex:#005be4"),
-  ]
-  .into_iter()
-  .map(|(name, styles)| (name.to_string(), styles.to_string()))
-  .collect()
+pub fn bundled_prompt_themes() -> BTreeMap<String, PromptThemeConfig> {
+  static DEFAULT_THEMES: OnceLock<BTreeMap<String, PromptThemeConfig>> = OnceLock::new();
+
+  DEFAULT_THEMES
+    .get_or_init(|| {
+      serde_yaml::from_str::<DefaultConfig>(include_str!("../../default.yml"))
+        .expect("Invalid bundled default prompt themes")
+        .prompts
+    })
+    .clone()
 }

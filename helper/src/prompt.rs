@@ -1,5 +1,5 @@
-use crate::config::{Config, PromptThemeConfig};
-use crate::env::Environment;
+use crate::config::{Config, PromptThemeConfig, PromptThemeOverrideConfig, PromptUserColorConfig};
+use crate::defaults::bundled_prompt_themes;
 use git2::{Repository, Status, StatusOptions};
 use jiff::Zoned;
 use nix::unistd::{Uid, User};
@@ -16,6 +16,7 @@ use tempera::{add_style, colorize_template};
 pub struct Prompt;
 
 struct PromptOptions {
+  theme: Option<String>,
   width: Option<u16>,
   path: PathBuf,
 }
@@ -32,21 +33,22 @@ impl Prompt {
   }
 
   fn render(options: &PromptOptions) -> Result<String, Box<dyn Error>> {
-    let environment = Environment::new()?;
     let config = Config::load_current()?;
-    let defaults = Config::load(Path::new(&environment.root).join("default.yml").as_path())?;
+    let bundled_themes = bundled_prompt_themes();
+    let defaults = Config::default();
     let theme_name = Self::theme_name(&config, options);
     let Some(theme) = config
-      .themes
+      .prompts
       .get(&theme_name)
-      .or_else(|| defaults.themes.get(&theme_name))
-      .or_else(|| defaults.themes.get(&config.prompt))
-      .or_else(|| defaults.themes.get("default"))
+      .or_else(|| bundled_themes.get(&theme_name))
+      .or_else(|| defaults.prompts.get("default"))
     else {
       return Err(IoError::new(ErrorKind::NotFound, format!("Prompt theme {theme_name} not found")).into());
     };
+    let mut theme = theme.clone();
+    Self::apply_overrides(&mut theme, &config.prompt_overrides);
 
-    Self::register_styles(theme)?;
+    Self::register_styles(&theme)?;
     let template = Self::interpolate(&theme.template.render(), &Self::variables(options)?);
     Ok(Self::collapse_spaces(&colorize_template(&Self::preprocess_tags(
       &template,
@@ -54,6 +56,7 @@ impl Prompt {
   }
 
   fn parse_options(payload: &[&str]) -> Result<PromptOptions, Box<dyn Error>> {
+    let mut theme = None;
     let mut width = None;
     let mut path = std::env::current_dir()?;
     let mut index = 0;
@@ -71,6 +74,15 @@ impl Prompt {
               .into(),
             );
           }
+        }
+        "--theme" => {
+          index += 1;
+          theme = Some(
+            payload
+              .get(index)
+              .ok_or_else(|| IoError::new(ErrorKind::InvalidInput, "Missing value for --theme"))?
+              .to_string(),
+          );
         }
         "--width" => {
           index += 1;
@@ -97,10 +109,14 @@ impl Prompt {
       index += 1;
     }
 
-    Ok(PromptOptions { width, path })
+    Ok(PromptOptions { theme, width, path })
   }
 
   fn theme_name(config: &Config, options: &PromptOptions) -> String {
+    if let Some(theme) = &options.theme {
+      return theme.clone();
+    }
+
     if options
       .width
       .is_some_and(|width| width < config.prompt_narrow_threshold)
@@ -112,15 +128,26 @@ impl Prompt {
   }
 
   fn register_styles(theme: &PromptThemeConfig) -> Result<(), Box<dyn Error>> {
-    let user_style = if Uid::effective().is_root() {
-      theme.user.root.as_str()
-    } else {
-      theme.user.regular.as_str()
-    };
     let mut styles = BTreeMap::new();
 
-    styles.insert("user_fg".to_string(), Self::split_styles(user_style));
-    styles.insert("user_bg".to_string(), Self::background_styles(user_style));
+    styles.insert("white".to_string(), vec!["hex:ffffff".to_string()]);
+    styles.insert("black".to_string(), vec!["hex:000000".to_string()]);
+
+    if let Some(user) = &theme.colors.user {
+      Self::insert_user_color_styles(&mut styles, user);
+    }
+
+    if let Some(host) = &theme.colors.host {
+      Self::insert_color_styles(&mut styles, "host", host);
+    }
+
+    if let Some(time) = &theme.colors.time {
+      Self::insert_color_styles(&mut styles, "time", time);
+    }
+
+    if let Some(path) = &theme.colors.path {
+      Self::insert_color_styles(&mut styles, "path", path);
+    }
 
     for (name, definition) in &theme.styles {
       styles.insert(name.to_string(), Self::split_styles(definition));
@@ -133,6 +160,86 @@ impl Prompt {
     }
 
     Ok(())
+  }
+
+  fn apply_overrides(theme: &mut PromptThemeConfig, overrides: &PromptThemeOverrideConfig) {
+    if let Some(user) = &overrides.colors.user {
+      if let Some(regular) = &user.regular {
+        theme.colors.user.get_or_insert_with(|| PromptUserColorConfig {
+          regular: regular.clone(),
+          root: None,
+        });
+      }
+
+      if let Some(user_theme) = &mut theme.colors.user {
+        if let Some(regular) = &user.regular {
+          user_theme.regular = regular.clone();
+        }
+        if let Some(root) = &user.root {
+          user_theme.root = Some(root.clone());
+        }
+      }
+    }
+
+    if let Some(host) = &overrides.colors.host {
+      theme.colors.host = Some(host.clone());
+    }
+    if let Some(time) = &overrides.colors.time {
+      theme.colors.time = Some(time.clone());
+    }
+    if let Some(path) = &overrides.colors.path {
+      theme.colors.path = Some(path.clone());
+    }
+
+    for (name, definition) in &overrides.styles {
+      theme.styles.insert(name.clone(), definition.clone());
+    }
+
+    if let Some(template) = &overrides.template {
+      theme.template = template.clone();
+    }
+  }
+
+  fn insert_user_color_styles(styles: &mut BTreeMap<String, Vec<String>>, config: &PromptUserColorConfig) {
+    let color = if Uid::effective().is_root() {
+      config.root.as_deref().unwrap_or(&config.regular)
+    } else {
+      &config.regular
+    };
+
+    Self::insert_color_styles(styles, "user", color);
+  }
+
+  fn insert_color_styles(styles: &mut BTreeMap<String, Vec<String>>, name: &str, color: &str) {
+    let color = color.trim().trim_start_matches('#');
+    let foreground = vec![format!("hex:{color}")];
+    let background = vec![format!("bg_hex:{color}")];
+    let text = vec![format!("hex:{}", Self::readable_text_color(color))];
+
+    styles.insert(name.to_string(), foreground.clone());
+    styles.insert(format!("{name}_fg"), foreground);
+    styles.insert(format!("{name}_bg"), background);
+    styles.insert(format!("{name}_text"), text);
+  }
+
+  fn readable_text_color(background: &str) -> &'static str {
+    let Some(brightness) = Self::perceived_brightness(background) else {
+      return "ffffff";
+    };
+
+    if brightness > 186 { "000000" } else { "ffffff" }
+  }
+
+  fn perceived_brightness(color: &str) -> Option<u32> {
+    if color.len() != 6 {
+      return None;
+    }
+
+    let red = u32::from(u8::from_str_radix(&color[0..2], 16).ok()?);
+    let green = u32::from(u8::from_str_radix(&color[2..4], 16).ok()?);
+    let blue = u32::from(u8::from_str_radix(&color[4..6], 16).ok()?);
+
+    Some((red * 299 + green * 587 + blue * 114) / 1000)
   }
 
   fn resolve_style(
@@ -163,20 +270,6 @@ impl Prompt {
       .split_whitespace()
       .filter(|style| !style.is_empty())
       .map(ToString::to_string)
-      .collect()
-  }
-
-  fn background_styles(styles: &str) -> Vec<String> {
-    Self::split_styles(styles)
-      .into_iter()
-      .filter_map(|style| match style.as_str() {
-        "bold" | "dim" | "italic" | "underline" | "blink" | "reverse" | "hidden" | "strikethrough" => None,
-        style if style.starts_with("bg_") => Some(style.to_string()),
-        style if style.starts_with("hex:") || style.starts_with("rgb:") || style.starts_with("ansi:") => {
-          Some(format!("bg_{style}"))
-        }
-        style => Some(format!("bg_{style}")),
-      })
       .collect()
   }
 
