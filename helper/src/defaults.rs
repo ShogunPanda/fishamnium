@@ -1,7 +1,8 @@
 use crate::config::{EditorConfig, GitConfig, NodeConfig, PromptColorsConfig, PromptTemplate, PromptThemeConfig};
 use serde::Deserialize;
 use std::collections::BTreeMap;
-use std::sync::OnceLock;
+use std::fs;
+use std::path::PathBuf;
 
 #[derive(Deserialize)]
 struct DefaultConfig {
@@ -185,7 +186,7 @@ pub fn is_prompt(value: &String) -> bool {
 }
 
 pub fn prompt_narrow() -> String {
-  "compact".to_string()
+  "xsmall".to_string()
 }
 
 pub fn is_prompt_narrow(value: &String) -> bool {
@@ -213,14 +214,20 @@ pub fn prompt_themes() -> BTreeMap<String, PromptThemeConfig> {
   .collect()
 }
 
-pub fn bundled_prompt_themes() -> BTreeMap<String, PromptThemeConfig> {
-  static DEFAULT_THEMES: OnceLock<BTreeMap<String, PromptThemeConfig>> = OnceLock::new();
+pub fn installed_prompt_themes() -> BTreeMap<String, PromptThemeConfig> {
+  let Ok(home) = std::env::var("HOME") else {
+    return prompt_themes();
+  };
 
-  DEFAULT_THEMES
-    .get_or_init(|| {
-      serde_yaml::from_str::<DefaultConfig>(include_str!("../../default.yml"))
-        .expect("Invalid bundled default prompt themes")
-        .prompts
-    })
-    .clone()
+  let path = PathBuf::from(home)
+    .join(".local")
+    .join("share")
+    .join("fishamnium")
+    .join("default.yml");
+
+  fs::read_to_string(path)
+    .ok()
+    .and_then(|content| serde_yaml::from_str::<DefaultConfig>(&content).ok())
+    .map(|config| config.prompts)
+    .unwrap_or_else(prompt_themes)
 }

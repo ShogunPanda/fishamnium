@@ -1,5 +1,5 @@
 use crate::config::{Config, PromptThemeConfig, PromptThemeOverrideConfig, PromptUserColorConfig};
-use crate::defaults::bundled_prompt_themes;
+use crate::defaults::installed_prompt_themes;
 use git2::{Repository, Status, StatusOptions};
 use jiff::Zoned;
 use nix::unistd::{Uid, User};
@@ -34,13 +34,13 @@ impl Prompt {
 
   fn render(options: &PromptOptions) -> Result<String, Box<dyn Error>> {
     let config = Config::load_current()?;
-    let bundled_themes = bundled_prompt_themes();
+    let installed_themes = installed_prompt_themes();
     let defaults = Config::default();
     let theme_name = Self::theme_name(&config, options);
     let Some(theme) = config
       .prompts
       .get(&theme_name)
-      .or_else(|| bundled_themes.get(&theme_name))
+      .or_else(|| installed_themes.get(&theme_name))
       .or_else(|| defaults.prompts.get("default"))
     else {
       return Err(IoError::new(ErrorKind::NotFound, format!("Prompt theme {theme_name} not found")).into());

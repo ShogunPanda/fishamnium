@@ -1,6 +1,6 @@
 theme: light
 prompt: default
-prompt_narrow: compact
+prompt_narrow: xsmall
 prompt_narrow_threshold: 100
 
 # One Light / Dark modified
@@ -39,19 +39,26 @@ colors:
     secondary: "5EBBF9"
 
 prompts:
-  minimal:
+  xsmall:
     colors:
       user:
         regular: "008800"
         root: "cc0000"
     template: "<bold user_fg>\uE0B6<user_bg user_text> \uEF09 {host} {git_status} <bg_reset><user_fg>\uE0B0 "
-  compact:
+  small:
     colors:
       user:
         regular: "008800"
         root: "cc0000"
       host: "ffdf00"
     template: "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} {git_status} <bg_reset><host_fg>\uE0B0 "
+  medium:
+    colors:
+      user:
+        regular: "008800"
+        root: "cc0000"
+      host: "ffdf00"
+    template: "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} \uF114 {path} {git_status}<bg_reset><host_fg>\uE0B0 "
   default:
     colors:
       user:
@@ -59,7 +66,7 @@ prompts:
         root: "cc0000"
       host: "ffdf00"
     template: "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} \uF114 {path} \uE0A0 {git_branch} {git_status}<bg_reset><host_fg>\uE0B0 "
-  extended:
+  large:
     colors:
       user:
         regular: "008800"
@@ -71,7 +78,7 @@ prompts:
       - ""
       - "<bold time_fg>\uE0B6<time_bg time_text> \uE384 {time} <path_bg time_fg>\uE0B4<path_text> \uF114 {path} \uE0A0 {git_branch} {git_hash} {git_status}<bg_reset><path_fg>\uE0B4"
       - "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} <bg_reset><host_fg>\uE0B0 "
-  full:
+  xlarge:
     colors:
       user:
         regular: "008800"
