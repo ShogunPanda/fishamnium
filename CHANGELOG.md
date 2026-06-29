@@ -1,3 +1,7 @@
+### 2026-06-29 / 15.0.1
+
+- fix: Fixed PR creation.
+
 ### 2026-06-28 / 14.0.0
 
 - feat!: Enhance prompt customization.
