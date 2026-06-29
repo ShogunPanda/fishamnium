@@ -45,12 +45,39 @@ function __g_refresh
   __git $operation $base; or return
 end
 
+function __g_pull_request_create_url
+  set base $argv[1]
+  set branch $argv[2]
+  set escapedBase (string escape --style=url -- "$base")
+  set escapedBranch (string escape --style=url -- "$branch")
+
+  for remote in upstream origin
+    set url $($FISHAMNIUM_HELPER git remote-url $remote 2>/dev/null); or continue
+
+    set host
+    set repo
+
+    if string match -qr -- '^git@(?<host>github\.com|gitlab\.com):(?<repo>.+?)(?:\.git)?$' "$url"; or string match -qr -- '^https://(?<host>github\.com|gitlab\.com)/(?<repo>.+?)(?:\.git)?$' "$url"
+      set repo (string replace -r '\.git$' '' -- "$repo")
+
+      switch $host
+        case github.com
+          echo "https://github.com/$repo/pull/new/$escapedBranch"
+          return 0
+        case gitlab.com
+          echo "https://gitlab.com/$repo/-/merge_requests/new?merge_request[source_branch]=$escapedBranch&merge_request[target_branch]=$escapedBase"
+          return 0
+      end
+    end
+  end
+
+  return 1
+end
+
 function __g_pull_request
   set remote $argv[1]
   set base $argv[2]
   set branch $argv[3]
-
-  set url $(g_pull_request_url -r $remote $base $branch); or return
 
   if set -q _flag_f
     set pushOptions $pushOptions "-f"
@@ -61,14 +88,22 @@ function __g_pull_request
   end
 
   dryRun=$_flag_N __git push $pushOptions $remote $branch; or return
+  set url $(__g_pull_request_create_url $base $branch)
   dryRun=$_flag_N __git checkout $base; or return
   dryRun=$_flag_N __git branch -D $branch  
-  dryRun=$_flag_N __g_status /usr/bin/open "$url"
 
-  if test -z "$_flag_N"
-    /usr/bin/open "$url"
+  if test -n "$url"
+    dryRun=$_flag_N __g_status /usr/bin/open "$url"
+
+    if test -z "$_flag_N"
+      /usr/bin/open "$url"
+    end
+  else
+    printf "%s%s--> Cannot generate Pull Request URL from upstream or origin remotes.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
   end
 end
+
+
 
 function __g_worktree_path_from_row
   set tab (printf "\t")
