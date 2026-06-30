@@ -1,3 +1,7 @@
+### 2026-06-30 / 15.0.2
+
+- fix: Fixed loading.
+
 ### 2026-06-29 / 15.0.1
 
 - fix: Fixed PR creation.
