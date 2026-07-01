@@ -113,6 +113,8 @@ alias gpru=g_pull_request_url
 alias gbs=g_switch
 alias gbds=g_branch_delete_select
 alias gp=g_push
+alias gpf='g_push -f'
+
 alias gu=g_update
 alias gre=g_reset
 alias grd=g_delete
