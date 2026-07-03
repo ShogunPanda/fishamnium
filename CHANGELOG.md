@@ -1,3 +1,7 @@
+### 2026-07-03 / 16.0.0
+
+- feat!: Changed hosts format.
+
 ### 2026-07-01 / 15.1.0
 
 - feat: Added gpf.
