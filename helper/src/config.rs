@@ -230,8 +230,8 @@ pub struct PromptUserColorOverrideConfig {
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
-  #[serde(default, skip_serializing_if = "Vec::is_empty")]
-  pub hosts: Vec<String>,
+  #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+  pub hosts: BTreeMap<String, String>,
 
   #[serde(default, skip_serializing_if = "is_git_config")]
   pub git: GitConfig,
@@ -364,6 +364,19 @@ impl Config {
           .collect::<Vec<_>>()
           .join(" "),
       ),
+      Value::Mapping(mapping) => Some(
+        mapping
+          .iter()
+          .filter_map(|(key, value)| {
+            Some(format!(
+              "{}\t{}",
+              Self::value_to_string(Some(key))?,
+              Self::value_to_string(Some(value))?
+            ))
+          })
+          .collect::<Vec<_>>()
+          .join("\n"),
+      ),
       _ => None,
     }
   }
@@ -488,7 +501,7 @@ impl Config {
 impl Default for Config {
   fn default() -> Self {
     Self {
-      hosts: Vec::new(),
+      hosts: BTreeMap::new(),
       git: GitConfig::default(),
       bookmarks: BTreeMap::new(),
       bookmarks_export_prefix: bookmarks_export_prefix(),
@@ -595,4 +608,26 @@ fn is_light_color_theme_config(value: &ColorThemeConfig) -> bool {
 
 fn is_dark_color_theme_config(value: &ColorThemeConfig) -> bool {
   value == &ColorThemeConfig::dark()
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn hosts_are_loaded_as_tsv() {
+    let config = serde_yaml::from_str::<Config>(
+      r#"
+hosts:
+  casa.perseveranza.net: "casa.perseveranza.net:1000"
+  cantina.perseveranza.net: "cantina.perseveranza.net:1000"
+"#,
+    )
+    .unwrap();
+
+    assert_eq!(
+      config.get(Some(".hosts"), &[]).unwrap(),
+      "cantina.perseveranza.net\tcantina.perseveranza.net:1000\ncasa.perseveranza.net\tcasa.perseveranza.net:1000"
+    );
+  }
 }
