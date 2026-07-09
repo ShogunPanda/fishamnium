@@ -1,3 +1,4 @@
+use crate::colors::Colors;
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use nix::unistd::gethostname;
 use std::error::Error;
@@ -69,11 +70,7 @@ impl Ssh {
     Ok(location.into_bytes())
   }
 
-  fn connect(payload: &[&str]) -> Result<Vec<u8>, Box<dyn Error>> {
-    if !payload.is_empty() {
-      return Err(IoError::new(ErrorKind::InvalidInput, "Ssh connect does not accept arguments").into());
-    }
-
+  fn connect(_payload: &[&str]) -> Result<Vec<u8>, Box<dyn Error>> {
     let Ok(clipboard) = Ssh::read_clipboard() else {
       return Ssh::exec_fish();
     };
@@ -83,6 +80,7 @@ impl Ssh {
     };
 
     Ssh::clear_clipboard()?;
+    ssh.print_status();
     ssh.exec()
   }
 
@@ -97,6 +95,22 @@ impl Ssh {
     }
 
     Err(command.args(["-t", &target, &remote_command]).exec().into())
+  }
+
+  fn print_status(&self) {
+    if let Ok(colors) = Colors::new(None) {
+      eprintln!(
+        "{}{}--> ssh {}@{} {}{}",
+        "\x1b[1m",
+        colors.foreground(&colors.palette.primary),
+        self.user,
+        self.host,
+        self.path,
+        "\x1b[0m"
+      );
+    } else {
+      eprintln!("--> ssh {}@{} {}", self.user, self.host, self.path);
+    }
   }
 
   fn from_marked_text(text: &str) -> Result<Option<Self>, Box<dyn Error>> {
@@ -170,7 +184,33 @@ impl Ssh {
   }
 
   fn exec_fish() -> Result<Vec<u8>, Box<dyn Error>> {
-    Err(Command::new("fish").exec().into())
+    let mut shells = vec!["fish".to_string()];
+
+    if let Ok(shell) = std::env::var("SHELL")
+      && shell.ends_with("/fish")
+    {
+      shells.insert(0, shell);
+    }
+
+    for shell in [
+      "/opt/homebrew/bin/fish",
+      "/usr/local/bin/fish",
+      "/opt/local/bin/fish",
+      "/usr/bin/fish",
+      "/bin/fish",
+    ] {
+      shells.push(shell.to_string());
+    }
+
+    for shell in shells {
+      let error = Command::new(&shell).exec();
+
+      if error.kind() != ErrorKind::NotFound {
+        return Err(error.into());
+      }
+    }
+
+    Err(IoError::new(ErrorKind::NotFound, "fish shell not found").into())
   }
 
   fn read_clipboard() -> Result<String, Box<dyn Error>> {
