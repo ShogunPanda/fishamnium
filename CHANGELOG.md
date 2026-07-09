@@ -1,3 +1,7 @@
+### 2026-07-09 / 16.1.0
+
+- feat: Added SSH utilities.
+
 ### 2026-07-03 / 16.0.0
 
 - feat!: Changed hosts format.
