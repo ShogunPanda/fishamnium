@@ -127,3 +127,11 @@ alias gwrm='g_refresh -m'
 alias gwpr=g_pull_request
 alias gwfpr=g_fast_pull_request
 alias gwy=g_sync
+
+# Worktree
+alias gtl='git worktree list'
+alias gts=g_worktree_cd_select
+alias gta='git worktree add'
+alias gtr='git worktree remove'
+alias gtrs='g_worktree_delete_select'
+alias gtp='git worktree prune'

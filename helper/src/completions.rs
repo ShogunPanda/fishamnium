@@ -96,6 +96,7 @@ complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a git -d
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a node -d "Node helpers"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a prompt -d "Print shell prompt"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a select -d "Select a row from stdin"
+complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a ssh -d "Manage SSH sessions"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a tmux -d "Manage tmux sessions"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a exit -d "Terminate the helper server"
 complete -c fishamnium -n "not __fishamnium_helper_command >/dev/null" -a quit -d "Terminate the helper server"
@@ -133,6 +134,10 @@ complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a delete -d "Delete bookmark"
 
 complete -c fishamnium -n "__fishamnium_helper_using_command tmux; and test (__fishamnium_helper_argument_index tmux) -eq 0" -a next-session -d "Print next available tmux session name"
+
+complete -c fishamnium -n "__fishamnium_helper_using_command ssh; and test (__fishamnium_helper_argument_index ssh) -eq 0" -a show -d "Print and copy current SSH location"
+complete -c fishamnium -n "__fishamnium_helper_using_command ssh; and test (__fishamnium_helper_argument_index ssh) -eq 0" -a connect -d "Connect to an SSH location"
+complete -c fishamnium -n "__fishamnium_helper_using_command ssh; and test (__fishamnium_helper_argument_index ssh) -eq 0" -a available -d "Check for an SSH location in the clipboard"
 
 complete -c fishamnium -n "__fishamnium_helper_using_command colors; and test (__fishamnium_helper_argument_index colors) -eq 0" -a light -d "Light theme"
 complete -c fishamnium -n "__fishamnium_helper_using_command colors; and test (__fishamnium_helper_argument_index colors) -eq 0" -a dark -d "Dark theme"
