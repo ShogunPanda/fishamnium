@@ -2,10 +2,12 @@ use crate::colors::Colors;
 use base64::{Engine as _, engine::general_purpose::STANDARD as BASE64};
 use nix::unistd::gethostname;
 use std::error::Error;
-use std::io::Write;
 use std::io::{Error as IoError, ErrorKind};
+use std::io::{Read, Write};
 use std::os::unix::process::CommandExt;
 use std::process::{Command, Stdio};
+use std::thread;
+use std::time::{Duration, Instant};
 
 pub struct Ssh {
   user: String,
@@ -15,6 +17,7 @@ pub struct Ssh {
 
 impl Ssh {
   const BEGIN_MARKER: &str = "-----BEGIN FISHAMNIUM SSH-----";
+  const CLIPBOARD_READ_TIMEOUT: Duration = Duration::from_secs(1);
   const END_MARKER: &str = "-----END FISHAMNIUM SSH-----";
 
   pub fn handle(command: Option<&str>, payload: &[&str]) -> Result<Vec<u8>, Box<dyn Error>> {
@@ -220,16 +223,47 @@ impl Ssh {
       ("xclip", &["-selection", "clipboard", "-out"][..]),
       ("xsel", &["--clipboard", "--output"][..]),
     ] {
-      let Ok(output) = Command::new(program).args(args).output() else {
+      let Ok(Some(output)) = Ssh::read_command_output(program, args, Ssh::CLIPBOARD_READ_TIMEOUT) else {
         continue;
       };
 
-      if output.status.success() {
-        return Ok(String::from_utf8(output.stdout)?);
-      }
+      return Ok(String::from_utf8(output)?);
     }
 
     Err(IoError::new(ErrorKind::NotFound, "No supported clipboard reader found").into())
+  }
+
+  fn read_command_output(program: &str, args: &[&str], timeout: Duration) -> Result<Option<Vec<u8>>, IoError> {
+    let mut child = Command::new(program)
+      .args(args)
+      .stdout(Stdio::piped())
+      .stderr(Stdio::null())
+      .spawn()?;
+    let mut stdout = child.stdout.take().expect("stdout must be piped");
+    let reader = thread::spawn(move || {
+      let mut output = Vec::new();
+      stdout.read_to_end(&mut output)?;
+      Ok::<_, IoError>(output)
+    });
+    let deadline = Instant::now() + timeout;
+
+    loop {
+      if let Some(status) = child.try_wait()? {
+        let output = reader
+          .join()
+          .map_err(|_| IoError::other("Clipboard reader panicked"))??;
+        return Ok(status.success().then_some(output));
+      }
+
+      if Instant::now() >= deadline {
+        let _ = child.kill();
+        child.wait()?;
+        let _ = reader.join();
+        return Ok(None);
+      }
+
+      thread::sleep(Duration::from_millis(10));
+    }
   }
 
   fn clear_clipboard() -> Result<(), Box<dyn Error>> {
