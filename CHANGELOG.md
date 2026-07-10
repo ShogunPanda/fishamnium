@@ -1,3 +1,7 @@
+### 2026-07-10 / 16.2.1
+
+- fix: Allow pasting timeout.
+
 ### 2026-07-09 / 16.2.0
 
 - feat: Added SSH utilities.
