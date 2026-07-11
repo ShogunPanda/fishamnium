@@ -1,3 +1,7 @@
+### 2026-07-11 / 16.3.0
+
+- feat: Added environment variable support.
+
 ### 2026-07-10 / 16.2.1
 
 - fix: Allow pasting timeout.
