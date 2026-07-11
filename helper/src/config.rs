@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_yaml::Value;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::error::Error;
 use std::fs::{self, File};
 use std::io::Write;
@@ -230,6 +230,9 @@ pub struct PromptUserColorOverrideConfig {
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
+  #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+  pub env: HashMap<String, String>,
+
   #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
   pub hosts: BTreeMap<String, String>,
 
@@ -501,6 +504,7 @@ impl Config {
 impl Default for Config {
   fn default() -> Self {
     Self {
+      env: HashMap::new(),
       hosts: BTreeMap::new(),
       git: GitConfig::default(),
       bookmarks: BTreeMap::new(),
@@ -629,5 +633,39 @@ hosts:
       config.get(Some(".hosts"), &[]).unwrap(),
       "cantina.perseveranza.net\tcantina.perseveranza.net:1000\ncasa.perseveranza.net\tcasa.perseveranza.net:1000"
     );
+  }
+
+  #[test]
+  fn environment_is_optional() {
+    let config = serde_yaml::from_str::<Config>("{}").unwrap();
+
+    assert!(config.env.is_empty());
+  }
+
+  #[test]
+  fn environment_is_loaded_as_strings() {
+    let config = serde_yaml::from_str::<Config>(
+      r#"
+env:
+  FOO: bar
+  ANSWER: "42"
+"#,
+    )
+    .unwrap();
+
+    assert_eq!(config.env.get("FOO"), Some(&"bar".to_string()));
+    assert_eq!(config.env.get("ANSWER"), Some(&"42".to_string()));
+  }
+
+  #[test]
+  fn environment_rejects_non_string_values() {
+    let result = serde_yaml::from_str::<Config>(
+      r#"
+env:
+  ANSWER: 42
+"#,
+    );
+
+    assert!(result.is_err());
   }
 }

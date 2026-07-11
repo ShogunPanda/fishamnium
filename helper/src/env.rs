@@ -44,7 +44,7 @@ impl Environment {
     let paths = Self::paths(existing_path);
     let config = Config::load_current()?;
 
-    Ok(format!(
+    let mut response = format!(
       "FISHAMNIUM_HOST={}\nFISHAMNIUM_ROOT={}\nFISHAMNIUM_CONFIG_ROOT={}\nFISHAMNIUM_CONFIG={}\nFISHAMNIUM_THEME={}\nFISHAMNIUM_THEME_NARROW={}\nFISHAMNIUM_THEME_NARROW_THRESHOLD={}\nPATH={}\nEDITOR={}\nGEDITOR={}\n",
       Environment::quote_env_value(&self.hostname),
       Environment::quote_env_value(&self.root),
@@ -56,8 +56,16 @@ impl Environment {
       Environment::quote_env_value(&paths.join(":")),
       Environment::quote_env_value(&config.editor.terminal),
       Environment::quote_env_value(&config.editor.graphical),
-    )
-    .into_bytes())
+    );
+
+    for (name, value) in &config.env {
+      response.push_str(name);
+      response.push('=');
+      response.push_str(&Self::quote_env_value(value));
+      response.push('\n');
+    }
+
+    Ok(response.into_bytes())
   }
 
   pub fn to_fish_response(&self, existing_path: Option<&str>) -> Result<Vec<u8>, Box<dyn Error>> {
@@ -88,12 +96,16 @@ impl Environment {
     Self::push_fish_variable(&mut response, "EDITOR", &[config.editor.terminal.as_str()]);
     Self::push_fish_variable(&mut response, "GEDITOR", &[config.editor.graphical.as_str()]);
 
+    for (name, value) in &config.env {
+      Self::push_fish_variable(&mut response, name, &[value]);
+    }
+
     Ok(response.into_bytes())
   }
 
   pub fn to_shell_response(existing_path: Option<&str>, theme: Option<&str>) -> Result<Vec<u8>, Box<dyn Error>> {
-    let mut response = Self::new()?.to_fish_response(existing_path)?;
-    response.extend(Colors::new(theme)?.to_fish_response());
+    let mut response = Colors::new(theme)?.to_fish_response();
+    response.extend(Self::new()?.to_fish_response(existing_path)?);
     Ok(response)
   }
 

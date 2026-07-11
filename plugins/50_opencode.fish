@@ -1,6 +1,16 @@
 # ----- Writing functions -----
 
+function opencode_attach -d "Attach to the configured OpenCode server"
+  if set -q FISHAMNIUM_OPENCODE_SERVER_PORT
+    opencode attach http://localhost:$FISHAMNIUM_OPENCODE_SERVER_PORT $argv
+  else
+    opencode $argv
+  end
+end
+
 function opencode_session_open_select -d "Interactively opens a OpenCode sessions"
+  argparse -i --name=opencode_session_open_select "a/attach" -- $argv
+
   if ! set sessions $($FISHAMNIUM_HELPER agents opencode list)
     return 1
   end
@@ -29,7 +39,11 @@ function opencode_session_open_select -d "Interactively opens a OpenCode session
   end
 
   cd "$directory"; or return 1
-  opencode -s "$session"
+  if set -q _flag_a
+    opencode_attach -s "$session"
+  else
+    opencode -s "$session"
+  end
 end
 
 function opencode_session_delete_select -d "Interactively delete OpenCode sessions"
@@ -66,7 +80,13 @@ function opencode_session_delete_last -d "Delete last OpenCode session"
 end
 
 function opencode_session_temporary -d "Create a temporary OpenCode session and deletes upon exit"
-  opencode
+  argparse -i --name=opencode_session_temporary "a/attach" -- $argv
+
+  if set -q _flag_a
+    opencode_attach
+  else
+    opencode
+  end
   opencode_session_delete_last
 end
 
@@ -77,6 +97,13 @@ alias occ="opencode -c"
 alias ocs="opencode -s"
 alias ocss="opencode_session_open_select"
 alias oct="opencode_session_temporary"
+
+alias oca="opencode_attach"
+alias ocac="opencode_attach -c"
+alias ocas="opencode_attach -s"
+alias ocass="opencode_session_open_select -a"
+alias ocat="opencode_session_temporary -a"
+
 alias ocl="opencode session list"
 alias ocd="opencode session delete"
 alias ocdl=opencode_session_delete_last
