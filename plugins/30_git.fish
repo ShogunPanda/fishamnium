@@ -108,7 +108,8 @@ end
 function __g_worktree_path_from_row
   set tab (printf "\t")
   set parts (string split -m 2 $tab "$argv[1]")
-  string replace -r '^~(?=/|$)' "$HOME" -- "$parts[2]"
+  set path (string replace -r '^~(?=/|$)' "$HOME" -- "$parts[2]")
+  path normalize "$path"
 end
 
 # ----- Default functions -----
@@ -392,7 +393,12 @@ function g_worktree_delete_select -d "Interactively delete worktrees"
   if test $status -eq 0
     for choice in $choices
       set path (__g_worktree_path_from_row "$choice")
+      set branch (git -C "$path" symbolic-ref --quiet --short HEAD)
       __git worktree remove "$path"; or return
+
+      if test -n "$branch"
+        __git branch -D -- "$branch"; or return
+      end
     end
   end
 end
