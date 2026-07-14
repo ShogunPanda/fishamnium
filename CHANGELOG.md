@@ -1,3 +1,7 @@
+### 2026-07-14 / 16.3.1
+
+- fix: Fixed worktree deletion.
+
 ### 2026-07-11 / 16.3.0
 
 - feat: Added environment variable support.
