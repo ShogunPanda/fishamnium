@@ -66,6 +66,7 @@ export function BookmarkResult({ bookmark }: { bookmark: Bookmarks }): JSX.Eleme
 export default function Command() {
   const [bookmarks, setBookmarks] = useState<Bookmarks[] | undefined>(undefined)
   const [error, setError] = useState<Error | undefined>(undefined)
+  const [searchText, setSearchText] = useState('')
 
   useEffect(
     function () {
@@ -82,9 +83,16 @@ export default function Command() {
     [setBookmarks, setError]
   )
 
+  const query = searchText.trim().toLowerCase()
+  const results = query ? bookmarks?.filter(bookmark => bookmark.name.toLowerCase().includes(query)) : []
+
   return (
-    <List isLoading={!Array.isArray(bookmarks) && typeof error === 'undefined'}>
-      {bookmarks?.map(bookmark => <BookmarkResult key={bookmark.path} bookmark={bookmark} />)}
+    <List
+      filtering={false}
+      isLoading={!Array.isArray(bookmarks) && typeof error === 'undefined'}
+      onSearchTextChange={setSearchText}
+    >
+      {results?.map(bookmark => <BookmarkResult key={bookmark.path} bookmark={bookmark} />)}
     </List>
   )
 }

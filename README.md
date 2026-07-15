@@ -7,6 +7,8 @@ Some useful shell extension for fish shell.
 
 https://sw.cowtech.it/fishamnium
 
+See the [documentation](docs/README.md) for configuration, helper commands, plugins, aliases, completions, and project hooks.
+
 ## Optional dependencies
 
 Fishamnium uses [Nerd Fonts](https://www.nerdfonts.com/) for its prompt. While not strictly required, we suggest to use it.

@@ -66,6 +66,8 @@ alias gb='git branch'
 alias gbc='git branch --show-current'
 alias gba='git branch -a'
 alias gbd='git branch -D'
+alias gbdc='g_cleanup'
+alias gbdm='g_cleanup -m'
 alias gbm='git branch -m'
 
 # Config
@@ -118,7 +120,6 @@ alias gpf='g_push -f'
 alias gu=g_update
 alias gre=g_reset
 alias grd=g_delete
-alias grc=g_cleanup
 
 # Workflow
 alias gws=g_start

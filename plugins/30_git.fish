@@ -307,14 +307,14 @@ function g_cleanup -d "Deletes all non default branches"
   g_is_repository; or return
 
   # Parse arguments
-  argparse -i --name=g_cleanup "f/force" "N/dry-run" -- $argv
+  argparse -i --name=g_cleanup "m/merged" "N/dry-run" -- $argv
   set base $(__g_ensure_branch $argv[1])
 
   # Prepare the branches to remove
-  if set -q _flag_f
-    set branches $(git branch --list | string match -r -- "^\s{2}(?!$base).+" | string trim); or return
-  else
+  if set -q _flag_m
     set branches $(git branch --list --merged $base | string match -r -- "^\s{2}(?!$base).+" | string trim); or return
+  else
+    set branches $(git branch --list | string match -r -- "^\s{2}(?!$base).+" | string trim); or return
   end
   
   # Execute command(s)

@@ -6,7 +6,7 @@ function __fishamnium_is_git_argument
   set cmd $(commandline -opc)
   set -e cmd[1]
 
-  argparse -i "N/dry-run" "r/remote=" "f/force" "s/no-verify" "a/all" -- $cmd >/dev/null 2>/dev/null
+  argparse -i "N/dry-run" "r/remote=" "f/force" "m/merged" "s/no-verify" "a/all" -- $cmd >/dev/null 2>/dev/null
   test $(count $argv) -eq $index
 end
 
@@ -64,6 +64,7 @@ complete -c g_reset -x -a ""
 complete -c g_delete -x -a "(__fishamnium_git_branches)"
 
 complete -c g_cleanup -x -a ""
+complete -c g_cleanup -s m -l merged -d "Only delete branches merged into the base branch"
 complete -c g_cleanup -n "__fishamnium_is_git_argument 0" -x -a "(__fishamnium_git_branches)"
 
 # g_push
