@@ -1,3 +1,7 @@
+### 2026-07-15 / 16.3.2
+
+- fix: Fixed g_cleanup.
+
 ### 2026-07-14 / 16.3.1
 
 - fix: Fixed worktree deletion.
