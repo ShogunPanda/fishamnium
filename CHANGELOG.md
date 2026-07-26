@@ -1,3 +1,7 @@
+### 2026-07-26 / 16.5.1
+
+- fix: Fixed response parsing.
+
 ### 2026-07-26 / 16.5.0
 
 - feat: Added pluggable helpers support.
