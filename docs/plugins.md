@@ -188,13 +188,12 @@ This optional plugin integrates with the OpenCode CLI and its local session data
 
 | Function | Purpose |
 | --- | --- |
-| `opencode_attach` | Attach to `localhost:$FISHAMNIUM_OPENCODE_SERVER_PORT`, or run OpenCode normally |
-| `opencode_session_open_select [-a]` | Select a session, enter its directory, and open or attach to it |
+| `opencode_session_open_select` | Select a session, enter its directory, and open it |
 | `opencode_session_delete_select [-g]` | Select sessions to delete in the current directory or globally |
 | `opencode_session_delete_last [-g]` | Delete the last current-directory or global session |
-| `opencode_session_temporary [-a]` | Run or attach to OpenCode and delete its last session on exit |
+| `opencode_session_temporary` | Run OpenCode and delete its last session on exit |
 
-Aliases: `oc`, `occ`, `ocs`, `ocss`, `oct`, `oca`, `ocac`, `ocas`, `ocass`, `ocat`, `ocl`, `ocd`, `ocdl`, `ocdlg`, `ocds`, and `ocdg`.
+Aliases: `oc`, `occ`, `ocs`, `ocss`, `oct`, `ocl`, `ocd`, `ocdl`, `ocdlg`, `ocds`, and `ocdg`.
 
 ## Completions
 
