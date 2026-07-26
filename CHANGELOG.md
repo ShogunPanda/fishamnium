@@ -1,3 +1,7 @@
+### 2026-07-26 / 16.5.0
+
+- feat: Added pluggable helpers support.
+
 ### 2026-07-26 / 16.4.0
 
 - feat: Removed useless OpenCode commands.
