@@ -373,7 +373,7 @@ impl Application {
     }
   }
 
-  fn read(stream: &mut impl Read) -> Result<Vec<u8>> {
+  pub(crate) fn read(stream: &mut impl Read) -> Result<Vec<u8>> {
     let mut header = [0; FRAME_HEADER_SIZE];
     stream.read_exact(&mut header)?;
 
@@ -384,7 +384,7 @@ impl Application {
     Ok(payload)
   }
 
-  fn write(stream: &mut impl Write, payload: &[u8]) -> Result<()> {
+  pub(crate) fn write(stream: &mut impl Write, payload: &[u8]) -> Result<()> {
     if payload.len() > MAX_FRAME_SIZE {
       return Err(Error::new(
         ErrorKind::InvalidInput,

@@ -8,6 +8,7 @@ mod config;
 mod defaults;
 mod env;
 mod git;
+mod helpers;
 mod node;
 mod prompt;
 mod protocol;
@@ -24,6 +25,7 @@ use crate::completions::*;
 use crate::config::*;
 use crate::env::*;
 use crate::git::*;
+use crate::helpers::*;
 use crate::node::*;
 use crate::prompt::*;
 use crate::protocol::*;
@@ -70,10 +72,10 @@ fn quit(events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn 
   Ok(empty_response())
 }
 
-fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
-  let arguments = decode_request(&request)?;
+fn dispatch_request(raw_request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
+  let arguments = decode_request(&raw_request)?;
 
-  let [request, payload @ ..] = arguments.as_slice() else {
+  let [command, payload @ ..] = arguments.as_slice() else {
     return Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into());
   };
 
@@ -82,7 +84,7 @@ fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) ->
   let command_arguments = payload.get(1..).unwrap_or(&[]);
   let command_arguments = command_arguments.iter().map(String::as_str).collect::<Vec<_>>();
 
-  match request.as_str() {
+  match command.as_str() {
     "pid" => Ok(Arc::new(format!("{}", id()).into_bytes())),
     "env" => Ok(Arc::new(Environment::new()?.to_response(first_arg)?)),
     "shell-environment" => Ok(Arc::new(Environment::to_shell_response(first_arg, second_arg)?)),
@@ -127,7 +129,10 @@ fn dispatch_request(request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) ->
     "ssh" => Ok(Arc::new(Ssh::handle(first_arg, &command_arguments)?)),
     "tmux" => Ok(Arc::new(Tmux::handle(first_arg, &command_arguments)?)),
     "exit" | "quit" => quit(events.clone()),
-    _ => Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into()),
+    command => match Helpers::handle(command, &raw_request)? {
+      Some(response) => Ok(response),
+      None => Err(IoError::new(ErrorKind::InvalidInput, "Unknown command").into()),
+    },
   }
 }
 
