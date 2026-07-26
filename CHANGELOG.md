@@ -1,3 +1,7 @@
+### 2026-07-26 / 16.4.0
+
+- feat: Removed useless OpenCode commands.
+
 ### 2026-07-15 / 16.3.2
 
 - fix: Fixed g_cleanup.
