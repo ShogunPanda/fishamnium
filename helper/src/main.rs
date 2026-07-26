@@ -72,7 +72,10 @@ fn quit(events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn 
   Ok(empty_response())
 }
 
-fn dispatch_request(raw_request: Vec<u8>, events: Arc<Sender<ApplicationSignal>>) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
+fn dispatch_request(
+  raw_request: Vec<u8>,
+  events: Arc<Sender<ApplicationSignal>>,
+) -> Result<Arc<Vec<u8>>, Box<dyn Error>> {
   let arguments = decode_request(&raw_request)?;
 
   let [command, payload @ ..] = arguments.as_slice() else {

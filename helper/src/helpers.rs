@@ -7,6 +7,7 @@ use std::process::{Command, Stdio};
 use std::sync::Arc;
 
 use crate::application::Application;
+use crate::protocol::{Response, decode_response};
 
 pub struct Helpers;
 
@@ -33,7 +34,11 @@ impl Helpers {
       .stdout
       .take()
       .ok_or_else(|| IoError::other("Helper stdout is not available"))?;
-    let response = Application::read(&mut stdout)?;
+    let response = match decode_response(&Application::read(&mut stdout)?)? {
+      Response::Ok(Some(response)) => response,
+      Response::Ok(None) => Vec::new(),
+      Response::Error(error) => return Err(IoError::other(error).into()),
+    };
     child.wait()?;
 
     Ok(Some(Arc::new(response)))
@@ -53,11 +58,13 @@ impl Helpers {
 
     match fs::metadata(&path) {
       Ok(metadata) if metadata.is_file() => Ok(Some(path)),
-      Ok(_) => Err(IoError::new(
-        ErrorKind::InvalidInput,
-        format!("Helper {} is not a regular file", path.display()),
-      )
-      .into()),
+      Ok(_) => Err(
+        IoError::new(
+          ErrorKind::InvalidInput,
+          format!("Helper {} is not a regular file", path.display()),
+        )
+        .into(),
+      ),
       Err(error) if error.kind() == ErrorKind::NotFound => Ok(None),
       Err(error) => Err(error.into()),
     }
