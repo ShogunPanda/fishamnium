@@ -91,8 +91,12 @@ function bookmark_cd -d "Changes current directory to a saved bookmark"
   argparse -i --name=bookmark_cd "s/stack" -- $argv
 
   if ! set destination $(bookmark_show $argv 2>/dev/null)
-    echo "$destination"
-    return 1
+    if test (count $argv) -eq 1; and test -d "$argv[1]"
+      set destination "$argv[1]"
+    else
+      echo "$destination"
+      return 1
+    end
   end
 
   if set -q _flag_s

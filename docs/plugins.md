@@ -27,7 +27,7 @@ Bookmarks are stored in the active YAML configuration. On load, this plugin expo
 | `bookmarks_names [REGEX]` | Print bookmark IDs |
 | `bookmarks_vscode_projects [REGEX]` | Print VS Code Projects JSON |
 | `bookmark_show [-y] ID` | Print a path; `-y` also copies it |
-| `bookmark_cd [-s] ID` | Change directory; `-s` uses `pushd` |
+| `bookmark_cd [-s] ID or PATH` | Change to a bookmark or valid directory path; `-s` uses `pushd` |
 | `bookmark_open ID` | Open with `GEDITOR` |
 | `bookmark_edit ID` | Open with `EDITOR` |
 | `bookmark_save ID [NAME]` | Save the current directory |
