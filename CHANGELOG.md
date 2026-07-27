@@ -1,3 +1,7 @@
+### 2026-07-27 / 16.5.2
+
+- fix: Allow bookmark_cd to handle paths.
+
 ### 2026-07-26 / 16.5.1
 
 - fix: Fixed response parsing.
