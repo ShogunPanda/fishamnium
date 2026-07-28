@@ -1,3 +1,7 @@
+### 2026-07-28 / 16.5.3
+
+- fix: Only listen on localhost.
+
 ### 2026-07-27 / 16.5.2
 
 - fix: Allow bookmark_cd to handle paths.
