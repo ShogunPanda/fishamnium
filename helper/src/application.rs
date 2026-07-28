@@ -219,7 +219,7 @@ impl Application {
     };
 
     // Open TCP socket
-    let tcp_listener = match TcpListener::bind(("0.0.0.0", self.port)) {
+    let tcp_listener = match TcpListener::bind(("127.0.0.1", self.port)) {
       Ok(listener) => listener,
       Err(error) => {
         let _ = fs::remove_file(&self.socket_path);
