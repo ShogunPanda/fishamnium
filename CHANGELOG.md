@@ -1,3 +1,7 @@
+### 2026-07-28 / 16.5.4
+
+- fix: Use better icon for branch.
+
 ### 2026-07-28 / 16.5.3
 
 - fix: Only listen on localhost.
