@@ -65,7 +65,7 @@ prompts:
         regular: "008800"
         root: "cc0000"
       host: "ffdf00"
-    template: "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} \uF114 {path} \uE0A0 {git_branch} {git_status}<bg_reset><host_fg>\uE0B0 "
+    template: "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} \uF114 {path} \uE725 {git_branch} {git_status}<bg_reset><host_fg>\uE0B0 "
   large:
     colors:
       user:
@@ -76,7 +76,7 @@ prompts:
       time: "013482"
     template:
       - ""
-      - "<bold time_fg>\uE0B6<time_bg time_text> \uE384 {time} <path_bg time_fg>\uE0B4<path_text> \uF114 {path} \uE0A0 {git_branch} {git_hash} {git_status}<bg_reset><path_fg>\uE0B4"
+      - "<bold time_fg>\uE0B6<time_bg time_text> \uE384 {time} <path_bg time_fg>\uE0B4<path_text> \uF114 {path} \uE725 {git_branch} {git_hash} {git_status}<bg_reset><path_fg>\uE0B4"
       - "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host} <bg_reset><host_fg>\uE0B0 "
   xlarge:
     colors:
@@ -88,7 +88,7 @@ prompts:
       time: "013482"
     template:
       - ""
-      - "<bold time_fg>\uE0B6<time_bg time_text> \uE384 {time} <path_bg time_fg>\uE0B4<path_text> \uF114 {path} \uE0A0 {git_branch} {git_hash} {git_status}<bg_reset><path_fg>\uE0B4"
+      - "<bold time_fg>\uE0B6<time_bg time_text> \uE384 {time} <path_bg time_fg>\uE0B4<path_text> \uF114 {path} \uE725 {git_branch} {git_hash} {git_status}<bg_reset><path_fg>\uE0B4"
       - "<bold user_fg>\uE0B6<user_bg user_text> \uF007 {user} <host_bg user_fg>\uE0B4<host_text> \uEF09 {host}{app: \uF013}{node}{rust}{ruby}{go} <bg_reset><host_fg>\uE0B0 "
 
 # Flexoki
