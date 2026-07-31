@@ -132,6 +132,8 @@ alias gwy=g_sync
 # Worktree
 alias gtl='git worktree list'
 alias gts=g_worktree_cd_select
+alias gty=g_worktree_copy
+alias gtys=g_worktree_copy_select
 alias gta='git worktree add'
 alias gtd='git worktree remove'
 alias gtds='g_worktree_delete_select'

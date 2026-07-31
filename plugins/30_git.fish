@@ -370,6 +370,43 @@ function g_worktree_cd_select -d "Interactively change current directory to a wo
   cd "$destination"
 end
 
+function g_worktree_copy -d "Copy a worktree path to the clipboard"
+  g_is_repository; or return
+
+  set destination $argv[1]
+  if test -z "$destination"
+    __fishamnium_print_error "You must provide a worktree path."
+    return 1
+  end
+
+  if ! test -d "$destination"
+    __fishamnium_print_error "Worktree path not found."
+    return 1
+  end
+
+  echo -n "$destination" | fish_clipboard_copy
+end
+
+function g_worktree_copy_select -d "Interactively copy a worktree path to the clipboard"
+  g_is_repository; or return
+
+  if ! set choice $($FISHAMNIUM_HELPER git worktrees | $FISHAMNIUM_HELPER select --prompt "Which worktree do you want to copy" --raw)
+    return 1
+  end
+
+  if test -z "$choice"
+    return 1
+  end
+
+  set destination (__g_worktree_path_from_row "$choice")
+  if test -z "$destination"
+    __fishamnium_print_error "Worktree path not found."
+    return 1
+  end
+
+  g_worktree_copy "$destination"
+end
+
 function g_worktree_delete_select -d "Interactively delete worktrees"
   g_is_repository; or return
 

@@ -18,6 +18,15 @@ function __fishamnium_git_remotes
   $FISHAMNIUM_HELPER git remotes-list 2>/dev/null
 end
 
+function __fishamnium_git_worktrees
+  set tab (printf "\t")
+
+  for row in $($FISHAMNIUM_HELPER git worktrees 2>/dev/null)
+    set parts (string split "$tab" -- "$row")
+    printf "%s\t%s (%s)\n" "$parts[2]" "$parts[1]" "$parts[3]"
+  end
+end
+
 # ----- Cleanup -----
 
 # Remove completions for internal commands
@@ -66,6 +75,9 @@ complete -c g_delete -x -a "(__fishamnium_git_branches)"
 complete -c g_cleanup -x -a ""
 complete -c g_cleanup -s m -l merged -d "Only delete branches merged into the base branch"
 complete -c g_cleanup -n "__fishamnium_is_git_argument 0" -x -a "(__fishamnium_git_branches)"
+
+# g_worktree_copy $worktree
+complete -c g_worktree_copy -x -a "(__fishamnium_git_worktrees)"
 
 # g_push
 complete -c g_push -x -a ""

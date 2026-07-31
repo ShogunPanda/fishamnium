@@ -135,7 +135,8 @@ The Git plugin provides repository queries, guarded write operations, interactiv
 | `g_pull_request_url [BASE] [BRANCH]` | Find an existing GitHub pull request URL |
 | `g_push`, `g_update`, `g_reset`, `g_delete`, `g_cleanup` | Push, update, reset, delete, or clean branches |
 | `g_switch`, `g_branch_delete_select` | Interactively switch or delete branches |
-| `g_worktree_cd_select`, `g_worktree_delete_select` | Interactively enter or delete worktrees |
+| `g_worktree_cd_select`, `g_worktree_delete_select`, `g_worktree_copy_select` | Interactively enter, delete, or copy a worktree path |
+| `g_worktree_copy WORKTREE` | Copy a worktree path to the clipboard |
 | `g_start BRANCH [BASE]` | Update the base branch and create a branch |
 | `g_refresh [-m] [BASE]` | Rebase, or merge with `-m`, the current branch on the updated base |
 | `g_pull_request [BASE]` | Refresh, push, open a PR URL, return to base, and delete the local branch |
