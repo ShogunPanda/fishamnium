@@ -1,3 +1,7 @@
+### 2026-07-31 / 16.6.0
+
+- feat: Added new worktree commands.
+
 ### 2026-07-28 / 16.5.4
 
 - fix: Use better icon for branch.
