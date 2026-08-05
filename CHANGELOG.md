@@ -1,3 +1,7 @@
+### 2026-08-05 / 16.7.0
+
+- feat: Added tmux session listing.
+
 ### 2026-07-31 / 16.6.0
 
 - feat: Added new worktree commands.
