@@ -14,9 +14,21 @@ pub struct Tmux;
 impl Tmux {
   pub fn handle(command: Option<&str>, payload: &[&str]) -> Result<Vec<u8>, Box<dyn Error>> {
     match command {
+      Some("list-sessions") => Self::list_sessions(payload),
       Some("next-session") => Self::next_session(payload),
       _ => Err(IoError::new(ErrorKind::InvalidInput, "Unknown tmux command").into()),
     }
+  }
+
+  fn list_sessions(payload: &[&str]) -> Result<Vec<u8>, Box<dyn Error>> {
+    if !payload.is_empty() {
+      return Err(IoError::new(ErrorKind::InvalidInput, "Tmux list-sessions does not accept arguments").into());
+    }
+
+    let mut names = Self::sessions()?.into_keys().collect::<Vec<_>>();
+    names.sort_unstable();
+
+    Ok(names.join("\n").into_bytes())
   }
 
   fn next_session(payload: &[&str]) -> Result<Vec<u8>, Box<dyn Error>> {

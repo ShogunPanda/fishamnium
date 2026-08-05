@@ -134,6 +134,7 @@ complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a delete -d "Delete bookmark"
 
 complete -c fishamnium -n "__fishamnium_helper_using_command tmux; and test (__fishamnium_helper_argument_index tmux) -eq 0" -a next-session -d "Print next available tmux session name"
+complete -c fishamnium -n "__fishamnium_helper_using_command tmux; and test (__fishamnium_helper_argument_index tmux) -eq 0" -a list-sessions -d "List tmux sessions"
 
 complete -c fishamnium -n "__fishamnium_helper_using_command ssh; and test (__fishamnium_helper_argument_index ssh) -eq 0" -a show -d "Print and copy current SSH location"
 complete -c fishamnium -n "__fishamnium_helper_using_command ssh; and test (__fishamnium_helper_argument_index ssh) -eq 0" -a connect -d "Connect to an SSH location"

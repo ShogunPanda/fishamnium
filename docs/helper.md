@@ -103,6 +103,7 @@ The loader also supplies `--status`, `--duration`, and the current terminal widt
 | `ssh show` | Copy and print the current user, host, and directory as a marked location |
 | `ssh available` | Succeed when the clipboard contains a marked SSH location |
 | `ssh connect` | Connect to the marked host and directory, or start Fish when none is present |
+| `tmux list-sessions` | List existing tmux session names |
 | `tmux next-session` | Print the first unattached NATO-alphabet session name |
 
 `ssh show` uses OSC 52 and supports `FISHAMNIUM_SSH_HOST` to override the advertised hostname. Clipboard reads support `pbpaste`, `wl-paste`, `xclip`, and `xsel`; clipboard clearing uses their corresponding writer.
