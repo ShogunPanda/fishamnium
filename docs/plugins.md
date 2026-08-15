@@ -141,11 +141,13 @@ The Git plugin provides repository queries, guarded write operations, interactiv
 | `g_refresh [-m] [BASE]` | Rebase, or merge with `-m`, the current branch on the updated base |
 | `g_pull_request [BASE]` | Refresh, push, open a PR URL, return to base, and delete the local branch |
 | `g_fast_pull_request BRANCH MESSAGE [BASE]` | Create, commit, refresh, and send a pull request |
-| `g_sync [BRANCH]` | Pull from the upstream remote and force-push to the writable remote |
+| `g_sync [-c] [BRANCH]` | Switch to the branch, pull from the upstream remote, force-push to the writable remote, and return to the original branch |
 | `gh_pr_branch PR`, `gh_pr_approve PR [MESSAGE]` | Read or approve a GitHub pull request |
 | `gh_remote_add OWNER/REPO [NAME]` | Add an SSH GitHub remote |
 
 `g_pull_request` and `g_fast_pull_request` also accept `-f` to force push and `-s` to skip Git hooks. Commands that delete branches, reset changes, force-push, or clean files are intentionally destructive; use `-N` where available before running them.
+
+`g_sync` accepts `-c` or `--current` to keep the current branch and use the previous behavior without switching.
 
 ## Git aliases (`31_git_aliases.fish`)
 

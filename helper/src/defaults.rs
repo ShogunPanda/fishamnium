@@ -85,14 +85,6 @@ pub fn colors_dark_cyan() -> String {
   COLORS_DARK_CYAN.to_string()
 }
 
-pub fn git_branch() -> String {
-  "main".to_string()
-}
-
-pub fn is_git_branch(value: &String) -> bool {
-  value == &git_branch()
-}
-
 pub fn git_remote() -> String {
   "origin".to_string()
 }

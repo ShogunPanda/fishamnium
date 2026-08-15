@@ -146,6 +146,8 @@ for i in g_start g_refresh g_pull_request g_fast_pull_request g_sync
   complete -c $i -s r -l remote -x -a "(__fishamnium_git_remotes)" -d "The remote to use"
 end
 
+complete -c g_sync -s c -l current -d "Keep the current branch instead of switching"
+
 for i in g_pull_request g_fast_pull_request
   complete -c $i -s f -l force -d "Use force push"
   complete -c $i -s s -l no-verify -d "Do not execute pre-push script"

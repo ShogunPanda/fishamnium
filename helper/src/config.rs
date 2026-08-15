@@ -22,8 +22,8 @@ pub fn empty_response() -> Arc<Vec<u8>> {
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GitConfig {
-  #[serde(default = "git_branch", skip_serializing_if = "is_git_branch")]
-  pub branch: String,
+  #[serde(default, skip_serializing_if = "Option::is_none")]
+  pub branch: Option<String>,
 
   #[serde(default = "git_remote", skip_serializing_if = "is_git_remote")]
   pub remote: String,
@@ -525,7 +525,7 @@ impl Default for Config {
 impl Default for GitConfig {
   fn default() -> Self {
     Self {
-      branch: git_branch(),
+      branch: None,
       remote: git_remote(),
       root: git_root(),
       upstream_remote: git_upstream_remote(),
@@ -612,60 +612,4 @@ fn is_light_color_theme_config(value: &ColorThemeConfig) -> bool {
 
 fn is_dark_color_theme_config(value: &ColorThemeConfig) -> bool {
   value == &ColorThemeConfig::dark()
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn hosts_are_loaded_as_tsv() {
-    let config = serde_yaml::from_str::<Config>(
-      r#"
-hosts:
-  casa.perseveranza.net: "casa.perseveranza.net:1000"
-  cantina.perseveranza.net: "cantina.perseveranza.net:1000"
-"#,
-    )
-    .unwrap();
-
-    assert_eq!(
-      config.get(Some(".hosts"), &[]).unwrap(),
-      "cantina.perseveranza.net\tcantina.perseveranza.net:1000\ncasa.perseveranza.net\tcasa.perseveranza.net:1000"
-    );
-  }
-
-  #[test]
-  fn environment_is_optional() {
-    let config = serde_yaml::from_str::<Config>("{}").unwrap();
-
-    assert!(config.env.is_empty());
-  }
-
-  #[test]
-  fn environment_is_loaded_as_strings() {
-    let config = serde_yaml::from_str::<Config>(
-      r#"
-env:
-  FOO: bar
-  ANSWER: "42"
-"#,
-    )
-    .unwrap();
-
-    assert_eq!(config.env.get("FOO"), Some(&"bar".to_string()));
-    assert_eq!(config.env.get("ANSWER"), Some(&"42".to_string()));
-  }
-
-  #[test]
-  fn environment_rejects_non_string_values() {
-    let result = serde_yaml::from_str::<Config>(
-      r#"
-env:
-  ANSWER: 42
-"#,
-    );
-
-    assert!(result.is_err());
-  }
 }

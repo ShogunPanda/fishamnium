@@ -115,14 +115,33 @@ end
 # ----- Default functions -----
 
 function g_default_branch -d "Get the default branch for the current repository"
-	# Return the value for the environment variables, if any
+	# Return the value from the environment, if any
 	if test -n "$GIT_DEFAULT_BRANCH"
 		echo "$GIT_DEFAULT_BRANCH"
 		return
 	end
 
-	# Lookup the value in the configuration file
-	__fishamnium_get_configuration .git.branch
+	# An explicitly configured branch takes precedence over the remote HEAD
+	set configured (__fishamnium_get_configuration .git.branch)
+	if test -n "$configured"
+		echo "$configured"
+		return
+	end
+
+	set remote (g_default_remote)
+	set remote_head (git symbolic-ref --quiet --short "refs/remotes/$remote/HEAD" 2>/dev/null)
+
+	# The local remote HEAD may be missing, so query the remote before falling back.
+	if test -z "$remote_head"
+		set remote_head (git ls-remote --symref "$remote" HEAD 2>/dev/null | string match -r '^ref: refs/heads/.*\s+HEAD$' | string replace -r '^ref: refs/heads/' '' | string replace -r '\s+HEAD$' '')
+	end
+
+	if test -n "$remote_head"
+		string replace -r '^[^/]+/' '' -- "$remote_head"
+		return
+	end
+
+	echo main
 end
 
 function g_default_remote -d "Get the default remote for the current repository"
@@ -545,8 +564,9 @@ function g_sync -d "Syncs two remotes"
   g_is_repository; or return
 
   # Parse arguments
-  argparse -i --name=g_sync "r/remote=" "u/upstream=" "N/dry-run" -- $argv
-  
+  argparse -i --name=g_sync "c/current" "r/remote=" "u/upstream=" "N/dry-run" -- $argv
+
+  set current $(g_branch_name); or return
   set remote $(__g_ensure_remote $_flag_r)
   set branch $(__g_ensure_branch $argv[1])
 
@@ -556,9 +576,32 @@ function g_sync -d "Syncs two remotes"
     set upstream $_flag_u
   end
 
-  dryRun=$_flag_N __git fetch $upstream; or return
-  dryRun=$_flag_N __git pull $upstream $branch; or return
-  dryRun=$_flag_N __git push -f $remote $branch; or return
+  set switched false
+  if ! set -q _flag_c; and test "$current" != "$branch"
+    dryRun=$_flag_N __git checkout $branch; or return
+    set switched true
+  end
+
+  dryRun=$_flag_N __git fetch $upstream
+  set result $status
+  if test $result -eq 0
+    dryRun=$_flag_N __git pull $upstream $branch
+    set result $status
+  end
+  if test $result -eq 0
+    dryRun=$_flag_N __git push -f $remote $branch
+    set result $status
+  end
+
+  if test "$switched" = true
+    dryRun=$_flag_N __git checkout $current
+    set restore_result $status
+    if test $result -eq 0
+      set result $restore_result
+    end
+  end
+
+  return $result
 end
 
 # ----- GitHub functions -----

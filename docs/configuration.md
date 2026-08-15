@@ -18,7 +18,6 @@ hosts:
   example: example.com:2222
 
 git:
-  branch: main
   remote: origin
   root: ~/development
   upstreamRemote: upstream
@@ -53,7 +52,7 @@ prompt_narrow_threshold: 100
 | --- | --- | --- |
 | `env` | `{}` | String-valued environment variables exported when Fishamnium loads |
 | `hosts` | `{}` | Named host values available through `fishamnium config .hosts` |
-| `git.branch` | `main` | Default base branch used by Git workflows |
+| `git.branch` | remote default branch, falling back to `main` | Optional explicit base branch used by Git workflows |
 | `git.remote` | `origin` | Default writable Git remote |
 | `git.root` | `~/development` | Configured Git workspace root |
 | `git.upstreamRemote` | `upstream` | Source remote used by `g_sync` |
