@@ -1,3 +1,7 @@
+### 2026-08-15 / 17.0.0
+
+- feat!: Improved g_sync behavior.
+
 ### 2026-08-05 / 16.7.0
 
 - feat: Added tmux session listing.
