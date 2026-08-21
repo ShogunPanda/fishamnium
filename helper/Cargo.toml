@@ -7,11 +7,10 @@
   base64     = "0.22"
   clap       = { version = "4.5", features = ["derive"] }
   comfy-table = { version = "7.1", features = ["custom_styling"] }
-  crossterm  = { version = "0.28", features = ["use-dev-tty"] }
-  git2       = { version = "0.20", features = ["vendored-openssl"] }
+  crossterm  = { version = "0.29", features = ["use-dev-tty"] }
+  git2       = { version = "0.20", default-features = false, features = ["vendored-libgit2"] }
   jiff       = "0.2"
   nix        = { version = "0.29", features = ["fs", "hostname", "process", "signal", "user"] }
-  ratatui    = "0.29"
   regex      = "1.11"
   rusqlite   = { version = "0.32", features = ["bundled"] }
   serde      = { version = "1.0", features = ["derive"] }
@@ -22,8 +21,8 @@
 
 [profile.release]
   codegen-units = 1
-  debug         = true
-  lto           = "fat"
-  opt-level     = 3
+  debug         = false
+  lto           = "thin"
+  opt-level     = 2
   panic         = "abort"
-  strip         = false
+  strip         = true

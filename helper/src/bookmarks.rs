@@ -63,6 +63,7 @@ impl Bookmark {
       }
       Some("names") => Arc::new(Self::to_names(&Self::list_filtered(payload.first().copied())?).into_bytes()),
       Some("show") => Arc::new(Self::show_current(payload.first().copied().unwrap_or(""))?.into_bytes()),
+      Some("find") => Arc::new(Self::find_current(payload.first().copied())?.into_bytes()),
       Some("save") => {
         if payload.len() > 2 {
           return Err(
@@ -366,6 +367,27 @@ impl Bookmark {
     }
 
     Err(IoError::new(ErrorKind::NotFound, format!("Bookmark {id} does not exist")).into())
+  }
+
+  fn find_current(path: Option<&str>) -> Result<String, Box<dyn Error>> {
+    let path = match path {
+      Some(path) if !path.is_empty() => PathBuf::from(Self::expand_home(path)?),
+      _ => std::env::current_dir()?,
+    };
+    let path = fs::canonicalize(&path).unwrap_or(path);
+    let mut response = String::new();
+
+    for bookmark in Self::list(&Config::load_current()?)? {
+      let bookmark_path = PathBuf::from(Self::expand_home(&bookmark.path)?);
+      let bookmark_path = fs::canonicalize(&bookmark_path).unwrap_or(bookmark_path);
+
+      if bookmark_path == path {
+        response.push_str(&bookmark.id);
+        response.push('\n');
+      }
+    }
+
+    Ok(response.trim_end().to_string())
   }
 
   fn save_current(id: &str, name: Option<String>) -> Result<(), Box<dyn Error>> {

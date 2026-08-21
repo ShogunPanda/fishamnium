@@ -46,6 +46,7 @@ Most listing commands accept an optional regular expression matching bookmark ID
 | `bookmarks autocomplete [REGEX]` | Print ID and path completion rows |
 | `bookmarks names [REGEX]` | Print bookmark IDs |
 | `bookmarks show ID` | Print the expanded bookmark path |
+| `bookmarks find [PATH]` | Print bookmark IDs matching a path; defaults to the current directory |
 | `bookmarks save ID [NAME]` | Save the current directory |
 | `bookmarks delete ID` | Delete a configured bookmark |
 

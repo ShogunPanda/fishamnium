@@ -89,14 +89,10 @@ function fishamnium_update_colors -d "Updates fishamnium color settings"
 end
 
 function fishamnium_reload -d "Reloads Fishamnium"
+  set -e -g FISHAMNIUM_PLUGINS FISHAMNIUM_COMPLETIONS FISHAMNIUM_LOADED_PLUGINS FISHAMNIUM_LOADED_COMPLETIONS
   printf "%s%s--> Reloading Fishamnium ...%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_PRIMARY" "$FISHAMNIUM_COLOR_RESET"
   $FISHAMNIUM_HELPER reload
   source ~/.config/fish/conf.d/fishamnium.fish
-end
-
-function fishamnium_forced_reload -d "Reloads Fishamnium (forced)"
-  set -e -g FISHAMNIUM_PLUGINS FISHAMNIUM_COMPLETIONS FISHAMNIUM_LOADED_PLUGINS FISHAMNIUM_LOADED_COMPLETIONS
-  fishamnium_reload
 end
 
 function fishamnium_update -d "Updates Fishamnium"

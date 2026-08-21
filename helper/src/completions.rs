@@ -130,6 +130,7 @@ complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a autocomplete -d "Print bookmark completion rows"
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a names -d "Print bookmark names"
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a show -d "Print bookmark path"
+complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a find -d "Find bookmarks matching a path"
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a save -d "Save current directory as bookmark"
 complete -c fishamnium -n "__fishamnium_helper_using_command bookmarks; and test (__fishamnium_helper_argument_index bookmarks) -eq 0" -a delete -d "Delete bookmark"
 

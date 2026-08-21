@@ -87,6 +87,19 @@ function bookmark_show -d "Reads a bookmark"
   echo "$destination"
 end
 
+function bookmark_find -d "Finds bookmarks matching a path"
+  if test (count $argv) -gt 1
+    __fishamnium_print_error "Please provide at most one path."
+    return 1
+  end
+
+  if test -n "$argv[1]"
+    $FISHAMNIUM_HELPER bookmarks find "$argv[1]"
+  else
+    $FISHAMNIUM_HELPER bookmarks find (pwd)
+  end
+end
+
 function bookmark_cd -d "Changes current directory to a saved bookmark"
   argparse -i --name=bookmark_cd "s/stack" -- $argv
 
@@ -222,6 +235,7 @@ end
 alias l=bookmarks_list
 alias le=bookmarks_export_to_env
 alias b=bookmark_show
+alias bf=bookmark_find
 alias y="bookmark_show -y"
 alias s=bookmark_save
 alias d=bookmark_delete
