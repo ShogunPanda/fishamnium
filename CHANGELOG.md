@@ -1,3 +1,7 @@
+### 2026-08-21 / 17.1.0
+
+- feat: Added bookmarks searching.
+
 ### 2026-08-15 / 17.0.0
 
 - feat!: Improved g_sync behavior.
