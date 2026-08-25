@@ -1,3 +1,7 @@
+### 2026-08-25 / 17.2.0
+
+- feat: Support worktrees in bookmarks.
+
 ### 2026-08-21 / 17.1.0
 
 - feat: Added bookmarks searching.
