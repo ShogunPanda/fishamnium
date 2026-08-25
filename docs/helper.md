@@ -50,6 +50,8 @@ Most listing commands accept an optional regular expression matching bookmark ID
 | `bookmarks save ID [NAME]` | Save the current directory |
 | `bookmarks delete ID` | Delete a configured bookmark |
 
+Bookmarks pointing to Git repositories also list linked worktrees as derived bookmarks. Their IDs use `<bookmark>--<worktree>` and their names use `(Worktree: <worktree>)`; the worktree containing the original bookmark path is omitted.
+
 ## Git and Node.js
 
 Git query commands discover the repository from the current directory.

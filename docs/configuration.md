@@ -95,6 +95,8 @@ bookmarks:
 
 `bookmark_save` and `bookmark_delete` update the selected configuration file atomically. Bookmark IDs may contain letters, numbers, `-`, `_`, `.`, `:`, and `@`.
 
+When a bookmark points inside a Git repository, linked worktrees are exposed as additional bookmarks. Their IDs use the format `<bookmark>--<worktree>` and their names append ` (Worktree: <worktree>)`. The worktree containing the bookmark path is not duplicated. During environment export, characters other than letters, numbers, and `_` are replaced with `_`.
+
 ## Colors
 
 `colors.light` and `colors.dark` accept the keys `white`, `black`, `lightgreen`, `yellow`, `magenta`, `blue`, `gray`, `lightgray`, `orange`, `red`, `green`, `cyan`, `foreground`, `primary`, and `secondary`. Values are six-digit RGB hex strings without `#`.

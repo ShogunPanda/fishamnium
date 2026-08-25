@@ -1,4 +1,5 @@
 use comfy_table::{Cell, Table, TableComponent};
+use git2::Repository;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
@@ -94,13 +95,15 @@ impl Bookmark {
 
     for (id, bookmark) in &config.bookmarks {
       if let Some(recursive) = &bookmark.recursive {
-        bookmarks.push(Self {
+        let root = Self {
           id: format!("{recursive}-root"),
-          path: bookmark.path.clone().replace("~", "$HOME"),
+          path: Self::collapse_home(&Self::expand_home(&bookmark.path)?)?,
           name: format!("{}: Root", bookmark.name),
-        });
+        };
+        Self::add_worktrees(&mut bookmarks, &root)?;
+        bookmarks.push(root);
 
-        let root = PathBuf::from(&bookmark.path.replace("~", &std::env::var("HOME")?));
+        let root = PathBuf::from(Self::expand_home(&bookmark.path)?);
         if root.is_dir() {
           for entry in fs::read_dir(root)? {
             let entry = entry?;
@@ -115,25 +118,56 @@ impl Bookmark {
               continue;
             }
 
-            bookmarks.push(Self {
+            let child = Self {
               id: format!("{recursive}-{folder}"),
-              path: format!("{}/{folder}", bookmark.path).replace("~", "$HOME"),
+              path: Self::collapse_home(&entry.path().to_string_lossy())?,
               name: format!("{}: {folder}", bookmark.name),
-            });
+            };
+            Self::add_worktrees(&mut bookmarks, &child)?;
+            bookmarks.push(child);
           }
         }
       } else {
-        bookmarks.push(Self {
+        let bookmark = Self {
           id: id.clone(),
-          path: bookmark.path.clone().replace("~", "$HOME"),
+          path: Self::collapse_home(&Self::expand_home(&bookmark.path)?)?,
           name: bookmark.name.clone(),
-        });
+        };
+        Self::add_worktrees(&mut bookmarks, &bookmark)?;
+        bookmarks.push(bookmark);
       }
     }
 
     bookmarks.sort_by(|left, right| (&left.id, &left.path, &left.name).cmp(&(&right.id, &right.path, &right.name)));
 
     Ok(bookmarks)
+  }
+
+  fn add_worktrees(bookmarks: &mut Vec<Self>, bookmark: &Self) -> Result<(), Box<dyn Error>> {
+    let path = PathBuf::from(Self::expand_home(&bookmark.path)?);
+    let repository = match Repository::discover(&path) {
+      Ok(repository) => repository,
+      Err(_) => return Ok(()),
+    };
+    let bookmark_path = fs::canonicalize(&path).unwrap_or(path);
+
+    for name in repository.worktrees()?.iter().flatten() {
+      let worktree = repository.find_worktree(name)?;
+      let path = worktree.path().to_path_buf();
+      let canonical_path = fs::canonicalize(&path).unwrap_or_else(|_| path.clone());
+
+      if canonical_path == bookmark_path {
+        continue;
+      }
+
+      bookmarks.push(Self {
+        id: format!("{}--{name}", bookmark.id),
+        path: Self::collapse_home(&path.to_string_lossy())?,
+        name: format!("{} (Worktree: {name})", bookmark.name),
+      });
+    }
+
+    Ok(())
   }
 
   pub fn save(config: &mut Config, id: &str, name: Option<&str>) -> Result<(), Box<dyn Error>> {
@@ -199,7 +233,7 @@ impl Bookmark {
       .iter()
       .map(|bookmark| VscodeProject {
         name: format!("{} ({})", bookmark.id, bookmark.name),
-        root_path: bookmark.path.replace("$HOME", "$home"),
+        root_path: bookmark.path.replace("$HOME", "$home").replace('~', "$home"),
         paths: Vec::new(),
         tags: Vec::new(),
         enabled: true,
@@ -231,13 +265,27 @@ impl Bookmark {
 
     for bookmark in bookmarks {
       response.push_str(prefix);
-      response.push_str(&bookmark.id.replace('-', "_").to_uppercase());
+      response.push_str(&Self::sanitize_environment_name(&bookmark.id));
       response.push('=');
       response.push_str(&Environment::quote_env_value(&Bookmark::expand_home(&bookmark.path)?));
       response.push('\n');
     }
 
     Ok(response)
+  }
+
+  fn sanitize_environment_name(name: &str) -> String {
+    name
+      .chars()
+      .map(|character| {
+        if character.is_ascii_alphanumeric() || character == '_' {
+          character
+        } else {
+          '_'
+        }
+      })
+      .collect::<String>()
+      .to_ascii_uppercase()
   }
 
   pub fn to_autocomplete(bookmarks: &[Self]) -> String {
@@ -310,7 +358,7 @@ impl Bookmark {
         Cell::new(
           bookmark
             .path
-            .replace("$HOME", &format!("{color_secondary}{color_bold}$HOME{color_reset}")),
+            .replace('~', &format!("{color_secondary}{color_bold}$HOME{color_reset}")),
         ),
       ]);
     }
@@ -408,5 +456,18 @@ impl Bookmark {
 
   fn name_from_payload(payload: &[&str]) -> Option<String> {
     payload.get(1).map(|name| (*name).to_string())
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::Bookmark;
+
+  #[test]
+  fn sanitize_environment_name_replaces_invalid_characters() {
+    assert_eq!(
+      Bookmark::sanitize_environment_name("project.v1--feature/foo:@é"),
+      "PROJECT_V1__FEATURE_FOO___"
+    );
   }
 }
