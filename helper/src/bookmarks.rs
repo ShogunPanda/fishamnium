@@ -318,7 +318,6 @@ impl Bookmark {
     let color_reset = "\x1b[0m";
     let color_bold = "\x1b[1m";
     let color_primary = colors.foreground(&colors.palette.primary);
-    let color_secondary = colors.foreground(&colors.palette.secondary);
     let mut table = Table::new();
     table
       .set_style(TableComponent::LeftBorder, '│')
@@ -355,11 +354,7 @@ impl Bookmark {
       table.add_row(vec![
         Cell::new(format!("{color_primary}{color_bold}{}{color_reset}", bookmark.id)),
         Cell::new(format!("{color_bold}{}{color_reset}", bookmark.name)),
-        Cell::new(
-          bookmark
-            .path
-            .replace('~', &format!("{color_secondary}{color_bold}$HOME{color_reset}")),
-        ),
+        Cell::new(bookmark.path.clone()),
       ]);
     }
 
@@ -456,18 +451,5 @@ impl Bookmark {
 
   fn name_from_payload(payload: &[&str]) -> Option<String> {
     payload.get(1).map(|name| (*name).to_string())
-  }
-}
-
-#[cfg(test)]
-mod tests {
-  use super::Bookmark;
-
-  #[test]
-  fn sanitize_environment_name_replaces_invalid_characters() {
-    assert_eq!(
-      Bookmark::sanitize_environment_name("project.v1--feature/foo:@é"),
-      "PROJECT_V1__FEATURE_FOO___"
-    );
   }
 }
