@@ -1,3 +1,7 @@
+### 2026-08-26 / 17.2.1
+
+- fix: Removed special handling of HOME.
+
 ### 2026-08-25 / 17.2.0
 
 - feat: Support worktrees in bookmarks.
