@@ -21,16 +21,13 @@ Fishamnium is loaded by Fish from `~/.config/fish/conf.d/fishamnium.fish`. The l
 | `~/.local/share/fishamnium/completions` | Fish completion definitions |
 | `~/.local/state/fishamnium` | Runtime state, including the helper PID and exported VS Code projects |
 
-Only executable plugin and completion files are sourced. To disable a bundled item without deleting it, remove its executable bit and run `fishamnium_forced_reload`.
+Only executable plugin and completion files are sourced. To disable a bundled item without deleting it, remove its executable bit and run `fishamnium_reload`.
 
 ## Common operations
 
 ```fish
 # Reload plugins, completions, configuration, and the helper.
 fishamnium_reload
-
-# Clear the cached plugin lists before reloading.
-fishamnium_forced_reload
 
 # Reinstall the latest release.
 fishamnium_update

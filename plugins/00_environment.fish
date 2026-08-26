@@ -100,7 +100,7 @@ function fishamnium_update -d "Updates Fishamnium"
   curl -sSL https://sw.cowtech.it/fishamnium/installer | fish
 
   bookmarks_export_to_env
-  fishamnium_forced_reload
+  fishamnium_reload
 end
 
 function fish_user_key_bindings

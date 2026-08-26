@@ -10,7 +10,6 @@ This plugin starts Fishamnium's shell environment, applies syntax and pager colo
 | --- | --- |
 | `fishamnium_update_colors [THEME]` | Reload environment and Fish colors, optionally using `light` or `dark` |
 | `fishamnium_reload` | Restart the helper and source the Fishamnium loader |
-| `fishamnium_forced_reload` | Clear loaded-file caches and reload |
 | `fishamnium_update` | Remove and reinstall Fishamnium, then regenerate bookmark exports |
 | `export NAME=VALUE ...` | Bash-compatible environment assignment helper |
 
