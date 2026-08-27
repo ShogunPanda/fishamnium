@@ -1,3 +1,7 @@
+### 2026-08-27 / 17.2.3
+
+- fix(git): use base branch comparison URL for GitHub pull requests
+
 ### 2026-08-26 / 17.2.1
 
 - fix: Removed special handling of HOME.
