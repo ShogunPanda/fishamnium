@@ -62,7 +62,7 @@ function __g_pull_request_create_url
 
       switch $host
         case github.com
-          echo "https://github.com/$repo/pull/new/$escapedBranch"
+          echo "https://github.com/$repo/compare/$escapedBase...$escapedBranch?expand=1"
           return 0
         case gitlab.com
           echo "https://gitlab.com/$repo/-/merge_requests/new?merge_request[source_branch]=$escapedBranch&merge_request[target_branch]=$escapedBase"
