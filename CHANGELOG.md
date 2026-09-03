@@ -1,3 +1,7 @@
+### 2026-09-03 / 17.2.4
+
+- fix: Fix sessions paths.
+
 ### 2026-08-27 / 17.2.3
 
 - fix(git): use base branch comparison URL for GitHub pull requests
