@@ -54,13 +54,16 @@ function opencode_session_delete_select -d "Interactively delete OpenCode sessio
 end
 
 function opencode_session_delete_last -d "Delete last OpenCode session"
-  argparse -i --name=opencode_session_delete_select "g/global" -- $argv
+  argparse -i --name=opencode_session_delete_last "g/global" -- $argv
 
   if set -q _flag_g
-    opencode session delete ($FISHAMNIUM_HELPER agents opencode last)
-    
+    set session ($FISHAMNIUM_HELPER agents opencode last)
   else
-    opencode session delete ($FISHAMNIUM_HELPER agents opencode last "$PWD")    
+    set session ($FISHAMNIUM_HELPER agents opencode last "$PWD")
+  end
+
+  if test -n "$session"
+    opencode session delete "$session"
   end
 end
 

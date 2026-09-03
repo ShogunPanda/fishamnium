@@ -1,5 +1,6 @@
 use rusqlite::Connection;
 use std::error::Error;
+use std::fs;
 use std::io::{Error as IoError, ErrorKind};
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -123,10 +124,14 @@ impl Agents {
     };
     let path = PathBuf::from(path);
 
-    if path.is_absolute() {
-      Ok(path)
+    let path = if path.is_absolute() {
+      path
     } else {
-      Ok(std::env::current_dir()?.join(path))
-    }
+      std::env::current_dir()?.join(path)
+    };
+
+    // Canonicalize aliases such as /Users/shogun and /Users/Shared before
+    // comparing paths stored by OpenCode with the current working directory.
+    Ok(fs::canonicalize(&path).unwrap_or(path))
   }
 }
