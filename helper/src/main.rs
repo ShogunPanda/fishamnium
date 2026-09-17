@@ -13,7 +13,6 @@ mod node;
 mod prompt;
 mod protocol;
 mod select;
-mod ssh;
 mod tmux;
 
 use crate::agents::*;
@@ -30,7 +29,6 @@ use crate::node::*;
 use crate::prompt::*;
 use crate::protocol::*;
 use crate::select::*;
-use crate::ssh::*;
 use crate::tmux::*;
 use clap::Parser;
 use std::backtrace::Backtrace;
@@ -129,7 +127,6 @@ fn dispatch_request(
     "git" => Git::handle(first_arg, &command_arguments),
     "node" => Node::handle(first_arg, &command_arguments),
     "prompt" => Prompt::handle(&payload.iter().map(String::as_str).collect::<Vec<_>>()),
-    "ssh" => Ok(Arc::new(Ssh::handle(first_arg, &command_arguments)?)),
     "tmux" => Ok(Arc::new(Tmux::handle(first_arg, &command_arguments)?)),
     "exit" | "quit" => quit(events.clone()),
     command => match Helpers::handle(command, &raw_request)? {
@@ -194,7 +191,6 @@ fn dispatch_local_command(command: Option<&str>, payload: &[String]) -> Result<O
         .as_ref()
         .clone(),
     ),
-    Some("ssh") => Some(Ssh::handle(first_arg, &command_arguments)?),
     Some("completions") => Some(Completions::to_fish_response(payload)?),
     _ => None,
   })

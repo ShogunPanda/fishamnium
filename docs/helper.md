@@ -2,7 +2,7 @@
 
 The native helper is installed as `~/.local/share/fishamnium/bin/fishamnium` and added to `PATH` as `fishamnium`. It renders the prompt, reads configuration, performs repository queries, provides interactive selection, and serves operations used by the Fish plugins.
 
-Running a command normally boots a background helper server and sends the request to it. Commands that require direct terminal or process access, including `select`, `agents`, `git`, `node`, `prompt`, `ssh`, and `completions`, can run locally. Use `fishamnium reload` after changing configuration to restart the server.
+Running a command normally boots a background helper server and sends the request to it. Commands that require direct terminal or process access, including `select`, `agents`, `git`, `node`, `prompt`, and `completions`, can run locally. Use `fishamnium reload` after changing configuration to restart the server.
 
 ## Invocation
 
@@ -97,16 +97,11 @@ fishamnium prompt [--theme NAME] [--width COLUMNS] [--path PATH]
 
 The loader also supplies `--status`, `--duration`, and the current terminal width. `--status`, `--pipestatus`, and `--duration` are accepted for compatibility but are not currently template variables. See [Prompt themes](configuration.md#prompt-themes) for template configuration.
 
-## Agents, SSH, and tmux
+## Agents and tmux
 
 | Command | Purpose |
 | --- | --- |
 | `agents opencode list [FOLDER]` | List top-level OpenCode sessions as ID, directory, and title TSV |
 | `agents opencode last [FOLDER]` | Print the most recently updated OpenCode session ID |
-| `ssh show` | Copy and print the current user, host, and directory as a marked location |
-| `ssh available` | Succeed when the clipboard contains a marked SSH location |
-| `ssh connect` | Connect to the marked host and directory, or start Fish when none is present |
 | `tmux list-sessions` | List existing tmux session names |
 | `tmux next-session` | Print the first unattached NATO-alphabet session name |
-
-`ssh show` uses OSC 52 and supports `FISHAMNIUM_SSH_HOST` to override the advertised hostname. Clipboard reads support `pbpaste`, `wl-paste`, `xclip`, and `xsel`; clipboard clearing uses their corresponding writer.
