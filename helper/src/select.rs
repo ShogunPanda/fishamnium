@@ -114,7 +114,13 @@ impl Select {
           match key.code {
             KeyCode::Char('c') if key.modifiers.contains(KeyModifiers::CONTROL) => break None,
             KeyCode::Esc => break None,
-            KeyCode::Enter if options.multiselect => break Some(selected.into_iter().collect()),
+            KeyCode::Enter if options.multiselect => {
+              if selected.is_empty() && !filtered.is_empty() {
+                break Some(vec![filtered[current]]);
+              }
+
+              break Some(selected.into_iter().collect());
+            }
             KeyCode::Enter => break (!filtered.is_empty()).then_some(vec![filtered[current]]),
             KeyCode::Tab if options.multiselect => {
               if !filtered.is_empty() {
