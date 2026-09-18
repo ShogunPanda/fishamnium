@@ -35,14 +35,11 @@ end
 function __g_refresh
   set remote $argv[1]
   set base $argv[2]
-  set branch $argv[3]
-  set operation $argv[4]
+  set operation $argv[3]
+  set remote_ref "refs/remotes/$remote/$base"
 
-  __git fetch $remote; or return
-	__git checkout $base; or return
-	__git pull $remote $base; or return
-  __git checkout $branch; or return
-  __git $operation $base; or return
+  __git fetch $remote "+refs/heads/$base:$remote_ref"; or return
+  __git $operation $remote_ref; or return
 end
 
 function __g_pull_request_create_url
@@ -78,29 +75,45 @@ function __g_pull_request
   set remote $argv[1]
   set base $argv[2]
   set branch $argv[3]
+  set force $argv[4]
+  set no_verify $argv[5]
+  set dry_run $argv[6]
+  set pushOptions
 
-  if set -q _flag_f
+  if test -n "$force"
     set pushOptions $pushOptions "-f"
   end
 
-  if set -q _flag_s
+  if test -n "$no_verify"
     set pushOptions $pushOptions "--no-verify"
   end
 
-  dryRun=$_flag_N __git push $pushOptions $remote $branch; or return
+  dryRun=$dry_run __git push $pushOptions $remote "refs/heads/$branch:refs/heads/$branch"; or return
   set url $(__g_pull_request_create_url $base $branch)
-  dryRun=$_flag_N __git checkout $base; or return
-  dryRun=$_flag_N __git branch -D $branch  
 
   if test -n "$url"
-    dryRun=$_flag_N __g_status /usr/bin/open "$url"
+    dryRun=$dry_run __g_status /usr/bin/open "$url"
 
-    if test -z "$_flag_N"
+    if test -z "$dry_run"
       /usr/bin/open "$url"
     end
   else
     printf "%s%s--> Cannot generate Pull Request URL from upstream or origin remotes.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_ERROR" "$FISHAMNIUM_COLOR_RESET"
   end
+
+  if ! git show-ref --verify --quiet "refs/heads/$base"
+    printf "%s%s--> Keeping local branch %s because local base branch %s does not exist.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_SECONDARY" "$branch" "$base" "$FISHAMNIUM_COLOR_RESET"
+    return
+  end
+
+  set base_worktree (__g_branch_worktree_path "$base")
+  if test -n "$base_worktree"
+    printf "%s%s--> Keeping local branch %s because %s is checked out at %s.%s\n" "$FISHAMNIUM_COLOR_BOLD" "$FISHAMNIUM_COLOR_FG_SECONDARY" "$branch" "$base" "$base_worktree" "$FISHAMNIUM_COLOR_RESET"
+    return
+  end
+
+  dryRun=$dry_run __git switch $base; or return
+  dryRun=$dry_run __git branch -D -- $branch; or return
 end
 
 
@@ -110,6 +123,22 @@ function __g_worktree_path_from_row
   set parts (string split -m 2 $tab "$argv[1]")
   set path (string replace -r '^~(?=/|$)' "$HOME" -- "$parts[2]")
   path normalize "$path"
+end
+
+function __g_branch_worktree_path
+  set branch_ref "refs/heads/$argv[1]"
+  set worktree
+
+  for line in (git worktree list --porcelain)
+    if string match -q 'worktree *' -- "$line"
+      set worktree (string replace 'worktree ' '' -- "$line")
+    else if test "$line" = "branch $branch_ref"
+      echo "$worktree"
+      return 0
+    end
+  end
+
+  return 1
 end
 
 # ----- Default functions -----
@@ -272,7 +301,7 @@ function g_push -d "Pushes the current or others branch to a remote"
   dryRun=$_flag_N __git push $remote $argv
 end
 
-function g_update -d "Fetchs and pulls a branch from a remote"
+function g_update -d "Pulls a branch from a remote"
   g_is_repository; or return
 
   # Parse arguments
@@ -285,7 +314,6 @@ function g_update -d "Fetchs and pulls a branch from a remote"
   end
 
   # Execute command(s)
-  dryRun=$_flag_N __git fetch $remote; or return
   dryRun=$_flag_N __git pull $remote $argv; or return
 end
 
@@ -312,13 +340,21 @@ function g_delete -d "Deletes one or more branch both locally and on a remote"
     return 1
   end
 
+  for branch in $argv
+    set worktree (__g_branch_worktree_path "$branch")
+    if test -n "$worktree"
+      __fishamnium_print_error "Cannot delete $branch because it is checked out at $worktree."
+      return 1
+    end
+  end
+
   # Prepare the branches to remove
   for i in $argv
     set remoteBranches $remoteBranches :$i
   end
 
   # Execute command(s)
-  dryRun=$_flag_N __git branch -D $argv; or return
+  dryRun=$_flag_N __git branch -D -- $argv; or return
   dryRun=$_flag_N __git push $remote $remoteBranches; or return
 end
 
@@ -335,10 +371,18 @@ function g_cleanup -d "Deletes all non default branches"
   else
     set branches $(git branch --list | string match -r -- "^\s{2}(?!$base).+" | string trim); or return
   end
+
+
+  set deletable_branches
+  for branch in $branches
+    if ! __g_branch_worktree_path "$branch" >/dev/null
+      set -a deletable_branches $branch
+    end
+  end
   
   # Execute command(s)
-  if test $(count $branches) -gt 0
-    dryRun=$_flag_N __git branch -D $branches
+  if test $(count $deletable_branches) -gt 0
+    dryRun=$_flag_N __git branch -D -- $deletable_branches
   end
 end
 
@@ -350,8 +394,15 @@ function g_switch -d "Interactively switch between local branch"
   set choice $(string join0 $branches | $FISHAMNIUM_HELPER select --prompt "Which branch you want to checkout")
   
   if test $status -eq 0
-    __g_status "git checkout $choice"
-    git checkout $choice
+    set worktree (__g_branch_worktree_path "$choice")
+    set current_worktree (git rev-parse --show-toplevel); or return
+
+    if test -n "$worktree"; and test "$worktree" != "$current_worktree"
+      __fishamnium_print_error "Cannot switch to $choice because it is checked out at $worktree."
+      return 1
+    end
+
+    __git switch $choice
   end
 end
 
@@ -361,11 +412,19 @@ function g_branch_delete_select -d "Interactively delete local branches"
   set current $(g_branch_name); or return
   set current_pattern (string escape --style=regex -- $current)
   set branches $($FISHAMNIUM_HELPER git branches | string match -vr -- "^$current_pattern	")
+  set candidates
 
-  set choices $(string join0 $branches | $FISHAMNIUM_HELPER select --prompt "Which branches do you want to delete? (current branch is filtered out)" --multi)
+  for branch in $branches
+    set name (string split "	" -- "$branch")[1]
+    if ! __g_branch_worktree_path "$name" >/dev/null
+      set -a candidates "$branch"
+    end
+  end
+
+  set choices $(string join0 $candidates | $FISHAMNIUM_HELPER select --prompt "Which branches do you want to delete? (checked-out branches are filtered out)" --multi)
   
   if test $status -eq 0
-    __git branch -D $choices
+    __git branch -D -- $choices
   end
 end
 
@@ -461,7 +520,7 @@ end
 
 # ----- Workflow functions -----
 
-function g_start -d "Starts a new branch out of the base one"
+function g_start -d "Starts a new branch from a fetched remote base"
   g_is_repository; or return
 
   # Parse arguments
@@ -470,23 +529,15 @@ function g_start -d "Starts a new branch out of the base one"
   set base $(__g_ensure_branch $argv[2])
   set remote $(__g_ensure_remote $_flag_r)
 
-  # Normalize remote
-  if set -q _flag_r
-    set remote $_flag_r
-  else
-    set remote $(g_default_remote)
-  end
-
   if test -z "$branch"
     __fishamnium_print_error "You must provide a branch name."
     return 1
   end
 
   # Execute command(s)
-  dryRun=$_flag_N __git fetch $remote; or return
-	dryRun=$_flag_N __git checkout $base; or return
-	dryRun=$_flag_N __git pull $remote $base	; or return
-  dryRun=$_flag_N __git checkout -b $branch; or return
+  set remote_ref "refs/remotes/$remote/$base"
+  dryRun=$_flag_N __git fetch $remote "+refs/heads/$base:$remote_ref"; or return
+  dryRun=$_flag_N __git switch --no-track -c $branch $remote_ref; or return
 end
 
 function g_refresh -d "Rebases the current branch on top of an existing remote branch"
@@ -509,10 +560,10 @@ function g_refresh -d "Rebases the current branch on top of an existing remote b
   end
 
   # Execute command(s)
-  dryRun=$_flag_N __g_refresh $remote $base $branch $operation
+  dryRun=$_flag_N __g_refresh $remote $base $operation
 end
 
-function g_pull_request -d "Sends a Pull Request and deletes the local branch"
+function g_pull_request -d "Sends a Pull Request and cleans up the local branch when possible"
   g_is_repository; or return
 
   # Parse arguments
@@ -528,11 +579,11 @@ function g_pull_request -d "Sends a Pull Request and deletes the local branch"
 
   # Execute command(s)
   dryRun=$_flag_N __g_status g_refresh
-  dryRun=$_flag_N __g_refresh $remote $base $branch rebase
-  _flag_f=$_flag_f _flag_s=$_flag_s _flag_N=$_flag_N __g_pull_request $remote $base $branch
+  dryRun=$_flag_N __g_refresh $remote $base rebase; or return
+  __g_pull_request $remote $base $branch "$_flag_f" "$_flag_s" "$_flag_N"
 end
 
-function g_fast_pull_request -d "Creates a local branch, commit changes and then sends a Pull Request, deleting the local branch at the end"
+function g_fast_pull_request -d "Creates and commits a local branch, then sends a Pull Request and cleans up when possible"
   g_is_repository; or return
 
   # Parse arguments
@@ -552,21 +603,24 @@ function g_fast_pull_request -d "Creates a local branch, commit changes and then
 
   # Execute command(s)
   dryRun=$_flag_N __g_status g_start
-  _flag_N=$_flag_N g_start -r $remote $branch $base; or return
+  if set -q _flag_N
+    g_start -N -r $remote $branch $base; or return
+  else
+    g_start -r $remote $branch $base; or return
+  end
   dryRun=$_flag_N __git commit -s -a -m "$message"; or return
   dryRun=$_flag_N __g_status g_refresh
-  dryRun=$_flag_N __g_refresh $remote $base $branch rebase
+  dryRun=$_flag_N __g_refresh $remote $base rebase; or return
   dryRun=$_flag_N __g_status g_pull_request
-  _flag_f=$_flag_f _flag_s=$_flag_s _flag_N=$_flag_N __g_pull_request $remote $base $branch
+  __g_pull_request $remote $base $branch "$_flag_f" "$_flag_s" "$_flag_N"
 end
 
-function g_sync -d "Syncs two remotes"
+function g_sync -d "Syncs a branch directly between two remotes"
   g_is_repository; or return
 
   # Parse arguments
-  argparse -i --name=g_sync "c/current" "r/remote=" "u/upstream=" "N/dry-run" -- $argv
+  argparse -i --name=g_sync "r/remote=" "u/upstream=" "N/dry-run" -- $argv
 
-  set current $(g_branch_name); or return
   set remote $(__g_ensure_remote $_flag_r)
   set branch $(__g_ensure_branch $argv[1])
 
@@ -576,32 +630,9 @@ function g_sync -d "Syncs two remotes"
     set upstream $_flag_u
   end
 
-  set switched false
-  if ! set -q _flag_c; and test "$current" != "$branch"
-    dryRun=$_flag_N __git checkout $branch; or return
-    set switched true
-  end
-
-  dryRun=$_flag_N __git fetch $upstream
-  set result $status
-  if test $result -eq 0
-    dryRun=$_flag_N __git pull $upstream $branch
-    set result $status
-  end
-  if test $result -eq 0
-    dryRun=$_flag_N __git push -f $remote $branch
-    set result $status
-  end
-
-  if test "$switched" = true
-    dryRun=$_flag_N __git checkout $current
-    set restore_result $status
-    if test $result -eq 0
-      set result $restore_result
-    end
-  end
-
-  return $result
+  set upstream_ref "refs/remotes/$upstream/$branch"
+  dryRun=$_flag_N __git fetch $upstream "+refs/heads/$branch:$upstream_ref"; or return
+  dryRun=$_flag_N __git push -f $remote "$upstream_ref:refs/heads/$branch"; or return
 end
 
 # ----- GitHub functions -----

@@ -12,6 +12,14 @@
 [tasks.build]
   dependencies = ["build:macos", "build:linux"]
 
+[tasks.test]
+  script = '''
+for file in plugins/*.fish completions/*.fish loader.fish installer tests/*.fish; do
+  fish --no-execute "$file"
+done
+fish --no-config tests/git_workflows.fish
+'''
+
 [tasks."build:macos"]
   script = '''
 mkdir -p dist

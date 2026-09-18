@@ -133,21 +133,21 @@ The Git plugin provides repository queries, guarded write operations, interactiv
 | `g_branch_name`, `g_full_branch_name` | Print the current branch |
 | `g_sha`, `g_full_sha` | Print the current commit |
 | `g_pull_request_url [BASE] [BRANCH]` | Find an existing GitHub pull request URL |
-| `g_push`, `g_update`, `g_reset`, `g_delete`, `g_cleanup` | Push, update, reset, delete, or clean branches |
+| `g_push`, `g_update`, `g_reset`, `g_delete`, `g_cleanup` | Push, update the current branch, reset, delete, or clean branches |
 | `g_switch`, `g_branch_delete_select` | Interactively switch or delete branches |
 | `g_worktree_cd_select`, `g_worktree_delete_select`, `g_worktree_copy_select` | Interactively enter, delete, or copy a worktree path |
 | `g_worktree_copy WORKTREE` | Copy a worktree path to the clipboard |
-| `g_start BRANCH [BASE]` | Update the base branch and create a branch |
-| `g_refresh [-m] [BASE]` | Rebase, or merge with `-m`, the current branch on the updated base |
-| `g_pull_request [BASE]` | Refresh, push, open a PR URL, return to base, and delete the local branch |
-| `g_fast_pull_request BRANCH MESSAGE [BASE]` | Create, commit, refresh, and send a pull request |
-| `g_sync [-c] [BRANCH]` | Switch to the branch, pull from the upstream remote, force-push to the writable remote, and return to the original branch |
+| `g_start BRANCH [BASE]` | Fetch the remote base and create a branch directly from its remote-tracking ref |
+| `g_refresh [-m] [BASE]` | Fetch the remote base, then rebase, or merge with `-m`, directly from its remote-tracking ref |
+| `g_pull_request [BASE]` | Refresh, push, open a PR URL, and clean up the local branch when the base is available |
+| `g_fast_pull_request BRANCH MESSAGE [BASE]` | Create, commit, refresh, and send a pull request using the fetched remote base |
+| `g_sync [BRANCH]` | Fetch from the upstream remote and force-push its remote-tracking ref directly to the writable remote |
 | `gh_pr_branch PR`, `gh_pr_approve PR [MESSAGE]` | Read or approve a GitHub pull request |
 | `gh_remote_add OWNER/REPO [NAME]` | Add an SSH GitHub remote |
 
-`g_pull_request` and `g_fast_pull_request` also accept `-f` to force push and `-s` to skip Git hooks. Commands that delete branches, reset changes, force-push, or clean files are intentionally destructive; use `-N` where available before running them.
+`g_pull_request` and `g_fast_pull_request` also accept `-f` to force push and `-s` to skip Git hooks. After opening the pull request, they switch to the local base and delete the topic only when that base exists locally and is not checked out in another worktree. Otherwise, the current topic branch is preserved. Commands that delete branches, reset changes, force-push, or clean files are intentionally destructive; use `-N` where available before running them.
 
-`g_sync` accepts `-c` or `--current` to keep the current branch and use the previous behavior without switching.
+`g_start`, `g_refresh`, and `g_sync` fetch only the branch needed by the operation. They do not create or update a same-named local base branch. `g_sync` does not switch branches or include local-only commits in the synchronized result.
 
 ## Git aliases (`31_git_aliases.fish`)
 

@@ -52,10 +52,10 @@ prompt_narrow_threshold: 100
 | --- | --- | --- |
 | `env` | `{}` | String-valued environment variables exported when Fishamnium loads |
 | `hosts` | `{}` | Named host values available through `fishamnium config .hosts` |
-| `git.branch` | remote default branch, falling back to `main` | Optional explicit base branch used by Git workflows |
-| `git.remote` | `origin` | Default writable Git remote |
+| `git.branch` | remote default branch, falling back to `main` | Optional base branch whose fetched remote-tracking ref is used by Git workflows |
+| `git.remote` | `origin` | Default writable Git remote and source remote for base branch workflows |
 | `git.root` | `~/development` | Configured Git workspace root |
-| `git.upstreamRemote` | `upstream` | Source remote used by `g_sync` |
+| `git.upstreamRemote` | `upstream` | Source remote fetched by `g_sync` before its remote-tracking ref is pushed to the writable remote |
 | `git.approvalMessage` | `LGTM!` | Default body used by `gh_pr_approve` |
 | `bookmarksExportPrefix` | `B_` | Prefix for bookmark environment variables |
 | `bookmarks` | `{}` | Saved and recursive bookmark definitions |

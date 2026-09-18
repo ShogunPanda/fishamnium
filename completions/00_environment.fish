@@ -4,7 +4,7 @@ for i in fishamnium fishamnium_reload __fishamnium_print_error __fishamnium_find
   complete -c $i -x -a ""
 end
 
-for i in __g_status __git __g_ensure_branch __g_ensure_remote g_default_branch g_default_remote
+for i in __g_status __git __g_ensure_branch __g_ensure_remote __g_pull_request_create_url __g_worktree_path_from_row __g_branch_worktree_path g_default_branch g_default_remote
   complete -c $i -e
   complete -c $i -x -a ""
 end

@@ -1,12 +1,12 @@
 # ----- Helper functions -----
 function __fishamnium_is_git_argument
-  status --is-interactive; or exit 1
+  status --is-interactive; or return 1
 
   set index $argv[1]
   set cmd $(commandline -opc)
   set -e cmd[1]
 
-  argparse -i "N/dry-run" "r/remote=" "f/force" "m/merged" "s/no-verify" "a/all" -- $cmd >/dev/null 2>/dev/null
+  argparse -i "N/dry-run" "r/remote=" "u/upstream=" "f/force" "m/merged" "s/no-verify" "a/all" -- $cmd >/dev/null 2>/dev/null
   test $(count $argv) -eq $index
 end
 
@@ -16,6 +16,35 @@ end
 
 function __fishamnium_git_remotes
   $FISHAMNIUM_HELPER git remotes-list 2>/dev/null
+end
+
+function __fishamnium_git_remote_branches
+  set remote $argv[1]
+  if test -z "$remote"
+    set cmd $(commandline -opc)
+    set -e cmd[1]
+    argparse -i "r/remote=" -- $cmd >/dev/null 2>/dev/null
+    set remote $_flag_r
+  end
+
+  if test -z "$remote"
+    set remote (g_default_remote)
+  end
+
+  git for-each-ref --format='%(refname:strip=3)%09Remote Branch' "refs/remotes/$remote/" 2>/dev/null | string match -vr '^HEAD\t'
+end
+
+function __fishamnium_git_upstream_branches
+  set cmd $(commandline -opc)
+  set -e cmd[1]
+  argparse -i "u/upstream=" -- $cmd >/dev/null 2>/dev/null
+  set upstream $_flag_u
+
+  if test -z "$upstream"
+    set upstream (__fishamnium_get_configuration .git.upstreamRemote)
+  end
+
+  __fishamnium_git_remote_branches "$upstream"
 end
 
 function __fishamnium_git_worktrees
@@ -59,11 +88,11 @@ complete -c g_pull_request_url -n "__fishamnium_is_git_argument 1" -x -a "(__fis
 # ----- Writing functions -----
 
 # Add common options
-for i in g_push g_reset g_delete g_cleanup
+for i in g_push g_update g_reset g_delete g_cleanup
   complete -c $i -s N -l dry-run -d "Do not execute operation, only print the commands"
 end
 
-for i in g_push g_update g_delete g_cleanup
+for i in g_push g_update g_delete
   complete -c $i -s r -l remote -x -a "(__fishamnium_git_remotes)" -d "The remote to use"
 end
 
@@ -111,8 +140,6 @@ complete -c g_update -s k -l keep -d 'Keep downloaded pack'
 complete -c g_update -l no-tags -d 'Disable automatic tag following'
 complete -c g_update -s p -l prune -d 'Remove remote-tracking references that no longer exist on the remote'
 complete -c g_update -l progress -d 'Force progress status'
-complete -f -c git -n '__fish_git_using_command pull; and not __fish_git_branch_for_remote' -a '(__fish_git_remotes)' -d 'Remote alias'
-complete -f -c git -n '__fish_git_using_command pull; and __fish_git_branch_for_remote' -a '(__fish_git_branch_for_remote)'
 complete -c g_update -l commit -d "Autocommit the merge"
 complete -c g_update -l no-commit -d "Don't autocommit the merge"
 complete -c g_update -s e -l edit -d 'Edit auto-generated merge message'
@@ -134,7 +161,7 @@ complete -c g_update -s X -l strategy-option -d 'Pass given option to the merge 
 complete -c g_update -l verify-signatures -d 'Abort merge if upstream branch tip commit is not signed with a valid key'
 complete -c g_update -l no-verify-signatures -d 'Do not abort merge if upstream branch tip commit is not signed with a valid key'
 complete -c g_update -l allow-unrelated-histories -d 'Allow merging even when branches do not share a common history'
-complete -c g_update -s r -l rebase -d 'Rebase the current branch on top of the upstream branch'
+complete -c g_update -l rebase -d 'Rebase the current branch on top of the upstream branch'
 complete -c g_update -l no-rebase -d 'Do not rebase the current branch on top of the upstream branch'
 complete -c g_update -l autostash -d 'Before starting rebase, stash local changes, and apply stash when done'
 complete -c g_update -l no-autostash -d 'Do not stash local changes before starting rebase'
@@ -146,22 +173,20 @@ for i in g_start g_refresh g_pull_request g_fast_pull_request g_sync
   complete -c $i -s r -l remote -x -a "(__fishamnium_git_remotes)" -d "The remote to use"
 end
 
-complete -c g_sync -s c -l current -d "Keep the current branch instead of switching"
-
 for i in g_pull_request g_fast_pull_request
   complete -c $i -s f -l force -d "Use force push"
   complete -c $i -s s -l no-verify -d "Do not execute pre-push script"
 end
 
 for i in g_start
-  complete -c $i -x -n "__fishamnium_is_git_argument 1" -a "(__fishamnium_git_branches)"
+  complete -c $i -x -n "__fishamnium_is_git_argument 1" -a "(__fishamnium_git_remote_branches)"
 end
 
 for i in g_refresh
-  complete -c $i -x -n "__fishamnium_is_git_argument 0" -a "(__fishamnium_git_branches)"
+  complete -c $i -x -n "__fishamnium_is_git_argument 0" -a "(__fishamnium_git_remote_branches)"
 end
 
-complete -c g_pull_request -x -n "__fishamnium_is_git_argument 0" -a "(__fishamnium_git_branches)"
-complete -c g_fast_pull_request -x -n "__fishamnium_is_git_argument 2" -a "(__fishamnium_git_branches)"
-complete -c g_sync -s u -l upstrem -x -a "(__fishamnium_git_remotes)" -d "The upstream to use"
-complete -c g_sync -x -a "(__fishamnium_git_branches)"
+complete -c g_pull_request -x -n "__fishamnium_is_git_argument 0" -a "(__fishamnium_git_remote_branches)"
+complete -c g_fast_pull_request -x -n "__fishamnium_is_git_argument 2" -a "(__fishamnium_git_remote_branches)"
+complete -c g_sync -s u -l upstream -x -a "(__fishamnium_git_remotes)" -d "The upstream to use"
+complete -c g_sync -x -a "(__fishamnium_git_upstream_branches)"
