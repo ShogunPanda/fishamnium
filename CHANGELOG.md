@@ -1,3 +1,7 @@
+### 2026-09-18 / 17.3.0
+
+- feat: Better git handling.
+
 ### 2026-09-03 / 17.2.4
 
 - fix: Fix sessions paths.
