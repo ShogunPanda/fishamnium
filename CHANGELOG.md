@@ -1,3 +1,7 @@
+### 2026-09-18 / 17.3.1
+
+- fix: Fixed selections.
+
 ### 2026-09-18 / 17.3.0
 
 - feat: Better git handling.
